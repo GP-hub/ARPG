@@ -1,5 +1,5 @@
 fileFormatVersion: 2
-guid: 138c711c5d9fdef4bb723059b60100e0
+guid: 982e223282afbcf4ca1fd8c1ebe8288b
 ModelImporter:
   serializedVersion: 21300
   internalIDToNameTable: []
@@ -79,14 +79,14 @@ ModelImporter:
       cycleOffset: 0
       loop: 0
       hasAdditiveReferencePose: 0
-      loopTime: 0
-      loopBlend: 0
-      loopBlendOrientation: 0
-      loopBlendPositionY: 0
-      loopBlendPositionXZ: 0
-      keepOriginalOrientation: 0
+      loopTime: 1
+      loopBlend: 1
+      loopBlendOrientation: 1
+      loopBlendPositionY: 1
+      loopBlendPositionXZ: 1
+      keepOriginalOrientation: 1
       keepOriginalPositionY: 1
-      keepOriginalPositionXZ: 0
+      keepOriginalPositionXZ: 1
       heightFromFeet: 0
       mirror: 0
       bodyMask: 01000000010000000100000001000000010000000100000001000000010000000100000001000000010000000100000001000000
@@ -473,43 +473,43 @@ ModelImporter:
         length: 0
         modified: 0
     skeleton:
-    - name: 2_Jog Backward Diagonal Right(Clone)
+    - name: 3_Jog Backward Diagonal Right(Clone)
       parentName: 
       position: {x: 0, y: 0, z: 0}
       rotation: {x: 0, y: 0, z: 0, w: 1}
       scale: {x: 1, y: 1, z: 1}
     - name: Character_Male_Face_01
-      parentName: 2_Jog Backward Diagonal Right(Clone)
+      parentName: 3_Jog Backward Diagonal Right(Clone)
       position: {x: -0, y: 0, z: 0}
       rotation: {x: 0, y: -0, z: -0, w: 1}
       scale: {x: 0.01, y: 0.01, z: 0.01}
     - name: Character_Female_Face_01
-      parentName: 2_Jog Backward Diagonal Right(Clone)
+      parentName: 3_Jog Backward Diagonal Right(Clone)
       position: {x: -0, y: 0, z: 0}
       rotation: {x: 0, y: -0, z: -0, w: 1}
       scale: {x: 0.01, y: 0.01, z: 0.01}
     - name: Character_Male_NoFace_01
-      parentName: 2_Jog Backward Diagonal Right(Clone)
+      parentName: 3_Jog Backward Diagonal Right(Clone)
       position: {x: -0, y: 0, z: 0}
       rotation: {x: 0, y: -0, z: -0, w: 1}
       scale: {x: 0.01, y: 0.01, z: 0.01}
     - name: Character_Female_NoFace_01
-      parentName: 2_Jog Backward Diagonal Right(Clone)
+      parentName: 3_Jog Backward Diagonal Right(Clone)
       position: {x: -0, y: 0, z: 0}
       rotation: {x: 0, y: -0, z: -0, w: 1}
       scale: {x: 0.01, y: 0.01, z: 0.01}
     - name: Character_Dummy_Male_01
-      parentName: 2_Jog Backward Diagonal Right(Clone)
+      parentName: 3_Jog Backward Diagonal Right(Clone)
       position: {x: -0, y: 0, z: 0}
       rotation: {x: 0, y: -0, z: -0, w: 1}
       scale: {x: 0.01, y: 0.01, z: 0.01}
     - name: Character_Dummy_Female_01
-      parentName: 2_Jog Backward Diagonal Right(Clone)
+      parentName: 3_Jog Backward Diagonal Right(Clone)
       position: {x: -0, y: 0, z: 0}
       rotation: {x: 0, y: -0, z: -0, w: 1}
       scale: {x: 0.01, y: 0.01, z: 0.01}
     - name: Root
-      parentName: 2_Jog Backward Diagonal Right(Clone)
+      parentName: 3_Jog Backward Diagonal Right(Clone)
       position: {x: 0.010773627, y: -0.06714642, z: 0.062728286}
       rotation: {x: -0, y: -0, z: -0, w: 1}
       scale: {x: 0.01, y: 0.01, z: 0.01}
