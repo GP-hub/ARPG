@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEditor;
 using UnityEngine;
+using UnityEngine.AI;
 using UnityEngine.Animations;
 using UnityEngine.EventSystems;
 using UnityEngine.InputSystem;
@@ -17,6 +18,10 @@ public class TwinStickMovement : MonoBehaviour
     [SerializeField] private float playerSpeed = 5f;
 
     private CharacterController controller;
+
+    private NavMeshAgent agent;
+    private NavMeshObstacle obstacle;
+
     private Animator animator;
     private Vector2 movement;
     private Vector2 aim;
@@ -31,7 +36,15 @@ public class TwinStickMovement : MonoBehaviour
         controller = GetComponent<CharacterController>();
         animator = GetComponent<Animator>();
         playerControls = new PlayerControls();
+
+
+        agent = GetComponent<NavMeshAgent>();
+        obstacle = GetComponent<NavMeshObstacle>();
+        obstacle.enabled = false;
+        obstacle.carveOnlyStationary = false;
+        obstacle.carving = true;
     }
+
     private void OnEnable()
     {
         playerControls.Enable();
@@ -52,6 +65,11 @@ public class TwinStickMovement : MonoBehaviour
         HandleAnimation();
     }
 
+    private void LateUpdate()
+    {
+        HandleNavMeshAgentObstacle();
+    }
+
     private void HandleAnimation()
     {
         Vector3 moveDirection = new Vector3(movement.x, 0, movement.y);
@@ -68,7 +86,6 @@ public class TwinStickMovement : MonoBehaviour
         }
         else
         {
-            // Reset the animator parameters to their default values
             animator.SetFloat("InputX", 0);
             animator.SetFloat("InputY", 0);
         }
@@ -109,5 +126,21 @@ public class TwinStickMovement : MonoBehaviour
     {
         Vector3 heightCorrectedPoint = new Vector3(lookPoint.x, transform.position.y, lookPoint.z);
         transform.LookAt(heightCorrectedPoint);
+    }
+
+    private void HandleNavMeshAgentObstacle()
+    {
+        Vector3 moveDirection = new Vector3(movement.x, 0, movement.y);
+
+        if (moveDirection.magnitude > 0.01f)
+        {
+            agent.enabled = true;
+            obstacle.enabled = false;
+        }
+        else
+        {
+            agent.enabled = false;
+            obstacle.enabled = true;
+        }
     }
 }
