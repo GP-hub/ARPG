@@ -5478,20 +5478,6 @@ GameObject:
   m_CorrespondingSourceObject: {fileID: 7571309364525542885, guid: 056cd2ef5c48bd543a8b8a967be299d2, type: 3}
   m_PrefabInstance: {fileID: 5444040362796816491}
   m_PrefabAsset: {fileID: 0}
---- !u!114 &5444040362796816493
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 5444040362796816492}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 5bdca823f9c94b24bb95b053a0c78a84, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  carvingTime: 0.5
-  carvingMoveThreshold: 0.1
 --- !u!208 &5444040362796816494
 NavMeshObstacle:
   m_ObjectHideFlags: 0
@@ -5501,12 +5487,12 @@ NavMeshObstacle:
   m_GameObject: {fileID: 5444040362796816492}
   m_Enabled: 1
   serializedVersion: 3
-  m_Shape: 1
-  m_Extents: {x: 0.5, y: 0.5, z: 0.5}
+  m_Shape: 0
+  m_Extents: {x: 0.2, y: 0.9, z: 0.2}
   m_MoveThreshold: 0.1
   m_Carve: 0
   m_CarveOnlyStationary: 1
-  m_Center: {x: 0, y: 0, z: 0}
+  m_Center: {x: 0, y: 0.9, z: 0}
   m_TimeToStationary: 0.5
 --- !u!195 &5444040362796816495
 NavMeshAgent:
