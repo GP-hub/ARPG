@@ -1,14 +1,12 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Drawing;
 using UnityEditor;
 using UnityEngine;
 using UnityEngine.AI;
-using UnityEngine.Animations;
 using UnityEngine.EventSystems;
 using UnityEngine.InputSystem;
-using UnityEngine.UIElements;
-using UnityEngine.Windows;
 
 [RequireComponent(typeof(CharacterController))]
 public class TwinStickMovement : MonoBehaviour
@@ -21,6 +19,8 @@ public class TwinStickMovement : MonoBehaviour
 
     private NavMeshAgent agent;
     private NavMeshObstacle obstacle;
+
+    private bool isAttackCastHeldDown;
 
     private Animator animator;
     private Vector2 movement;
@@ -63,6 +63,8 @@ public class TwinStickMovement : MonoBehaviour
         HandleMovement();
         HandleRotation();
         HandleAnimation();
+
+        isAttackCastHeldDown = playerControls.Controls.Attack.ReadValue<float>() > .1;
     }
 
     private void LateUpdate()
@@ -76,6 +78,7 @@ public class TwinStickMovement : MonoBehaviour
 
         if (moveDirection.magnitude > 0.01f)
         {
+
             float angle = Vector3.SignedAngle(transform.forward, moveDirection.normalized, Vector3.up);
 
             float targetInputX = Mathf.Sin(angle * Mathf.Deg2Rad);
@@ -108,24 +111,38 @@ public class TwinStickMovement : MonoBehaviour
 
     private void HandleRotation()
     {
-        Ray ray = Camera.main.ScreenPointToRay(aim);
-        Plane groundPlane = new Plane(Vector3.up, Vector3.zero);
-        float rayDistance;
-
-        if (groundPlane.Raycast(ray, out rayDistance))
+        if (isAttackCastHeldDown)
         {
-            Vector3 point = ray.GetPoint(rayDistance);
-            if (new Vector3(movement.x, 0, movement.y).magnitude > 0.01f)
+            Ray ray = Camera.main.ScreenPointToRay(aim);
+            Plane groundPlane = new Plane(Vector3.up, Vector3.zero);
+            float rayDistance;
+
+            if (groundPlane.Raycast(ray, out rayDistance))
             {
-                LookAt(point);
+                Vector3 point = ray.GetPoint(rayDistance);
+                if (new Vector3(movement.x, 0, movement.y).magnitude > 0.01f)
+                {
+                    LookAt(point);
+                }
             }
         }
+        else
+        {
+            Vector3 lookPoint = transform.position + new Vector3(movement.x, 0, movement.y);
+            LookAt(lookPoint);
+        }
+
     }
 
     private void LookAt(Vector3 lookPoint)
     {
         Vector3 heightCorrectedPoint = new Vector3(lookPoint.x, transform.position.y, lookPoint.z);
-        transform.LookAt(heightCorrectedPoint);
+
+        Quaternion targetRotation = Quaternion.LookRotation(heightCorrectedPoint - transform.position);
+        transform.rotation = Quaternion.Lerp(transform.rotation, targetRotation, Time.deltaTime * smoothnessInputTransition);
+
+        //Vector3 heightCorrectedPoint = new Vector3(lookPoint.x, transform.position.y, lookPoint.z);
+        //transform.LookAt(heightCorrectedPoint);
     }
 
     private void HandleNavMeshAgentObstacle()
