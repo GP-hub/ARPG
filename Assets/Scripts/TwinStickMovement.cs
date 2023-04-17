@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Drawing;
+using Unity.VisualScripting;
 using UnityEditor;
 using UnityEngine;
 using UnityEngine.AI;
@@ -28,6 +29,8 @@ public class TwinStickMovement : MonoBehaviour
     private Vector3 playerVelocity;
     private float smoothnessInputTransition = 20.0f;
 
+    private Canvas aimCanvas;
+
     private PlayerControls playerControls;
 
     //
@@ -36,7 +39,7 @@ public class TwinStickMovement : MonoBehaviour
         controller = GetComponent<CharacterController>();
         animator = GetComponent<Animator>();
         playerControls = new PlayerControls();
-
+        aimCanvas = transform.GetChild(2).GetComponent<Canvas>();
 
         agent = GetComponent<NavMeshAgent>();
         obstacle = GetComponent<NavMeshObstacle>();
@@ -63,6 +66,7 @@ public class TwinStickMovement : MonoBehaviour
         HandleMovement();
         HandleRotation();
         HandleAnimation();
+        HandleAimCanvasRotation();
 
         isAttackCastHeldDown = playerControls.Controls.Attack.ReadValue<float>() > .1;
     }
@@ -140,9 +144,12 @@ public class TwinStickMovement : MonoBehaviour
 
         Quaternion targetRotation = Quaternion.LookRotation(heightCorrectedPoint - transform.position);
         transform.rotation = Quaternion.Lerp(transform.rotation, targetRotation, Time.deltaTime * smoothnessInputTransition);
+    }
 
-        //Vector3 heightCorrectedPoint = new Vector3(lookPoint.x, transform.position.y, lookPoint.z);
-        //transform.LookAt(heightCorrectedPoint);
+    void HandleAimCanvasRotation()
+    {
+        float angle = Mathf.Atan2(aim.y - Screen.height / 2, aim.x - Screen.width / 2) * Mathf.Rad2Deg;
+        aimCanvas.transform.rotation = Quaternion.Euler(90, 0, angle - 90);
     }
 
     private void HandleNavMeshAgentObstacle()
