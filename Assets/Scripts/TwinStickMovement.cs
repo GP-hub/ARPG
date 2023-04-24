@@ -1,14 +1,5 @@
-using System;
-using System.Collections;
-using System.Collections.Generic;
-using UnityEditor;
 using UnityEngine;
 using UnityEngine.AI;
-using UnityEngine.Animations;
-using UnityEngine.EventSystems;
-using UnityEngine.InputSystem;
-using UnityEngine.UIElements;
-using UnityEngine.Windows;
 
 [RequireComponent(typeof(CharacterController))]
 public class TwinStickMovement : MonoBehaviour
@@ -22,11 +13,15 @@ public class TwinStickMovement : MonoBehaviour
     private NavMeshAgent agent;
     private NavMeshObstacle obstacle;
 
+    private bool isAttackCastHeldDown;
+
     private Animator animator;
     private Vector2 movement;
     private Vector2 aim;
     private Vector3 playerVelocity;
-    private float smoothnessInputTransition = 20.0f;
+    private float smoothnessInputTransition = 12.5f;
+
+    private Canvas aimCanvas;
 
     private PlayerControls playerControls;
 
@@ -36,7 +31,7 @@ public class TwinStickMovement : MonoBehaviour
         controller = GetComponent<CharacterController>();
         animator = GetComponent<Animator>();
         playerControls = new PlayerControls();
-
+        aimCanvas = transform.GetChild(2).GetComponent<Canvas>();
 
         agent = GetComponent<NavMeshAgent>();
         obstacle = GetComponent<NavMeshObstacle>();
@@ -63,6 +58,9 @@ public class TwinStickMovement : MonoBehaviour
         HandleMovement();
         HandleRotation();
         HandleAnimation();
+        HandleAimCanvasRotation();
+
+        isAttackCastHeldDown = playerControls.Controls.Attack.ReadValue<float>() > .1;
     }
 
     private void LateUpdate()
@@ -76,6 +74,7 @@ public class TwinStickMovement : MonoBehaviour
 
         if (moveDirection.magnitude > 0.01f)
         {
+
             float angle = Vector3.SignedAngle(transform.forward, moveDirection.normalized, Vector3.up);
 
             float targetInputX = Mathf.Sin(angle * Mathf.Deg2Rad);
@@ -108,24 +107,42 @@ public class TwinStickMovement : MonoBehaviour
 
     private void HandleRotation()
     {
-        Ray ray = Camera.main.ScreenPointToRay(aim);
-        Plane groundPlane = new Plane(Vector3.up, Vector3.zero);
-        float rayDistance;
-
-        if (groundPlane.Raycast(ray, out rayDistance))
+        if (movement == new Vector2(0, 0) && !isAttackCastHeldDown)
         {
-            Vector3 point = ray.GetPoint(rayDistance);
-            if (new Vector3(movement.x, 0, movement.y).magnitude > 0.01f)
+            return;
+        }
+
+        if (isAttackCastHeldDown)
+        {
+            Ray ray = Camera.main.ScreenPointToRay(aim);
+            Plane groundPlane = new Plane(Vector3.up, Vector3.zero);
+            float rayDistance;
+
+            if (groundPlane.Raycast(ray, out rayDistance))
             {
+                Vector3 point = ray.GetPoint(rayDistance);
+
                 LookAt(point);
             }
+        }
+        else
+        {
+            Vector3 lookPoint = transform.position + new Vector3(movement.x, 0, movement.y);
+            LookAt(lookPoint);
         }
     }
 
     private void LookAt(Vector3 lookPoint)
     {
         Vector3 heightCorrectedPoint = new Vector3(lookPoint.x, transform.position.y, lookPoint.z);
-        transform.LookAt(heightCorrectedPoint);
+        Quaternion targetRotation = Quaternion.LookRotation(heightCorrectedPoint - transform.position);
+        transform.rotation = Quaternion.Lerp(transform.rotation, targetRotation, Time.deltaTime * smoothnessInputTransition /2);
+    }
+
+    void HandleAimCanvasRotation()
+    {
+        float angle = Mathf.Atan2(aim.y - Screen.height / 2, aim.x - Screen.width / 2) * Mathf.Rad2Deg;
+        aimCanvas.transform.rotation = Quaternion.Euler(90, 0, angle - 90);
     }
 
     private void HandleNavMeshAgentObstacle()
