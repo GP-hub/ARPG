@@ -123,7 +123,6 @@ public class TwinStickMovement : MonoBehaviour
                 Vector3 point = ray.GetPoint(rayDistance);
 
                 LookAt(point);
-                //previousLookPoint = point;
             }
         }
         else
