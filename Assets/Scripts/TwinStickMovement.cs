@@ -1,13 +1,5 @@
-using System;
-using System.Collections;
-using System.Collections.Generic;
-using System.Drawing;
-using Unity.VisualScripting;
-using UnityEditor;
 using UnityEngine;
 using UnityEngine.AI;
-using UnityEngine.EventSystems;
-using UnityEngine.InputSystem;
 
 [RequireComponent(typeof(CharacterController))]
 public class TwinStickMovement : MonoBehaviour
@@ -27,7 +19,7 @@ public class TwinStickMovement : MonoBehaviour
     private Vector2 movement;
     private Vector2 aim;
     private Vector3 playerVelocity;
-    private float smoothnessInputTransition = 20.0f;
+    private float smoothnessInputTransition = 12.5f;
 
     private Canvas aimCanvas;
 
@@ -115,6 +107,11 @@ public class TwinStickMovement : MonoBehaviour
 
     private void HandleRotation()
     {
+        if (movement == new Vector2(0, 0) && !isAttackCastHeldDown)
+        {
+            return;
+        }
+
         if (isAttackCastHeldDown)
         {
             Ray ray = Camera.main.ScreenPointToRay(aim);
@@ -124,10 +121,9 @@ public class TwinStickMovement : MonoBehaviour
             if (groundPlane.Raycast(ray, out rayDistance))
             {
                 Vector3 point = ray.GetPoint(rayDistance);
-                if (new Vector3(movement.x, 0, movement.y).magnitude > 0.01f)
-                {
-                    LookAt(point);
-                }
+
+                LookAt(point);
+                //previousLookPoint = point;
             }
         }
         else
@@ -135,15 +131,13 @@ public class TwinStickMovement : MonoBehaviour
             Vector3 lookPoint = transform.position + new Vector3(movement.x, 0, movement.y);
             LookAt(lookPoint);
         }
-
     }
 
     private void LookAt(Vector3 lookPoint)
     {
         Vector3 heightCorrectedPoint = new Vector3(lookPoint.x, transform.position.y, lookPoint.z);
-
         Quaternion targetRotation = Quaternion.LookRotation(heightCorrectedPoint - transform.position);
-        transform.rotation = Quaternion.Lerp(transform.rotation, targetRotation, Time.deltaTime * smoothnessInputTransition);
+        transform.rotation = Quaternion.Lerp(transform.rotation, targetRotation, Time.deltaTime * smoothnessInputTransition /2);
     }
 
     void HandleAimCanvasRotation()
