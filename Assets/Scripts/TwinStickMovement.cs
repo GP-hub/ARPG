@@ -19,11 +19,14 @@ public class TwinStickMovement : MonoBehaviour
     private Vector2 movement;
     private Vector2 aim;
     private Vector3 playerVelocity;
+    private Vector3 worldAim;
     private float smoothnessInputTransition = 12.5f;
 
     private Canvas aimCanvas;
 
     private PlayerControls playerControls;
+
+    public Vector3 WorldAim { get => worldAim;}
 
     //
     private void Awake()
@@ -121,8 +124,8 @@ public class TwinStickMovement : MonoBehaviour
             if (groundPlane.Raycast(ray, out rayDistance))
             {
                 Vector3 point = ray.GetPoint(rayDistance);
-
                 LookAt(point);
+                worldAim = point;
             }
         }
         else
