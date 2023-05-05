@@ -20,13 +20,14 @@ public class TwinStickMovement : MonoBehaviour
     private Vector2 aim;
     private Vector3 playerVelocity;
     private Vector3 worldAim;
-    private float smoothnessInputTransition = 12.5f;
+    private float smoothnessInputTransition = 50f; // 12.5f with old rotation method
 
     private Canvas aimCanvas;
 
     private PlayerControls playerControls;
 
     public Vector3 WorldAim { get => worldAim;}
+    public float PlayerSpeed { get => playerSpeed; set => playerSpeed = value; }
 
     //
     private void Awake()
@@ -108,32 +109,48 @@ public class TwinStickMovement : MonoBehaviour
         controller.Move(playerVelocity * Time.deltaTime);
     }
 
+    // Constantly rotation toward cursor
     private void HandleRotation()
     {
-        if (movement == new Vector2(0, 0) && !isAttackCastHeldDown)
-        {
-            return;
-        }
+        Ray ray = Camera.main.ScreenPointToRay(aim);
+        Plane groundPlane = new Plane(Vector3.up, Vector3.zero);
+        float rayDistance;
 
-        if (isAttackCastHeldDown)
+        if (groundPlane.Raycast(ray, out rayDistance))
         {
-            Ray ray = Camera.main.ScreenPointToRay(aim);
-            Plane groundPlane = new Plane(Vector3.up, Vector3.zero);
-            float rayDistance;
-
-            if (groundPlane.Raycast(ray, out rayDistance))
-            {
-                Vector3 point = ray.GetPoint(rayDistance);
-                LookAt(point);
-                worldAim = point;
-            }
-        }
-        else
-        {
-            Vector3 lookPoint = transform.position + new Vector3(movement.x, 0, movement.y);
-            LookAt(lookPoint);
+            Vector3 point = ray.GetPoint(rayDistance);
+            LookAt(point);
+            worldAim = point;
         }
     }
+
+    // HandleRotation function when we want to look at the direction we are running when not attacking or idling
+    //private void HandleRotation()
+    //{
+    //    if (movement == new Vector2(0, 0) && !isAttackCastHeldDown)
+    //    {
+    //        return;
+    //    }
+
+    //    if (isAttackCastHeldDown)
+    //    {
+    //        Ray ray = Camera.main.ScreenPointToRay(aim);
+    //        Plane groundPlane = new Plane(Vector3.up, Vector3.zero);
+    //        float rayDistance;
+
+    //        if (groundPlane.Raycast(ray, out rayDistance))
+    //        {
+    //            Vector3 point = ray.GetPoint(rayDistance);
+    //            LookAt(point);
+    //            worldAim = point;
+    //        }
+    //    }
+    //    else
+    //    {
+    //        Vector3 lookPoint = transform.position + new Vector3(movement.x, 0, movement.y);
+    //        LookAt(lookPoint);
+    //    }
+    //}
 
     private void LookAt(Vector3 lookPoint)
     {
