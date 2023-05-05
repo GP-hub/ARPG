@@ -20,7 +20,7 @@ public class TwinStickMovement : MonoBehaviour
     private Vector2 aim;
     private Vector3 playerVelocity;
     private Vector3 worldAim;
-    private float smoothnessInputTransition = 50f; // 12.5f with old rotation method
+    private float smoothnessInputTransition = 25f; // 12.5f with old rotation method
 
     private Canvas aimCanvas;
 
@@ -156,7 +156,7 @@ public class TwinStickMovement : MonoBehaviour
     {
         Vector3 heightCorrectedPoint = new Vector3(lookPoint.x, transform.position.y, lookPoint.z);
         Quaternion targetRotation = Quaternion.LookRotation(heightCorrectedPoint - transform.position);
-        transform.rotation = Quaternion.Lerp(transform.rotation, targetRotation, Time.deltaTime * smoothnessInputTransition /2);
+        transform.rotation = Quaternion.Lerp(transform.rotation, targetRotation, Time.deltaTime * 50 /2);
     }
 
     void HandleAimCanvasRotation()
