@@ -84,8 +84,6 @@ public class TwinStickMovement : MonoBehaviour
             float targetInputX = Mathf.Sin(angle * Mathf.Deg2Rad);
             float targetInputY = Mathf.Cos(angle * Mathf.Deg2Rad);
 
-            Debug.Log("angleX: " + targetInputX+" , angleY: "+ targetInputY);
-
             animator.SetFloat("InputX", Mathf.Lerp(animator.GetFloat("InputX"), targetInputX, Time.deltaTime * smoothnessInputTransition));
             animator.SetFloat("InputY", Mathf.Lerp(animator.GetFloat("InputY"), targetInputY, Time.deltaTime * smoothnessInputTransition));
         }

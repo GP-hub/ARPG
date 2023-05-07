@@ -11,7 +11,6 @@ public class Fireball : MonoBehaviour
     private bool isCooldown = false;
     private float attackCooldownTime = 1f;
     private float attackTimeElapsed = 0f;
-    private int attackCount = 0;
     private TwinStickMovement twinStickMovement;
     public GameObject projectilePrefab;
     public GameObject exitPoint;
@@ -31,7 +30,6 @@ public class Fireball : MonoBehaviour
         playerInput.actions.FindAction("Attack").performed += OnAttackChanged;
         playerInput.actions.FindAction("Attack").canceled += OnAttackChanged;
 
-
         for (int i = 0; i < maxObjects; i++)
         {
             GameObject newObject = Instantiate(projectilePrefab, Vector3.zero, Quaternion.identity);
@@ -40,27 +38,31 @@ public class Fireball : MonoBehaviour
         }
     }
 
-    private void OnAttackChanged(InputAction.CallbackContext context)
+    private void Update()
     {
-        if (context.performed)
+        if (isAttacking)
         {
             if (!isCooldown)
             {
                 CastAttack();
             }
         }
-        else if (context.canceled)
-        {
-            isAttacking = false;
-            animator.ResetTrigger("Attack");
-        }
+    }
+
+    private void OnAttackChanged(InputAction.CallbackContext context)
+    {
+        if (context.performed) isAttacking = true;
+        else if (context.canceled) isAttacking = false;
     }
 
     private void CastAttack()
     {
         animator.SetTrigger("Attack");
         isAttacking = true;
-        //MoveObject();
+
+        twinStickMovement.PlayerSpeed = 2;
+        animator.speed = .5f;
+
         StartCoroutine(CooldownCoroutine());
     }
 
@@ -68,11 +70,13 @@ public class Fireball : MonoBehaviour
     {
         isCooldown = true;
         attackTimeElapsed = 0f;
+
         while (attackTimeElapsed < attackCooldownTime)
         {
             attackTimeElapsed += Time.deltaTime;
             yield return null;
         }
+
         isCooldown = false;
     }
 
@@ -101,8 +105,11 @@ public class Fireball : MonoBehaviour
                 }
             }
         }
-    }
 
+        twinStickMovement.PlayerSpeed = 5;
+        animator.speed = 1;
+        animator.ResetTrigger("Attack");
+    }
 
     private IEnumerator DisableObjectAfterTime(GameObject objectToDisable, float time)
     {
@@ -119,7 +126,7 @@ public class Fireball : MonoBehaviour
                 return objectPool[i];
             }
         }
-        // If no inactive object is found, instantiate a new one (if there's room in the pool)
+
         if (objectPool.Count < maxObjects)
         {
             GameObject newObject = Instantiate(projectilePrefab, exitPoint.transform.position, Quaternion.identity);
@@ -129,5 +136,6 @@ public class Fireball : MonoBehaviour
         }
         return null;
     }
+
 }
 
