@@ -97,7 +97,11 @@ public class Fireball : MonoBehaviour
         isAttacking = true;
         animator.SetTrigger("Attack");
         StartCoroutine(CooldownAttackCoroutine(attackCooldownTime));
+    }
 
+    // Trigger by first keyframe of Attack animation
+    public void MoveSpeedPlayerOnAttack()
+    {
         twinStickMovement.PlayerSpeed = 2;
         animator.speed = .5f;
     }
@@ -107,7 +111,11 @@ public class Fireball : MonoBehaviour
         isPowering = true;
         animator.SetTrigger("Power");
         StartCoroutine(CooldownPowerCoroutine(powerCooldownTime));
+    }
 
+    // Trigger by first keyframe of Power animation
+    public void MoveSpeedPlayerOnPower()
+    {
         twinStickMovement.PlayerSpeed = 0f;
         animator.speed = 0.5f;
     }
