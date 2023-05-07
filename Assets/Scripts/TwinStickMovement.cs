@@ -14,6 +14,7 @@ public class TwinStickMovement : MonoBehaviour
     private NavMeshObstacle obstacle;
 
     private bool isAttackCastHeldDown;
+    private bool iPowerCastHeldDown;
 
     private Animator animator;
     private Vector2 movement;
@@ -65,6 +66,7 @@ public class TwinStickMovement : MonoBehaviour
         HandleAimCanvasRotation();
 
         isAttackCastHeldDown = playerControls.Controls.Attack.ReadValue<float>() > .1;
+        iPowerCastHeldDown = playerControls.Controls.Power.ReadValue<float>() > .1;
     }
 
     private void LateUpdate()
@@ -76,7 +78,7 @@ public class TwinStickMovement : MonoBehaviour
     {
         Vector3 moveDirection = new Vector3(movement.x, 0, movement.y);
 
-        if (moveDirection.magnitude > 0.01f)
+        if (moveDirection.magnitude > 0.01f && playerSpeed != 0)
         {
 
             float angle = Vector3.SignedAngle(transform.forward, moveDirection.normalized, Vector3.up);

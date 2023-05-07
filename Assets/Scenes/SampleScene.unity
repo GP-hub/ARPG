@@ -7926,6 +7926,10 @@ MonoBehaviour:
       m_Calls: []
     m_ActionId: 66a7cc62-1ea4-4c88-87e9-58872c10cabd
     m_ActionName: Controls/Attack[/Mouse/leftButton]
+  - m_PersistentCalls:
+      m_Calls: []
+    m_ActionId: 5935c044-f9db-4783-ab8e-67470f7759ed
+    m_ActionName: Controls/Power[/Mouse/rightButton]
   m_NeverAutoSwitchControlSchemes: 0
   m_DefaultControlScheme: 
   m_DefaultActionMap: Controls
@@ -7981,7 +7985,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7c530024983f45f47bb640265daf64d3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  projectilePrefab: {fileID: 2029881061899082543, guid: d505addd5a9d5374f9e1091533707515, type: 3}
+  fireballPrefab: {fileID: 2029881061899082543, guid: d505addd5a9d5374f9e1091533707515, type: 3}
+  meteorPrefab: {fileID: 1127485153584772817, guid: 4094a67b479e5524d955e9dd7d16567c, type: 3}
   exitPoint: {fileID: 2100639841}
   projectileSpeed: 10
   maxObjects: 5
