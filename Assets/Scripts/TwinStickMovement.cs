@@ -14,16 +14,21 @@ public class TwinStickMovement : MonoBehaviour
     private NavMeshObstacle obstacle;
 
     private bool isAttackCastHeldDown;
+    private bool iPowerCastHeldDown;
 
     private Animator animator;
     private Vector2 movement;
     private Vector2 aim;
     private Vector3 playerVelocity;
-    private float smoothnessInputTransition = 12.5f;
+    private Vector3 worldAim;
+    private float smoothnessInputTransition = 25f; // 12.5f with old rotation method
 
     private Canvas aimCanvas;
 
     private PlayerControls playerControls;
+
+    public Vector3 WorldAim { get => worldAim;}
+    public float PlayerSpeed { get => playerSpeed; set => playerSpeed = value; }
 
     //
     private void Awake()
@@ -61,6 +66,7 @@ public class TwinStickMovement : MonoBehaviour
         HandleAimCanvasRotation();
 
         isAttackCastHeldDown = playerControls.Controls.Attack.ReadValue<float>() > .1;
+        iPowerCastHeldDown = playerControls.Controls.Power.ReadValue<float>() > .1;
     }
 
     private void LateUpdate()
@@ -72,7 +78,7 @@ public class TwinStickMovement : MonoBehaviour
     {
         Vector3 moveDirection = new Vector3(movement.x, 0, movement.y);
 
-        if (moveDirection.magnitude > 0.01f)
+        if (moveDirection.magnitude > 0.01f && playerSpeed != 0)
         {
 
             float angle = Vector3.SignedAngle(transform.forward, moveDirection.normalized, Vector3.up);
@@ -105,38 +111,54 @@ public class TwinStickMovement : MonoBehaviour
         controller.Move(playerVelocity * Time.deltaTime);
     }
 
+    // Constantly rotation toward cursor
     private void HandleRotation()
     {
-        if (movement == new Vector2(0, 0) && !isAttackCastHeldDown)
-        {
-            return;
-        }
+        Ray ray = Camera.main.ScreenPointToRay(aim);
+        Plane groundPlane = new Plane(Vector3.up, Vector3.zero);
+        float rayDistance;
 
-        if (isAttackCastHeldDown)
+        if (groundPlane.Raycast(ray, out rayDistance))
         {
-            Ray ray = Camera.main.ScreenPointToRay(aim);
-            Plane groundPlane = new Plane(Vector3.up, Vector3.zero);
-            float rayDistance;
-
-            if (groundPlane.Raycast(ray, out rayDistance))
-            {
-                Vector3 point = ray.GetPoint(rayDistance);
-
-                LookAt(point);
-            }
-        }
-        else
-        {
-            Vector3 lookPoint = transform.position + new Vector3(movement.x, 0, movement.y);
-            LookAt(lookPoint);
+            Vector3 point = ray.GetPoint(rayDistance);
+            LookAt(point);
+            worldAim = point;
         }
     }
+
+    // HandleRotation function when we want to look at the direction we are running when not attacking or idling
+    //private void HandleRotation()
+    //{
+    //    if (movement == new Vector2(0, 0) && !isAttackCastHeldDown)
+    //    {
+    //        return;
+    //    }
+
+    //    if (isAttackCastHeldDown)
+    //    {
+    //        Ray ray = Camera.main.ScreenPointToRay(aim);
+    //        Plane groundPlane = new Plane(Vector3.up, Vector3.zero);
+    //        float rayDistance;
+
+    //        if (groundPlane.Raycast(ray, out rayDistance))
+    //        {
+    //            Vector3 point = ray.GetPoint(rayDistance);
+    //            LookAt(point);
+    //            worldAim = point;
+    //        }
+    //    }
+    //    else
+    //    {
+    //        Vector3 lookPoint = transform.position + new Vector3(movement.x, 0, movement.y);
+    //        LookAt(lookPoint);
+    //    }
+    //}
 
     private void LookAt(Vector3 lookPoint)
     {
         Vector3 heightCorrectedPoint = new Vector3(lookPoint.x, transform.position.y, lookPoint.z);
         Quaternion targetRotation = Quaternion.LookRotation(heightCorrectedPoint - transform.position);
-        transform.rotation = Quaternion.Lerp(transform.rotation, targetRotation, Time.deltaTime * smoothnessInputTransition /2);
+        transform.rotation = Quaternion.Lerp(transform.rotation, targetRotation, Time.deltaTime * 50 /2);
     }
 
     void HandleAimCanvasRotation()
