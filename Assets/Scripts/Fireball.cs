@@ -1,8 +1,11 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Runtime.CompilerServices;
 using TMPro;
+using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.InputSystem;
+using UnityEngine.UIElements;
 
 public class Fireball : MonoBehaviour
 {
@@ -148,6 +151,46 @@ public class Fireball : MonoBehaviour
         isPowerCooldown = false;
     }
 
+    private Vector3 CorrectingAimPosition(Vector3 hit)
+    {
+        Vector3 pointA = hit;
+        Vector3 pointB = Camera.main.transform.position;
+        Vector3 pointC = new Vector3(Camera.main.transform.position.x, hit.y, Camera.main.transform.position.z);
+
+        float squaredLengthAB = (pointB - pointA).sqrMagnitude;
+        float squaredLengthBC = (pointC - pointB).sqrMagnitude;
+        float squaredLengthCA = (pointA - pointC).sqrMagnitude;
+
+        float lenghtHypotenuse = Mathf.Sqrt(squaredLengthAB);
+        float lengthBC = Mathf.Sqrt(squaredLengthBC);
+        float lengthCA = Mathf.Sqrt(squaredLengthCA);
+
+        float angleAtHit = CalculateAngle(lengthCA, lenghtHypotenuse, lengthBC);
+
+        float angleNextToHit = 90 - angleAtHit;
+
+        Vector3 direction = (Camera.main.transform.position - hit).normalized;
+        float distance = CalculateSideLengths(angleNextToHit);
+        Vector3 targetPosition = pointA + direction * distance;
+
+        return targetPosition;
+    }
+
+    private float CalculateAngle(float sideA, float sideB, float sideC)
+    {
+        return Mathf.Acos((sideA * sideA + sideB * sideB - sideC * sideC) / (2 * sideA * sideB)) * Mathf.Rad2Deg;
+    }
+
+    private float CalculateSideLengths(float angleA)
+    {
+        float sideB = exitPoint.transform.position.y;
+
+        float radianA = angleA * Mathf.Deg2Rad;
+
+        float sideA = sideB * Mathf.Tan(radianA);
+
+        return sideA;
+    }
 
     // Called by Player Attack Animation Keyframe
     public void CastFireball()
@@ -160,9 +203,11 @@ public class Fireball : MonoBehaviour
 
         if (Physics.Raycast(cursorRay, out RaycastHit hit, 100f, groundLayer))
         {
-            Vector3 targetPosition = hit.point/* + new Vector3(0, 1.25f, 0)*/;
-            Vector3 direction = (targetPosition - /*exitPoint.*/this.transform.position).normalized;
-            //Debug.Log("hit point:" + direction);
+            Vector3 targetPosition = hit.point;
+            
+            Vector3 targetCorrectedPosition = new Vector3(CorrectingAimPosition(targetPosition).x, targetPosition.y, CorrectingAimPosition(targetPosition).z);
+            Vector3 direction = (targetCorrectedPosition - this.transform.position).normalized;
+
             GameObject newObject = GetPooledFireballObject();
             if (newObject != null)
             {
@@ -172,7 +217,6 @@ public class Fireball : MonoBehaviour
                 if (newObjectRigidbody != null)
                 {
                     newObjectRigidbody.velocity = direction * projectileSpeed;
-                    //newObjectRigidbody.velocity = new Vector3(direction.x, 0, direction.z) * projectileSpeed;
                     StartCoroutine(DisableObjectAfterTime(newObject, lifetime));
                 }
             }

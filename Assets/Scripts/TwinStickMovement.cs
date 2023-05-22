@@ -182,4 +182,10 @@ public class TwinStickMovement : MonoBehaviour
             obstacle.enabled = true;
         }
     }
+
+    // If we want to do something at the end of the attack animation /// Empty
+    public void EndOfAttack()
+    {
+
+    }
 }
