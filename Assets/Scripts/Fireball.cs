@@ -62,26 +62,26 @@ public class Fireball : MonoBehaviour
 
     private void HandlingCasting()
     {
-        if (isAttacking)
+        if (isAttacking && !isAttackCooldown)
         {
-            if (!isPowering)
-            {
-                if (!isAttackCooldown)
-                {
-                    CastAttack();
-                }
-                else
-                {
-                    animator.ResetTrigger("Attack");
-                }
-            }
-            if (isPowering)
-            {
-                if (isPowerCooldown && !isAttackCooldown)
-                {
-                    CastAttack();
-                }
-            }
+            CastAttack();
+            //if (!isAttackCooldown)
+            //{
+            //}
+            //    else
+            //    {
+            //        animator.ResetTrigger("Attack");
+            //    }
+            //if (!isPowering)
+            //{
+            //}
+            //if (isPowering)
+            //{
+            //    if (isPowerCooldown && !isAttackCooldown)
+            //    {
+            //        CastAttack();
+            //    }
+            //}
         }
 
         if (isPowering)
@@ -205,6 +205,7 @@ public class Fireball : MonoBehaviour
     // Called by Player Attack Animation Keyframe
     public void CastFireball()
     {
+        // We return the player speed to its original value
         twinStickMovement.PlayerSpeed = 5;
         animator.speed = 1;
         animator.ResetTrigger("Attack");
