@@ -62,15 +62,25 @@ public class Fireball : MonoBehaviour
 
     private void HandlingCasting()
     {
-        if (isAttacking && !isPowering)
+        if (isAttacking)
         {
-            if (!isAttackCooldown)
+            if (!isPowering)
             {
-                CastAttack();
+                if (!isAttackCooldown)
+                {
+                    CastAttack();
+                }
+                else
+                {
+                    animator.ResetTrigger("Attack");
+                }
             }
-            else
+            if (isPowering)
             {
-                animator.ResetTrigger("Attack");
+                if (isPowerCooldown && !isAttackCooldown)
+                {
+                    CastAttack();
+                }
             }
         }
 
