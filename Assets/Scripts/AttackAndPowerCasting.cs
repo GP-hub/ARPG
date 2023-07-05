@@ -9,6 +9,22 @@ using UnityEngine.UIElements;
 
 public class AttackAndPowerCasting : MonoBehaviour
 {
+    [Header("Spells")]
+    public GameObject exitPoint;
+    public LayerMask groundLayer;
+
+
+    [Space(10)]
+    [Header("Attack")]
+    public GameObject fireballPrefab;
+    public float attackProjectileSpeed = 10f;
+    public float attackLifetime = 1.5f;
+
+    [Space(10)]
+    [Header("Power")]
+    public GameObject meteorPrefab;
+    public float powerLifetime = 1.5f;
+
     private PlayerInput playerInput;
 
     private bool isAttacking = false;
@@ -21,31 +37,20 @@ public class AttackAndPowerCasting : MonoBehaviour
     private float attackCooldownTime = 1f;
     private float powerCooldownTime = 5f;
 
-    private float attackPlayerMovementSpeed = 2f;
-    private float powerPlayerMovementSpeed = 0f;
+    private float attackPlayerMovementSpeedPercent = 2;
+    private float powerPlayerMovementSpeedPercent = 5;
 
     private float attackSpeedMultiplier = 1;
     private float powerSpeedMultiplier = 1;
 
     private TwinStickMovement twinStickMovement;
 
-    public GameObject fireballPrefab;
-    public GameObject meteorPrefab;
-    public Animation meteorAnimation;
-    public GameObject exitPoint;
-
-    public float projectileSpeed = 10f;
-
     private List<GameObject> fireballObjectPool = new List<GameObject>();
     private List<GameObject> powerObjectPool = new List<GameObject>();
 
-    public int maxObjects = 5;
-
-    public float lifetime = 1.5f;
+    private int maxObjectsForPooling = 5;
 
     private Animator animator;
-
-    public LayerMask groundLayer;
 
     private void Awake()
     {
@@ -111,7 +116,7 @@ public class AttackAndPowerCasting : MonoBehaviour
     public void MoveSpeedPlayerOnAttack()
     {
         // Speed of the player when casting attack
-        twinStickMovement.PlayerSpeed = attackPlayerMovementSpeed;
+        twinStickMovement.PlayerSpeed -= attackPlayerMovementSpeedPercent;
 
         // Animation speed when using attacking
         animator.SetFloat("AttackSpeed", attackSpeedMultiplier);
@@ -129,7 +134,7 @@ public class AttackAndPowerCasting : MonoBehaviour
     public void MoveSpeedPlayerOnPower()
     {
         // Speed of the player when casting power
-        twinStickMovement.PlayerSpeed = powerPlayerMovementSpeed;
+        twinStickMovement.PlayerSpeed -= powerPlayerMovementSpeedPercent;
 
         // Animation speed when using power
         animator.SetFloat("PowerSpeed", powerSpeedMultiplier);
@@ -208,7 +213,7 @@ public class AttackAndPowerCasting : MonoBehaviour
     public void CastFireball()
     {
         // We return the player speed to its original value
-        twinStickMovement.PlayerSpeed = twinStickMovement.PlayerSpeed;
+        twinStickMovement.PlayerSpeed += attackPlayerMovementSpeedPercent;
         animator.ResetTrigger("Attack");
 
         Ray cursorRay = Camera.main.ScreenPointToRay(Input.mousePosition);
@@ -228,8 +233,8 @@ public class AttackAndPowerCasting : MonoBehaviour
                 Rigidbody newObjectRigidbody = newObject.GetComponent<Rigidbody>();
                 if (newObjectRigidbody != null)
                 {
-                    newObjectRigidbody.velocity = direction * projectileSpeed;
-                    StartCoroutine(DisableObjectAfterTime(newObject, lifetime));
+                    newObjectRigidbody.velocity = direction * attackProjectileSpeed;
+                    StartCoroutine(DisableObjectAfterTime(newObject, attackLifetime));
                 }
             }
         }
@@ -242,7 +247,7 @@ public class AttackAndPowerCasting : MonoBehaviour
     // Called by Player Power Animation Keyframe
     public void CastMeteor()
     {
-        twinStickMovement.PlayerSpeed = twinStickMovement.PlayerSpeed;
+        twinStickMovement.PlayerSpeed += powerPlayerMovementSpeedPercent;
         animator.ResetTrigger("Power");
 
         Ray cursorRay = Camera.main.ScreenPointToRay(Input.mousePosition);
@@ -258,7 +263,7 @@ public class AttackAndPowerCasting : MonoBehaviour
                 Rigidbody newObjectRigidbody = newObject.GetComponent<Rigidbody>();
                 if (newObjectRigidbody != null)
                 {
-                    StartCoroutine(DisableObjectAfterTime(newObject, lifetime));
+                    StartCoroutine(DisableObjectAfterTime(newObject, powerLifetime));
                 }
             }
         }
@@ -282,7 +287,7 @@ public class AttackAndPowerCasting : MonoBehaviour
             }
         }
 
-        if (fireballObjectPool.Count < maxObjects)
+        if (fireballObjectPool.Count < maxObjectsForPooling)
         {
             GameObject newObject = Instantiate(fireballPrefab, exitPoint.transform.position, Quaternion.identity);
             newObject.SetActive(false);
@@ -302,7 +307,7 @@ public class AttackAndPowerCasting : MonoBehaviour
             }
         }
 
-        if (powerObjectPool.Count < maxObjects)
+        if (powerObjectPool.Count < maxObjectsForPooling)
         {
             GameObject newObject = Instantiate(meteorPrefab, pos, Quaternion.identity);
             newObject.SetActive(false);
@@ -314,7 +319,7 @@ public class AttackAndPowerCasting : MonoBehaviour
 
     private void PoolingMeteorObject()
     {
-        for (int i = 0; i < maxObjects; i++)
+        for (int i = 0; i < maxObjectsForPooling; i++)
         {
             GameObject newPowerObject = Instantiate(meteorPrefab, Vector3.zero, Quaternion.identity);
             newPowerObject.SetActive(false);
@@ -324,7 +329,7 @@ public class AttackAndPowerCasting : MonoBehaviour
 
     private void PoolingFireballObject()
     {
-        for (int i = 0; i < maxObjects; i++)
+        for (int i = 0; i < maxObjectsForPooling; i++)
         {
             GameObject newFireballObject = Instantiate(fireballPrefab, Vector3.zero, Quaternion.identity);
             newFireballObject.SetActive(false);
