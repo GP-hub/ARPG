@@ -13,6 +13,7 @@ public class Fireball : MonoBehaviour
 
     private bool isAttacking = false;
     private bool isPowering = false;
+    private bool isCasting = false;
 
     private bool isAttackCooldown = false;
     private bool isPowerCooldown = false;
@@ -20,10 +21,17 @@ public class Fireball : MonoBehaviour
     private float attackCooldownTime = 1f;
     private float powerCooldownTime = 5f;
 
+    private float attackPlayerMovementSpeed = 2f;
+    private float powerPlayerMovementSpeed = 0f;
+
+    private float attackSpeedMultiplier = 1;
+    private float powerSpeedMultiplier = 1;
+
     private TwinStickMovement twinStickMovement;
 
     public GameObject fireballPrefab;
     public GameObject meteorPrefab;
+    public Animation meteorAnimation;
     public GameObject exitPoint;
 
     public float projectileSpeed = 10f;
@@ -62,26 +70,12 @@ public class Fireball : MonoBehaviour
 
     private void HandlingCasting()
     {
+        if (isCasting) return;
+
         if (isAttacking && !isAttackCooldown)
         {
             CastAttack();
-            //if (!isAttackCooldown)
-            //{
-            //}
-            //    else
-            //    {
-            //        animator.ResetTrigger("Attack");
-            //    }
-            //if (!isPowering)
-            //{
-            //}
-            //if (isPowering)
-            //{
-            //    if (isPowerCooldown && !isAttackCooldown)
-            //    {
-            //        CastAttack();
-            //    }
-            //}
+            return;
         }
 
         if (isPowering)
@@ -107,6 +101,7 @@ public class Fireball : MonoBehaviour
 
     private void CastAttack()
     {
+        isCasting = true;
         isAttacking = true;
         animator.SetTrigger("Attack");
         StartCoroutine(CooldownAttackCoroutine(attackCooldownTime));
@@ -115,12 +110,16 @@ public class Fireball : MonoBehaviour
     // Trigger by first keyframe of Attack animation
     public void MoveSpeedPlayerOnAttack()
     {
-        twinStickMovement.PlayerSpeed = 2;
-        animator.speed = .5f;
+        // Speed of the player when casting attack
+        twinStickMovement.PlayerSpeed = attackPlayerMovementSpeed;
+
+        // Animation speed when using attacking
+        animator.SetFloat("AttackSpeed", attackSpeedMultiplier);
     }
 
     private void CastPower()
     {
+        isCasting = true;
         isPowering = true;
         animator.SetTrigger("Power");
         StartCoroutine(CooldownPowerCoroutine(powerCooldownTime));
@@ -129,8 +128,11 @@ public class Fireball : MonoBehaviour
     // Trigger by first keyframe of Power animation
     public void MoveSpeedPlayerOnPower()
     {
-        twinStickMovement.PlayerSpeed = 0f;
-        animator.speed = 0.5f;
+        // Speed of the player when casting power
+        twinStickMovement.PlayerSpeed = powerPlayerMovementSpeed;
+
+        // Animation speed when using power
+        animator.SetFloat("PowerSpeed", powerSpeedMultiplier);
     }
 
     private IEnumerator CooldownAttackCoroutine(float cd)
@@ -207,7 +209,6 @@ public class Fireball : MonoBehaviour
     {
         // We return the player speed to its original value
         twinStickMovement.PlayerSpeed = 5;
-        animator.speed = 1;
         animator.ResetTrigger("Attack");
 
         Ray cursorRay = Camera.main.ScreenPointToRay(Input.mousePosition);
@@ -232,13 +233,16 @@ public class Fireball : MonoBehaviour
                 }
             }
         }
+
+        isCasting = false;
+
+
     }
 
     // Called by Player Power Animation Keyframe
     public void CastMeteor()
     {
         twinStickMovement.PlayerSpeed = 5;
-        animator.speed = 1;
         animator.ResetTrigger("Power");
 
         Ray cursorRay = Camera.main.ScreenPointToRay(Input.mousePosition);
@@ -258,6 +262,8 @@ public class Fireball : MonoBehaviour
                 }
             }
         }
+
+        isCasting = false;
     }
 
     private IEnumerator DisableObjectAfterTime(GameObject objectToDisable, float time)

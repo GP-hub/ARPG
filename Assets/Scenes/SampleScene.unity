@@ -7569,10 +7569,10 @@ GameObject:
   - component: {fileID: 2580364717049616962}
   - component: {fileID: 2580364717049616964}
   - component: {fileID: 2580364717049616963}
+  - component: {fileID: 5444040362796816496}
   - component: {fileID: 2580364717049616965}
   - component: {fileID: 5444040362796816494}
   - component: {fileID: 5444040362796816495}
-  - component: {fileID: 5444040362796816496}
   m_Layer: 0
   m_Name: Player
   m_TagString: Untagged
@@ -7846,6 +7846,7 @@ Animator:
   m_HasTransformHierarchy: 1
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorStateOnDisable: 0
+  m_WriteDefaultValuesOnDisable: 0
 --- !u!114 &2580364717049616963
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -7987,6 +7988,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   fireballPrefab: {fileID: 2029881061899082543, guid: d505addd5a9d5374f9e1091533707515, type: 3}
   meteorPrefab: {fileID: 1127485153584772817, guid: 4094a67b479e5524d955e9dd7d16567c, type: 3}
+  meteorAnimation: {fileID: 0}
   exitPoint: {fileID: 2100639841}
   projectileSpeed: 10
   maxObjects: 5
