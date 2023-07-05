@@ -62,6 +62,15 @@ public partial class @PlayerControls: IInputActionCollection2, IDisposable
                     ""processors"": """",
                     ""interactions"": """",
                     ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""Dash"",
+                    ""type"": ""Button"",
+                    ""id"": ""03657a35-97c7-44bf-89ca-554affb34dcf"",
+                    ""expectedControlType"": ""Button"",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
                 }
             ],
             ""bindings"": [
@@ -152,6 +161,17 @@ public partial class @PlayerControls: IInputActionCollection2, IDisposable
                     ""action"": ""Power"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""cf6f3c4e-2c94-4d99-9495-a7a55f9dd352"",
+                    ""path"": ""<Keyboard>/space"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": ""KBM"",
+                    ""action"": ""Dash"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
                 }
             ]
         }
@@ -181,6 +201,7 @@ public partial class @PlayerControls: IInputActionCollection2, IDisposable
         m_Controls_Aim = m_Controls.FindAction("Aim", throwIfNotFound: true);
         m_Controls_Attack = m_Controls.FindAction("Attack", throwIfNotFound: true);
         m_Controls_Power = m_Controls.FindAction("Power", throwIfNotFound: true);
+        m_Controls_Dash = m_Controls.FindAction("Dash", throwIfNotFound: true);
     }
 
     public void Dispose()
@@ -246,6 +267,7 @@ public partial class @PlayerControls: IInputActionCollection2, IDisposable
     private readonly InputAction m_Controls_Aim;
     private readonly InputAction m_Controls_Attack;
     private readonly InputAction m_Controls_Power;
+    private readonly InputAction m_Controls_Dash;
     public struct ControlsActions
     {
         private @PlayerControls m_Wrapper;
@@ -254,6 +276,7 @@ public partial class @PlayerControls: IInputActionCollection2, IDisposable
         public InputAction @Aim => m_Wrapper.m_Controls_Aim;
         public InputAction @Attack => m_Wrapper.m_Controls_Attack;
         public InputAction @Power => m_Wrapper.m_Controls_Power;
+        public InputAction @Dash => m_Wrapper.m_Controls_Dash;
         public InputActionMap Get() { return m_Wrapper.m_Controls; }
         public void Enable() { Get().Enable(); }
         public void Disable() { Get().Disable(); }
@@ -275,6 +298,9 @@ public partial class @PlayerControls: IInputActionCollection2, IDisposable
             @Power.started += instance.OnPower;
             @Power.performed += instance.OnPower;
             @Power.canceled += instance.OnPower;
+            @Dash.started += instance.OnDash;
+            @Dash.performed += instance.OnDash;
+            @Dash.canceled += instance.OnDash;
         }
 
         private void UnregisterCallbacks(IControlsActions instance)
@@ -291,6 +317,9 @@ public partial class @PlayerControls: IInputActionCollection2, IDisposable
             @Power.started -= instance.OnPower;
             @Power.performed -= instance.OnPower;
             @Power.canceled -= instance.OnPower;
+            @Dash.started -= instance.OnDash;
+            @Dash.performed -= instance.OnDash;
+            @Dash.canceled -= instance.OnDash;
         }
 
         public void RemoveCallbacks(IControlsActions instance)
@@ -323,5 +352,6 @@ public partial class @PlayerControls: IInputActionCollection2, IDisposable
         void OnAim(InputAction.CallbackContext context);
         void OnAttack(InputAction.CallbackContext context);
         void OnPower(InputAction.CallbackContext context);
+        void OnDash(InputAction.CallbackContext context);
     }
 }
