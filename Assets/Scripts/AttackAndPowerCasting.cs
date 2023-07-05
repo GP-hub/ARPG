@@ -7,7 +7,7 @@ using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.UIElements;
 
-public class Fireball : MonoBehaviour
+public class AttackAndPowerCasting : MonoBehaviour
 {
     private PlayerInput playerInput;
 
@@ -208,7 +208,7 @@ public class Fireball : MonoBehaviour
     public void CastFireball()
     {
         // We return the player speed to its original value
-        twinStickMovement.PlayerSpeed = 5;
+        twinStickMovement.PlayerSpeed = twinStickMovement.PlayerSpeed;
         animator.ResetTrigger("Attack");
 
         Ray cursorRay = Camera.main.ScreenPointToRay(Input.mousePosition);
@@ -242,7 +242,7 @@ public class Fireball : MonoBehaviour
     // Called by Player Power Animation Keyframe
     public void CastMeteor()
     {
-        twinStickMovement.PlayerSpeed = 5;
+        twinStickMovement.PlayerSpeed = twinStickMovement.PlayerSpeed;
         animator.ResetTrigger("Power");
 
         Ray cursorRay = Camera.main.ScreenPointToRay(Input.mousePosition);
