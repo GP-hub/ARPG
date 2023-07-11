@@ -126,34 +126,6 @@ public class TwinStickMovement : MonoBehaviour
         }
     }
 
-    // HandleRotation function when we want to look at the direction we are running when not attacking or idling
-    //private void HandleRotation()
-    //{
-    //    if (movement == new Vector2(0, 0) && !isAttackCastHeldDown)
-    //    {
-    //        return;
-    //    }
-
-    //    if (isAttackCastHeldDown)
-    //    {
-    //        Ray ray = Camera.main.ScreenPointToRay(aim);
-    //        Plane groundPlane = new Plane(Vector3.up, Vector3.zero);
-    //        float rayDistance;
-
-    //        if (groundPlane.Raycast(ray, out rayDistance))
-    //        {
-    //            Vector3 point = ray.GetPoint(rayDistance);
-    //            LookAt(point);
-    //            worldAim = point;
-    //        }
-    //    }
-    //    else
-    //    {
-    //        Vector3 lookPoint = transform.position + new Vector3(movement.x, 0, movement.y);
-    //        LookAt(lookPoint);
-    //    }
-    //}
-
     private void LookAt(Vector3 lookPoint)
     {
         Vector3 heightCorrectedPoint = new Vector3(lookPoint.x, transform.position.y, lookPoint.z);

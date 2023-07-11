@@ -7569,13 +7569,14 @@ GameObject:
   - component: {fileID: 2580364717049616962}
   - component: {fileID: 2580364717049616964}
   - component: {fileID: 2580364717049616963}
+  - component: {fileID: 5444040362796816497}
+  - component: {fileID: 5444040362796816496}
   - component: {fileID: 2580364717049616965}
   - component: {fileID: 5444040362796816494}
   - component: {fileID: 5444040362796816495}
-  - component: {fileID: 5444040362796816496}
   m_Layer: 0
   m_Name: Player
-  m_TagString: Untagged
+  m_TagString: Player
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -7930,6 +7931,10 @@ MonoBehaviour:
       m_Calls: []
     m_ActionId: 5935c044-f9db-4783-ab8e-67470f7759ed
     m_ActionName: Controls/Power[/Mouse/rightButton]
+  - m_PersistentCalls:
+      m_Calls: []
+    m_ActionId: 03657a35-97c7-44bf-89ca-554affb34dcf
+    m_ActionName: Controls/Dash[/Keyboard/space]
   m_NeverAutoSwitchControlSchemes: 0
   m_DefaultControlScheme: 
   m_DefaultActionMap: Controls
@@ -7985,15 +7990,30 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7c530024983f45f47bb640265daf64d3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  fireballPrefab: {fileID: 2029881061899082543, guid: d505addd5a9d5374f9e1091533707515, type: 3}
-  meteorPrefab: {fileID: 1127485153584772817, guid: 4094a67b479e5524d955e9dd7d16567c, type: 3}
   exitPoint: {fileID: 2100639841}
-  projectileSpeed: 10
-  maxObjects: 5
-  lifetime: 1.5
   groundLayer:
     serializedVersion: 2
     m_Bits: 8
+  fireballPrefab: {fileID: 2029881061899082543, guid: d505addd5a9d5374f9e1091533707515, type: 3}
+  attackProjectileSpeed: 10
+  attackLifetime: 1.5
+  meteorPrefab: {fileID: 1127485153584772817, guid: 4094a67b479e5524d955e9dd7d16567c, type: 3}
+  powerLifetime: 1.5
+--- !u!114 &5444040362796816497
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2494901959581414798}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6412ae8ba5ae8f5409770ad4fb84ce37, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  dashSpeed: 5
+  dashDuration: 0.1
+  dashCooldown: 0
 --- !u!1 &6314962405623691228
 GameObject:
   m_ObjectHideFlags: 0
