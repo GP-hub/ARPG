@@ -1,16 +1,20 @@
 using System.Collections;
 using UnityEngine;
 using UnityEngine.InputSystem;
+using UnityEngine.UIElements.Experimental;
 
 public class Dash : MonoBehaviour
 {
     [SerializeField] private int dashSpeed;
     [SerializeField] private float dashDuration;
+    [SerializeField] private float dashCooldown;
 
-    private bool isDashing // FIX THE COROUTINE
+    private bool isDashOnCooldown;
+    private bool isCasting = false;
 
     private TwinStickMovement twinStickMovement;
     private PlayerInput playerInput;
+
 
     private void Awake()
     {
@@ -20,6 +24,16 @@ public class Dash : MonoBehaviour
         playerInput.actions.FindAction("Dash").performed += OnDash;
     }
 
+    private void OnEnable()
+    {
+        EventManager.Instance.onCasting += Casting;
+    }
+
+    private void Casting(bool dashing)
+    {
+        isCasting = dashing;
+    }
+
     private void OnDash(InputAction.CallbackContext context)
     {
         if (context.performed) StartDash();
@@ -27,21 +41,27 @@ public class Dash : MonoBehaviour
 
     private void StartDash()
     {
+        if (isDashOnCooldown) return;
+        if (isCasting) return;
+
+        StartCoroutine(CooldownDashCoroutine(dashCooldown));
         StartCoroutine(ModifyPlayerMovementSpeed());
     }
 
     private IEnumerator ModifyPlayerMovementSpeed()
     {
-        twinStickMovement.PlayerSpeed = dashSpeed;
+        EventManager.Instance.Dashing(true);
+        twinStickMovement.PlayerSpeed += dashSpeed;
 
         yield return new WaitForSeconds(dashDuration);
 
-        twinStickMovement.PlayerSpeed = 5;
+        twinStickMovement.PlayerSpeed -= dashSpeed;
+        EventManager.Instance.Dashing(false);
     }
 
     private IEnumerator CooldownDashCoroutine(float cd)
     {
-        isAttackCooldown = true;
+        isDashOnCooldown = true;
         float attackTimeElapsed = 0f;
 
         while (attackTimeElapsed < cd)
@@ -50,6 +70,6 @@ public class Dash : MonoBehaviour
             yield return null;
         }
 
-        isAttackCooldown = false;
+        isDashOnCooldown = false;
     }
 }

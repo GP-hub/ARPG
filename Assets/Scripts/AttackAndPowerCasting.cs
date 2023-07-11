@@ -1,17 +1,14 @@
 using System.Collections;
 using System.Collections.Generic;
-using System.Runtime.CompilerServices;
-using TMPro;
-using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.InputSystem;
-using UnityEngine.UIElements;
 
 public class AttackAndPowerCasting : MonoBehaviour
 {
     [Header("Spells")]
     public GameObject exitPoint;
     public LayerMask groundLayer;
+    private int maxObjectsForPooling = 5;
 
 
     [Space(10)]
@@ -19,36 +16,32 @@ public class AttackAndPowerCasting : MonoBehaviour
     public GameObject fireballPrefab;
     public float attackProjectileSpeed = 10f;
     public float attackLifetime = 1.5f;
+    [SerializeField] private float attackCooldownTime = 1f;
+    [SerializeField] private float attackPlayerMovementSpeedPercent = 2;
+    [SerializeField] private float attackSpeedMultiplier = 1;
 
     [Space(10)]
     [Header("Power")]
     public GameObject meteorPrefab;
     public float powerLifetime = 1.5f;
+    [SerializeField] private float powerCooldownTime = 5f;
+    [SerializeField] private float powerPlayerMovementSpeedPercent = 5;
+    [SerializeField] private float powerSpeedMultiplier = 1;
 
     private PlayerInput playerInput;
 
     private bool isAttacking = false;
     private bool isPowering = false;
     private bool isCasting = false;
+    private bool isDashing = false;
 
     private bool isAttackCooldown = false;
     private bool isPowerCooldown = false;
-
-    private float attackCooldownTime = 1f;
-    private float powerCooldownTime = 5f;
-
-    private float attackPlayerMovementSpeedPercent = 2;
-    private float powerPlayerMovementSpeedPercent = 5;
-
-    private float attackSpeedMultiplier = 1;
-    private float powerSpeedMultiplier = 1;
 
     private TwinStickMovement twinStickMovement;
 
     private List<GameObject> fireballObjectPool = new List<GameObject>();
     private List<GameObject> powerObjectPool = new List<GameObject>();
-
-    private int maxObjectsForPooling = 5;
 
     private Animator animator;
 
@@ -68,6 +61,11 @@ public class AttackAndPowerCasting : MonoBehaviour
         PoolingFireballObject();
     }
 
+    private void OnEnable()
+    {
+        EventManager.Instance.onDashing += Dashing;
+    }
+
     private void Update()
     {
         HandlingCasting();
@@ -76,6 +74,7 @@ public class AttackAndPowerCasting : MonoBehaviour
     private void HandlingCasting()
     {
         if (isCasting) return;
+        if (isDashing) return;
 
         if (isAttacking && !isAttackCooldown)
         {
@@ -90,6 +89,10 @@ public class AttackAndPowerCasting : MonoBehaviour
                 CastPower();
             }
         }
+    }
+    private void Dashing(bool dashing)
+    {
+        isDashing = dashing;
     }
 
     private void OnAttackChanged(InputAction.CallbackContext context)
@@ -106,7 +109,9 @@ public class AttackAndPowerCasting : MonoBehaviour
 
     private void CastAttack()
     {
+        EventManager.Instance.Casting(true);
         isCasting = true;
+
         isAttacking = true;
         animator.SetTrigger("Attack");
         StartCoroutine(CooldownAttackCoroutine(attackCooldownTime));
@@ -124,7 +129,9 @@ public class AttackAndPowerCasting : MonoBehaviour
 
     private void CastPower()
     {
+        EventManager.Instance.Casting(true);
         isCasting = true;
+
         isPowering = true;
         animator.SetTrigger("Power");
         StartCoroutine(CooldownPowerCoroutine(powerCooldownTime));
@@ -239,9 +246,8 @@ public class AttackAndPowerCasting : MonoBehaviour
             }
         }
 
+        EventManager.Instance.Casting(false);
         isCasting = false;
-
-
     }
 
     // Called by Player Power Animation Keyframe
@@ -268,6 +274,7 @@ public class AttackAndPowerCasting : MonoBehaviour
             }
         }
 
+        EventManager.Instance.Casting(false);
         isCasting = false;
     }
 

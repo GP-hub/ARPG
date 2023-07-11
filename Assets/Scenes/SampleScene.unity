@@ -7847,7 +7847,6 @@ Animator:
   m_HasTransformHierarchy: 1
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorStateOnDisable: 0
-  m_WriteDefaultValuesOnDisable: 0
 --- !u!114 &2580364717049616963
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -8012,8 +8011,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6412ae8ba5ae8f5409770ad4fb84ce37, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  dashSpeed: 10
+  dashSpeed: 5
   dashDuration: 0.1
+  dashCooldown: 0
 --- !u!1 &6314962405623691228
 GameObject:
   m_ObjectHideFlags: 0
