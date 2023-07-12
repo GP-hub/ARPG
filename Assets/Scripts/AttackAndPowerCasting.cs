@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.InputSystem;
+using static UnityEditor.PlayerSettings;
 
 public class AttackAndPowerCasting : MonoBehaviour
 {
@@ -14,6 +15,7 @@ public class AttackAndPowerCasting : MonoBehaviour
     [Space(10)]
     [Header("Attack")]
     public GameObject fireballPrefab;
+    public GameObject fireballExplosionPrefab;
     public float attackProjectileSpeed = 10f;
     public float attackLifetime = 1.5f;
     [SerializeField] private float attackCooldownTime = 1f;
@@ -41,6 +43,7 @@ public class AttackAndPowerCasting : MonoBehaviour
     private TwinStickMovement twinStickMovement;
 
     private List<GameObject> fireballObjectPool = new List<GameObject>();
+    private List<GameObject> fireballExplosionObjectPool = new List<GameObject>();
     private List<GameObject> powerObjectPool = new List<GameObject>();
 
     private Animator animator;
@@ -59,6 +62,7 @@ public class AttackAndPowerCasting : MonoBehaviour
 
         PoolingMeteorObject();
         PoolingFireballObject();
+        PoolingFireballExplosionObject();
     }
 
     private void OnEnable()
@@ -304,6 +308,26 @@ public class AttackAndPowerCasting : MonoBehaviour
         return null;
     }
 
+    private GameObject GetPooledFireballExplosionObject(Vector3 pos)
+    {
+        for (int i = 0; i < fireballExplosionObjectPool.Count; i++)
+        {
+            if (!fireballExplosionObjectPool[i].activeInHierarchy)
+            {
+                return fireballExplosionObjectPool[i];
+            }
+        }
+
+        if (fireballExplosionObjectPool.Count < maxObjectsForPooling)
+        {
+            GameObject newObject = Instantiate(fireballExplosionPrefab, pos, Quaternion.identity);
+            newObject.SetActive(false);
+            fireballExplosionObjectPool.Add(newObject);
+            return newObject;
+        }
+        return null;
+    }
+
     private GameObject GetPooledMeteorObject(Vector3 pos)
     {
         for (int i = 0; i < powerObjectPool.Count; i++)
@@ -341,6 +365,16 @@ public class AttackAndPowerCasting : MonoBehaviour
             GameObject newFireballObject = Instantiate(fireballPrefab, Vector3.zero, Quaternion.identity);
             newFireballObject.SetActive(false);
             fireballObjectPool.Add(newFireballObject);
+        }
+    }
+
+    private void PoolingFireballExplosionObject()
+    {
+        for (int i = 0; i < maxObjectsForPooling; i++)
+        {
+            GameObject newFireballExplosionObject = Instantiate(fireballExplosionPrefab, Vector3.zero, Quaternion.identity);
+            newFireballExplosionObject.SetActive(false);
+            fireballObjectPool.Add(newFireballExplosionObject);
         }
     }
 
