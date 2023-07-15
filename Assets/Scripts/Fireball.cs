@@ -14,6 +14,7 @@ public class Fireball : MonoBehaviour
     {
         // Instantiate the explosion prefab at the bullet's position
         //Instantiate(explosionPrefab, transform.position, Quaternion.identity);
+        if (other.tag == "Player") return;
 
         Explosion();
     }
