@@ -5,8 +5,10 @@ using UnityEngine;
 public class Fireball : MonoBehaviour
 {
 
-    public float explosionRadius = 5f;
-    public int damageAmount = 5;
+    [SerializeField] private float explosionRadius = 5f;
+    [SerializeField] private int damageAmount = 5;
+    [SerializeField] private float timeExplosionFadeOut = 2f;
+
 
     void OnTriggerEnter(Collider other)
     {
@@ -32,6 +34,7 @@ public class Fireball : MonoBehaviour
             }
         }
 
+        PoolingManager.Instance.Pooling(this.transform.position, timeExplosionFadeOut);
         gameObject.SetActive(false);
     }
 }

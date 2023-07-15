@@ -1,13 +1,17 @@
 using System.Collections;
 using UnityEngine;
 using UnityEngine.InputSystem;
-using UnityEngine.UIElements.Experimental;
+using UnityEngine.UI;
 
 public class Dash : MonoBehaviour
 {
     [SerializeField] private int dashSpeed;
     [SerializeField] private float dashDuration;
     [SerializeField] private float dashCooldown;
+    [SerializeField] private Image dashCooldownImage;
+
+    private float dashCooldownTimeElapsed;
+
 
     private bool isDashOnCooldown;
     private bool isCasting = false;
@@ -62,14 +66,16 @@ public class Dash : MonoBehaviour
     private IEnumerator CooldownDashCoroutine(float cd)
     {
         isDashOnCooldown = true;
-        float attackTimeElapsed = 0f;
+        dashCooldownTimeElapsed = 0f;
+        dashCooldownImage.fillAmount = 1;
 
-        while (attackTimeElapsed < cd)
+        while (dashCooldownTimeElapsed < cd)
         {
-            attackTimeElapsed += Time.deltaTime;
+            dashCooldownTimeElapsed += Time.deltaTime;
+            dashCooldownImage.fillAmount = 1 - dashCooldownTimeElapsed / dashCooldown;
             yield return null;
         }
-
+        dashCooldownImage.fillAmount = 0;
         isDashOnCooldown = false;
     }
 }

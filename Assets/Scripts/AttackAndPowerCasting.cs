@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.InputSystem;
-using static UnityEditor.PlayerSettings;
+using UnityEngine.UI;
 
 public class AttackAndPowerCasting : MonoBehaviour
 {
@@ -21,6 +21,7 @@ public class AttackAndPowerCasting : MonoBehaviour
     [SerializeField] private float attackCooldownTime = 1f;
     [SerializeField] private float attackPlayerMovementSpeedPercent = 2;
     [SerializeField] private float attackSpeedMultiplier = 1;
+    [SerializeField] private Image attackCooldownImage;
 
     [Space(10)]
     [Header("Power")]
@@ -29,6 +30,8 @@ public class AttackAndPowerCasting : MonoBehaviour
     [SerializeField] private float powerCooldownTime = 5f;
     [SerializeField] private float powerPlayerMovementSpeedPercent = 5;
     [SerializeField] private float powerSpeedMultiplier = 1;
+    [SerializeField] private Image powerCooldownImage;
+
 
     private PlayerInput playerInput;
 
@@ -39,6 +42,9 @@ public class AttackAndPowerCasting : MonoBehaviour
 
     private bool isAttackCooldown = false;
     private bool isPowerCooldown = false;
+
+    private float attackCooldownTimeElapsed;
+    private float powerCooldownTimeElapsed;
 
     private TwinStickMovement twinStickMovement;
 
@@ -154,28 +160,33 @@ public class AttackAndPowerCasting : MonoBehaviour
     private IEnumerator CooldownAttackCoroutine(float cd)
     {
         isAttackCooldown = true;
-        float attackTimeElapsed = 0f;
+        attackCooldownTimeElapsed = 0f;
+        attackCooldownImage.fillAmount = 1;
 
-        while (attackTimeElapsed < cd)
+
+        while (attackCooldownTimeElapsed < cd)
         {
-            attackTimeElapsed += Time.deltaTime;
+            attackCooldownTimeElapsed += Time.deltaTime;
+            attackCooldownImage.fillAmount = 1 - attackCooldownTimeElapsed / attackCooldownTime;
             yield return null;
         }
-
+        attackCooldownImage.fillAmount = 0;
         isAttackCooldown = false;
     }
 
     private IEnumerator CooldownPowerCoroutine(float cd)
     {
         isPowerCooldown = true;
-        float powerTimeElapsed = 0f;
+        powerCooldownTimeElapsed = 0f;
+        powerCooldownImage.fillAmount = 1;
 
-        while (powerTimeElapsed < cd)
+        while (powerCooldownTimeElapsed < cd)
         {
-            powerTimeElapsed += Time.deltaTime;
+            powerCooldownTimeElapsed += Time.deltaTime;
+            powerCooldownImage.fillAmount = 1 - powerCooldownTimeElapsed / powerCooldownTime;
             yield return null;
         }
-
+        powerCooldownImage.fillAmount = 0;
         isPowerCooldown = false;
     }
 
@@ -245,7 +256,7 @@ public class AttackAndPowerCasting : MonoBehaviour
                 if (newObjectRigidbody != null)
                 {
                     newObjectRigidbody.velocity = direction * attackProjectileSpeed;
-                    StartCoroutine(DisableObjectAfterTime(newObject, attackLifetime));
+                    StartCoroutine(DisableFireballObjectAfterTime(newObject, attackLifetime));
                 }
             }
         }
@@ -273,7 +284,7 @@ public class AttackAndPowerCasting : MonoBehaviour
                 Rigidbody newObjectRigidbody = newObject.GetComponent<Rigidbody>();
                 if (newObjectRigidbody != null)
                 {
-                    StartCoroutine(DisableObjectAfterTime(newObject, powerLifetime));
+                    StartCoroutine(DisablePowerObjectAfterTime(newObject, powerLifetime));
                 }
             }
         }
@@ -282,9 +293,18 @@ public class AttackAndPowerCasting : MonoBehaviour
         isCasting = false;
     }
 
-    private IEnumerator DisableObjectAfterTime(GameObject objectToDisable, float time)
+    private IEnumerator DisablePowerObjectAfterTime(GameObject objectToDisable, float time)
     {
         yield return new WaitForSeconds(time);
+        objectToDisable.SetActive(false);
+    }
+
+    private IEnumerator DisableFireballObjectAfterTime(GameObject objectToDisable, float time)
+    {
+        if (objectToDisable.activeSelf) yield return null;
+
+        yield return new WaitForSeconds(time);
+        PoolingManager.Instance.Pooling(objectToDisable.transform.position, time);
         objectToDisable.SetActive(false);
     }
 
@@ -303,26 +323,6 @@ public class AttackAndPowerCasting : MonoBehaviour
             GameObject newObject = Instantiate(fireballPrefab, exitPoint.transform.position, Quaternion.identity);
             newObject.SetActive(false);
             fireballObjectPool.Add(newObject);
-            return newObject;
-        }
-        return null;
-    }
-
-    private GameObject GetPooledFireballExplosionObject(Vector3 pos)
-    {
-        for (int i = 0; i < fireballExplosionObjectPool.Count; i++)
-        {
-            if (!fireballExplosionObjectPool[i].activeInHierarchy)
-            {
-                return fireballExplosionObjectPool[i];
-            }
-        }
-
-        if (fireballExplosionObjectPool.Count < maxObjectsForPooling)
-        {
-            GameObject newObject = Instantiate(fireballExplosionPrefab, pos, Quaternion.identity);
-            newObject.SetActive(false);
-            fireballExplosionObjectPool.Add(newObject);
             return newObject;
         }
         return null;
