@@ -4,12 +4,12 @@ using UnityEngine;
 
 public class Enemy : MonoBehaviour
 {
-    [SerializeField] float health, maxHealth = 30;
+    [SerializeField] private float health, maxHealth = 30;
 
-    //public GameObject playerPrefab;
-    public GameObject healthBarPrefab;
-    //public Transform playersParent;
-    public RectTransform healthPanelRect;
+    [SerializeField] private GameObject healthBarPrefab;
+    [SerializeField] private RectTransform healthPanelRect;
+
+    private Healthbar healthBar;
 
     // Start is called before the first frame update
     void Start()
@@ -32,13 +32,15 @@ public class Enemy : MonoBehaviour
         {
             Destroy(gameObject);
         }
+        healthBar.OnHealthChanged(health / maxHealth);
         Debug.Log("enemy health: " + health);
     }
 
     private void GeneratePlayerHealthBar(Transform player)
     {
-        GameObject healthBar = Instantiate(healthBarPrefab) as GameObject;
-        healthBar.GetComponent<Healthbar>().SetHealthBarData(player.transform.position + new Vector3(0, 1.8f, 0), healthPanelRect);
+        GameObject healthBarGo = Instantiate(healthBarPrefab);
+        healthBar = healthBarGo.GetComponent<Healthbar>();
+        healthBar.SetHealthBarData(player.transform.position + new Vector3(0, 1.8f, 0), healthPanelRect);
         healthBar.transform.SetParent(healthPanelRect, false);
     }
 }

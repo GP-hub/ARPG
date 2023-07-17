@@ -5,16 +5,11 @@ using UnityEngine.Animations;
 
 public class Healthbar : MonoBehaviour
 {
-    #region PRIVATE_VARIABLES
-    private Vector2 positionCorrection = new Vector2(0, 100);
-    #endregion
-    #region PUBLIC_REFERENCES
-    public RectTransform targetCanvas;
-    public RectTransform healthBar;
-    public Vector3 objectToFollow;
+    [SerializeField] private RectTransform targetCanvas;
+    [SerializeField] private RectTransform healthBar;
+    [SerializeField] private Vector3 objectToFollow;
+    [SerializeField] private Image healthbarImage;
 
-    #endregion
-    #region PUBLIC_METHODS
     public void SetHealthBarData(Vector3 targetTransform, RectTransform healthBarPanel)
     {
         this.targetCanvas = healthBarPanel;
@@ -25,10 +20,14 @@ public class Healthbar : MonoBehaviour
     }
     public void OnHealthChanged(float healthFill)
     {
-        healthBar.GetComponent<Image>().fillAmount = healthFill;
+        healthbarImage.fillAmount = healthFill;
+
+        if (healthbarImage.fillAmount <= 0)
+        {
+            this.transform.parent.gameObject.SetActive(false);
+        }
     }
-    #endregion
-    #region UNITY_CALLBACKS
+
     void Update()
     {
         if (objectToFollow != null)
@@ -36,8 +35,7 @@ public class Healthbar : MonoBehaviour
             RepositionHealthBar();
         }
     }
-    #endregion
-    #region PRIVATE_METHODS
+
     private void RepositionHealthBar()
     {
         Vector2 ViewportPosition = Camera.main.WorldToViewportPoint(objectToFollow);
@@ -47,5 +45,5 @@ public class Healthbar : MonoBehaviour
         //now you can set the position of the ui element
         healthBar.anchoredPosition = WorldObject_ScreenPosition;
     }
-    #endregion
+
 }

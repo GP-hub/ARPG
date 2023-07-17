@@ -93,6 +93,7 @@ MonoBehaviour:
   targetCanvas: {fileID: 0}
   healthBar: {fileID: 0}
   objectToFollow: {x: 0, y: 0, z: 0}
+  healthbarImage: {fileID: 3313655751300142005}
 --- !u!1 &4920457926719513556
 GameObject:
   m_ObjectHideFlags: 0
