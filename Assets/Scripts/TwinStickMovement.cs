@@ -2,6 +2,8 @@ using UnityEngine;
 using UnityEngine.AI;
 
 [RequireComponent(typeof(CharacterController))]
+[RequireComponent(typeof(NavMeshObstacle))]
+[RequireComponent(typeof(NavMeshAgent))]
 public class TwinStickMovement : MonoBehaviour
 {
     private float gravity = -9.81f;
