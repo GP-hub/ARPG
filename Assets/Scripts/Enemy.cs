@@ -18,18 +18,22 @@ public class Enemy : MonoBehaviour
 
     private NavMeshAgent agent;
     private NavMeshObstacle obstacle;
+    private Animator animator;
+    private Rigidbody rb;
 
     private Healthbar healthBar;
 
     private Transform target;
 
-    private bool isCoroutineRunning;
-    private bool isCoroutineRunningTwo;
+    private bool isCoroutineAgentEnabling;
+    private bool isCoroutineObstacleEnabling;
 
     private void Awake()
     {
         agent = GetComponent<NavMeshAgent>();
         obstacle = GetComponent<NavMeshObstacle>();
+        animator = GetComponent<Animator>();
+        rb = GetComponent<Rigidbody>();
 
         obstacle.enabled = false;
         obstacle.carveOnlyStationary = false;
@@ -47,6 +51,8 @@ public class Enemy : MonoBehaviour
 
     private void LateUpdate()
     {
+        HandleAttack();
+        HandleAnimation();
         HandleNavMeshAgentObstacleTwo();
     }
 
@@ -62,19 +68,45 @@ public class Enemy : MonoBehaviour
         Debug.Log("enemy health: " + health);
     }
 
+    void HandleAttack()
+    {
+        if (true)
+        {
 
-    private void HandleNavMeshAgentObstacleTwo()
+        }
+    }
+
+
+    void HandleAnimation()
+    {
+        float currentSpeed = agent.velocity.magnitude;
+        Debug.Log("enemy speed: " + currentSpeed);
+
+        //if (currentSpeed > 0.1f)
+        //{
+        //    animator.SetBool("IsWalking", true);
+        //    animator.SetBool("IsIdle", false);
+        //}
+        //else
+        //{
+        //    animator.SetBool("IsIdle", false);
+        //    animator.SetBool("IsWalking", true);
+        //}
+    }
+
+
+    void HandleNavMeshAgentObstacleTwo()
     {
         if (target != null)
         {
             float distance = Vector3.Distance(transform.position, target.position);
 
-            if (distance > 2f)
+            if (distance > agent.stoppingDistance)
             {
                 // Enable NavMeshAgent and disable NavMeshObstacle
                 obstacle.enabled = false;
 
-                if (!isCoroutineRunning)
+                if (!isCoroutineAgentEnabling)
                 {
                     StartCoroutine(WaitForAgentEnabling());
                 }
@@ -85,7 +117,7 @@ public class Enemy : MonoBehaviour
                 // Disable NavMeshAgent and enable NavMeshObstacle
                 agent.enabled = false;
 
-                if (!isCoroutineRunningTwo)
+                if (!isCoroutineObstacleEnabling)
                 {
                     StartCoroutine(WaitForObstacleEnabling());
                 }
@@ -104,27 +136,27 @@ public class Enemy : MonoBehaviour
     IEnumerator WaitForAgentEnabling()
     {
         StopCoroutine(WaitForObstacleEnabling());
-        isCoroutineRunning = true;
+        isCoroutineAgentEnabling = true;
 
         yield return new WaitForSeconds(.1f);
         agent.enabled = true;
 
         agent.SetDestination(target.position);
 
-        isCoroutineRunning = false;
+        isCoroutineAgentEnabling = false;
     }
 
     IEnumerator WaitForObstacleEnabling()
     {
         StopCoroutine(WaitForAgentEnabling());
 
-        isCoroutineRunningTwo = true;
+        isCoroutineObstacleEnabling = true;
 
         yield return null;
 
         obstacle.enabled = true;
 
-        isCoroutineRunningTwo = false;
+        isCoroutineObstacleEnabling = false;
     }
 
 }
