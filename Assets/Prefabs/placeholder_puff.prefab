@@ -12,7 +12,7 @@ GameObject:
   - component: {fileID: 7680705617509592995}
   - component: {fileID: 7691464674148142865}
   m_Layer: 0
-  m_Name: placeholder
+  m_Name: placeholder_puff
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
