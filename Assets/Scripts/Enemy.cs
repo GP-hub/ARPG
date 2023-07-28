@@ -82,16 +82,16 @@ public class Enemy : MonoBehaviour
         float currentSpeed = agent.velocity.magnitude;
         Debug.Log("enemy speed: " + currentSpeed);
 
-        //if (currentSpeed > 0.1f)
-        //{
-        //    animator.SetBool("IsWalking", true);
-        //    animator.SetBool("IsIdle", false);
-        //}
-        //else
-        //{
-        //    animator.SetBool("IsIdle", false);
-        //    animator.SetBool("IsWalking", true);
-        //}
+        if (currentSpeed > 0.1f)
+        {
+            animator.SetBool("IsWalking", true);
+            animator.SetBool("IsIdle", false);
+        }
+        else
+        {
+            animator.SetBool("IsIdle", true);
+            animator.SetBool("IsWalking", false);
+        }
     }
 
 
