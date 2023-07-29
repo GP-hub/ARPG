@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.AI;
+using UnityEngine.InputSystem.HID;
 using UnityEngine.InputSystem.XR;
 
 [RequireComponent(typeof(NavMeshObstacle))]
@@ -10,11 +11,23 @@ using UnityEngine.InputSystem.XR;
 public class Enemy : MonoBehaviour
 {
     [SerializeField] private float health, maxHealth = 30;
+    [SerializeField] private float attackRange;
 
     [Space(10)]
     [Header("Healthbar")]
     [SerializeField] private GameObject healthBarPrefab;
     [SerializeField] private RectTransform healthPanelRect;
+
+    [Space(10)]
+    [Header("Ranged Attack")]
+    [SerializeField] private GameObject fireballPrefab;
+    [SerializeField] private GameObject fireballExplosionPrefab;
+    [SerializeField] private float attackProjectileSpeed;
+    [SerializeField] private float attackLifetime;
+    private int maxObjectsForPooling = 5;
+
+
+    private List<GameObject> fireballObjectPool = new List<GameObject>();
 
     private NavMeshAgent agent;
     private NavMeshObstacle obstacle;
@@ -46,6 +59,8 @@ public class Enemy : MonoBehaviour
         health = maxHealth;
         GeneratePlayerHealthBar(this.gameObject);
         target = GameObject.Find("Player").transform;
+
+        PoolingFireballObject();
     }
 
 
@@ -74,7 +89,7 @@ public class Enemy : MonoBehaviour
         {
             float distanceToTarget = Vector3.Distance(transform.position, target.position);
 
-            if (distanceToTarget < 2) 
+            if (distanceToTarget < attackRange) 
             {
                 animator.SetBool("IsAttacking", true);
 
@@ -122,11 +137,31 @@ public class Enemy : MonoBehaviour
         {
             if (collider.CompareTag("Player"))
             {
-                Debug.Log("Hit player");
+                Debug.Log("Melee hit player");
             }
         }
     }
 
+    public void RangedHit()
+    {
+        Debug.Log("RangedHit");
+
+        Vector3 targetCorrectedPosition = target.transform.position;
+        Vector3 direction = (targetCorrectedPosition - this.transform.position).normalized;
+
+        GameObject newObject = GetPooledFireballObject();
+        if (newObject != null)
+        {
+            newObject.transform.position = this.transform.position;
+            newObject.SetActive(true);
+            Rigidbody newObjectRigidbody = newObject.GetComponent<Rigidbody>();
+            if (newObjectRigidbody != null)
+            {
+                newObjectRigidbody.velocity = direction * attackProjectileSpeed;
+                StartCoroutine(DisableFireballObjectAfterTime(newObject, attackLifetime));
+            }
+        }
+    }
 
     void HandleAnimation()
     {
@@ -153,7 +188,8 @@ public class Enemy : MonoBehaviour
         {
             float distance = Vector3.Distance(transform.position, target.position);
 
-            if (distance > agent.stoppingDistance+0.2)
+            //if (distance > agent.stoppingDistance)
+            if (distance > attackRange)
             {
                 // Enable NavMeshAgent and disable NavMeshObstacle
                 obstacle.enabled = false;
@@ -219,9 +255,49 @@ public class Enemy : MonoBehaviour
         Vector3 direction = vectorAB.normalized;
 
         // Small offset to solve enemy not being close enough not matter the stopping distance .5f
-        Vector3 targetPosition = transform.position + direction * .5f;
+        Vector3 targetPosition = transform.position + direction * attackRange;
 
         return targetPosition;
+    }
+
+
+    private void PoolingFireballObject()
+    {
+        for (int i = 0; i < maxObjectsForPooling; i++)
+        {
+            GameObject newFireballObject = Instantiate(fireballPrefab, Vector3.zero, Quaternion.identity);
+            newFireballObject.SetActive(false);
+            fireballObjectPool.Add(newFireballObject);
+        }
+    }
+
+    private GameObject GetPooledFireballObject()
+    {
+        for (int i = 0; i < fireballObjectPool.Count; i++)
+        {
+            if (!fireballObjectPool[i].activeInHierarchy)
+            {
+                return fireballObjectPool[i];
+            }
+        }
+
+        if (fireballObjectPool.Count < maxObjectsForPooling)
+        {
+            GameObject newObject = Instantiate(fireballPrefab, this.transform.position, Quaternion.identity);
+            newObject.SetActive(false);
+            fireballObjectPool.Add(newObject);
+            return newObject;
+        }
+        return null;
+    }
+
+    private IEnumerator DisableFireballObjectAfterTime(GameObject objectToDisable, float time)
+    {
+        if (objectToDisable.activeSelf) yield return null;
+
+        yield return new WaitForSeconds(time);
+        PoolingManager.Instance.Pooling(objectToDisable.transform.position, time);
+        objectToDisable.SetActive(false);
     }
 
 }
