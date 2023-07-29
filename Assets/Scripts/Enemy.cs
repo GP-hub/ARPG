@@ -53,7 +53,7 @@ public class Enemy : MonoBehaviour
     {
         HandleAttack();
         HandleAnimation();
-        HandleNavMeshAgentObstacleTwo();
+        HandleNavMeshAgentObstacle();
     }
 
     public void TakeDamage(float damageAmount)
@@ -65,22 +65,54 @@ public class Enemy : MonoBehaviour
             Destroy(gameObject);
         }
         healthBar.OnHealthChanged(health / maxHealth);
-        Debug.Log("enemy health: " + health);
+        Debug.Log("Enemy hp: " + health);
     }
 
     void HandleAttack()
     {
-        if (true)
+        if (obstacle.enabled && !agent.enabled)
         {
+            float distanceToTarget = Vector3.Distance(transform.position, target.position);
 
+            if (distanceToTarget < 2) 
+            {
+                animator.SetBool("IsAttacking", true);
+
+                animator.SetBool("IsWalking", false);
+                animator.SetBool("IsIdle", false);
+            }
+            else
+            {
+                animator.SetBool("IsAttacking", false);
+            }
+        }
+        else if (!obstacle.enabled && agent.enabled)
+        {
+            animator.SetBool("IsAttacking", false);
+        }
+    }
+
+    public void MeleeHit()
+    {
+        Debug.Log("MeleeHit");
+
+        Collider[] colliders = Physics.OverlapSphere(transform.position, 5f);
+
+        foreach (Collider collider in colliders)
+        {
+            if (collider.CompareTag("Player"))
+            {
+                Debug.Log("Hit player");
+            }
         }
     }
 
 
     void HandleAnimation()
     {
+        if (animator.GetBool("IsAttacking")) return;
+
         float currentSpeed = agent.velocity.magnitude;
-        Debug.Log("enemy speed: " + currentSpeed);
 
         if (currentSpeed > 0.1f)
         {
@@ -95,13 +127,13 @@ public class Enemy : MonoBehaviour
     }
 
 
-    void HandleNavMeshAgentObstacleTwo()
+    void HandleNavMeshAgentObstacle()
     {
         if (target != null)
         {
             float distance = Vector3.Distance(transform.position, target.position);
 
-            if (distance > agent.stoppingDistance)
+            if (distance > agent.stoppingDistance+0.2)
             {
                 // Enable NavMeshAgent and disable NavMeshObstacle
                 obstacle.enabled = false;
@@ -113,7 +145,6 @@ public class Enemy : MonoBehaviour
             }
             else
             {
-                
                 // Disable NavMeshAgent and enable NavMeshObstacle
                 agent.enabled = false;
 
@@ -136,12 +167,14 @@ public class Enemy : MonoBehaviour
     IEnumerator WaitForAgentEnabling()
     {
         StopCoroutine(WaitForObstacleEnabling());
+
         isCoroutineAgentEnabling = true;
 
         yield return new WaitForSeconds(.1f);
+
         agent.enabled = true;
 
-        agent.SetDestination(target.position);
+        agent.SetDestination(AdjustTargetPosition(target));
 
         isCoroutineAgentEnabling = false;
     }
@@ -157,6 +190,17 @@ public class Enemy : MonoBehaviour
         obstacle.enabled = true;
 
         isCoroutineObstacleEnabling = false;
+    }
+
+    Vector3 AdjustTargetPosition(Transform transform)
+    {
+        Vector3 vectorAB = transform.position - this.transform.position;
+
+        Vector3 direction = vectorAB.normalized;
+
+        Vector3 targetPosition = transform.position + direction * .5f;
+
+        return targetPosition;
     }
 
 }
