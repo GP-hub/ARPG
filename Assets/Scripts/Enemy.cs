@@ -78,6 +78,8 @@ public class Enemy : MonoBehaviour
             {
                 animator.SetBool("IsAttacking", true);
 
+                LookTowards();
+
                 animator.SetBool("IsWalking", false);
                 animator.SetBool("IsIdle", false);
             }
@@ -92,10 +94,28 @@ public class Enemy : MonoBehaviour
         }
     }
 
+    void LookTowards()
+    {
+        // Check if the target is valid (not null)
+        if (target != null)
+        {
+            // Calculate the direction from this GameObject to the target
+            Vector3 directionToTarget = target.position - transform.position;
+
+            // Create a rotation to look in that direction
+            Quaternion targetRotation = Quaternion.LookRotation(directionToTarget);
+
+            // Smoothly interpolate the current rotation towards the target rotation
+            transform.rotation = Quaternion.Lerp(transform.rotation, targetRotation, 5f * Time.deltaTime);
+
+        }
+    }
+
     public void MeleeHit()
     {
         Debug.Log("MeleeHit");
 
+        // Range of the sphere of the melee hit
         Collider[] colliders = Physics.OverlapSphere(transform.position, 5f);
 
         foreach (Collider collider in colliders)
@@ -198,6 +218,7 @@ public class Enemy : MonoBehaviour
 
         Vector3 direction = vectorAB.normalized;
 
+        // Small offset to solve enemy not being close enough not matter the stopping distance .5f
         Vector3 targetPosition = transform.position + direction * .5f;
 
         return targetPosition;
