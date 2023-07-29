@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Fireball : MonoBehaviour
+public class Fireball_enemy : MonoBehaviour
 {
 
     [SerializeField] private float explosionRadius = 5f;
@@ -15,7 +15,7 @@ public class Fireball : MonoBehaviour
         Debug.Log("collide with: " + other.name);
         // Instantiate the explosion prefab at the bullet's position
         //Instantiate(explosionPrefab, transform.position, Quaternion.identity);
-        if (other.tag == "Player") return;
+        if (other.tag == "Enemy") return;
 
         Explosion();
     }
@@ -26,7 +26,7 @@ public class Fireball : MonoBehaviour
 
         foreach (Collider collider in colliders)
         {
-            if (collider.CompareTag("Enemy"))
+            if (collider.CompareTag("Player"))
             {
                 Enemy healthComponent = collider.GetComponent<Enemy>();
                 if (healthComponent != null)
@@ -40,3 +40,4 @@ public class Fireball : MonoBehaviour
         gameObject.SetActive(false);
     }
 }
+

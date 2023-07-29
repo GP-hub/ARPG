@@ -20,6 +20,7 @@ public class Enemy : MonoBehaviour
 
     [Space(10)]
     [Header("Ranged Attack")]
+    [SerializeField] private GameObject exitPoint;
     [SerializeField] private GameObject fireballPrefab;
     [SerializeField] private GameObject fireballExplosionPrefab;
     [SerializeField] private float attackProjectileSpeed;
@@ -80,7 +81,7 @@ public class Enemy : MonoBehaviour
             Destroy(gameObject);
         }
         healthBar.OnHealthChanged(health / maxHealth);
-        Debug.Log("Enemy hp: " + health);
+        //Debug.Log("Enemy hp: " + health);
     }
 
     void HandleAttack()
@@ -152,7 +153,7 @@ public class Enemy : MonoBehaviour
         GameObject newObject = GetPooledFireballObject();
         if (newObject != null)
         {
-            newObject.transform.position = this.transform.position;
+            newObject.transform.position = exitPoint.transform.position;
             newObject.SetActive(true);
             Rigidbody newObjectRigidbody = newObject.GetComponent<Rigidbody>();
             if (newObjectRigidbody != null)
@@ -283,7 +284,7 @@ public class Enemy : MonoBehaviour
 
         if (fireballObjectPool.Count < maxObjectsForPooling)
         {
-            GameObject newObject = Instantiate(fireballPrefab, this.transform.position, Quaternion.identity);
+            GameObject newObject = Instantiate(fireballPrefab, exitPoint.transform.position, Quaternion.identity);
             newObject.SetActive(false);
             fireballObjectPool.Add(newObject);
             return newObject;
@@ -297,6 +298,7 @@ public class Enemy : MonoBehaviour
 
         yield return new WaitForSeconds(time);
         PoolingManager.Instance.Pooling(objectToDisable.transform.position, time);
+        Debug.Log("Disabled after: " + time);
         objectToDisable.SetActive(false);
     }
 

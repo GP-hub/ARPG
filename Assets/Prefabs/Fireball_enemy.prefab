@@ -13,9 +13,9 @@ GameObject:
   - component: {fileID: 4029075942579205044}
   - component: {fileID: 3158673508159486566}
   - component: {fileID: 7202943210809298394}
-  - component: {fileID: -3908552247158369458}
+  - component: {fileID: 4310669518149984246}
   m_Layer: 0
-  m_Name: Fireball
+  m_Name: Fireball_enemy
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -115,7 +115,7 @@ Rigidbody:
   m_Interpolate: 0
   m_Constraints: 0
   m_CollisionDetection: 2
---- !u!114 &-3908552247158369458
+--- !u!114 &4310669518149984246
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -124,9 +124,9 @@ MonoBehaviour:
   m_GameObject: {fileID: 2029881061899082543}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 11a67cc1a9de2e94c8c2cf951e11a662, type: 3}
+  m_Script: {fileID: 11500000, guid: f5bfa315954400743807a1f659064695, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  explosionRadius: 10
+  explosionRadius: 5
   damageAmount: 0
   timeExplosionFadeOut: 2

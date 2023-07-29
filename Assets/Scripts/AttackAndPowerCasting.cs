@@ -7,8 +7,8 @@ using UnityEngine.UI;
 public class AttackAndPowerCasting : MonoBehaviour
 {
     [Header("Spells")]
-    public GameObject exitPoint;
-    public LayerMask groundLayer;
+    [SerializeField] private GameObject exitPoint;
+    [SerializeField] private LayerMask groundLayer;
     private int maxObjectsForPooling = 5;
 
 
