@@ -17,7 +17,6 @@ public class AttackAndPowerCasting : MonoBehaviour
     public GameObject fireballPrefab;
     public GameObject fireballExplosionPrefab;
     public float attackProjectileSpeed = 10f;
-    public float attackLifetime = 1.5f;
     [SerializeField] private float attackCooldownTime = 1f;
     [SerializeField] private float attackPlayerMovementSpeedPercent = 2;
     [SerializeField] private float attackSpeedMultiplier = 1;
@@ -68,7 +67,6 @@ public class AttackAndPowerCasting : MonoBehaviour
 
         PoolingMeteorObject();
         PoolingFireballObject();
-        PoolingFireballExplosionObject();
     }
 
     private void OnEnable()
@@ -256,7 +254,6 @@ public class AttackAndPowerCasting : MonoBehaviour
                 if (newObjectRigidbody != null)
                 {
                     newObjectRigidbody.velocity = direction * attackProjectileSpeed;
-                    StartCoroutine(DisableFireballObjectAfterTime(newObject, attackLifetime));
                 }
             }
         }
@@ -296,15 +293,6 @@ public class AttackAndPowerCasting : MonoBehaviour
     private IEnumerator DisablePowerObjectAfterTime(GameObject objectToDisable, float time)
     {
         yield return new WaitForSeconds(time);
-        objectToDisable.SetActive(false);
-    }
-
-    private IEnumerator DisableFireballObjectAfterTime(GameObject objectToDisable, float time)
-    {
-        if (objectToDisable.activeSelf) yield return null;
-
-        yield return new WaitForSeconds(time);
-        PoolingManager.Instance.Pooling(objectToDisable.transform.position, time);
         objectToDisable.SetActive(false);
     }
 
@@ -365,16 +353,6 @@ public class AttackAndPowerCasting : MonoBehaviour
             GameObject newFireballObject = Instantiate(fireballPrefab, Vector3.zero, Quaternion.identity);
             newFireballObject.SetActive(false);
             fireballObjectPool.Add(newFireballObject);
-        }
-    }
-
-    private void PoolingFireballExplosionObject()
-    {
-        for (int i = 0; i < maxObjectsForPooling; i++)
-        {
-            GameObject newFireballExplosionObject = Instantiate(fireballExplosionPrefab, Vector3.zero, Quaternion.identity);
-            newFireballExplosionObject.SetActive(false);
-            fireballObjectPool.Add(newFireballExplosionObject);
         }
     }
 

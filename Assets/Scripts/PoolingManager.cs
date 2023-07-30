@@ -9,7 +9,7 @@ public class PoolingManager : MonoBehaviour
     [SerializeField] private GameObject player;
 
     private GameObject prefab;
-    private int initialPoolSize = 10;
+    private int initialPoolSize = 5;
 
     private List<GameObject> objectPool;
 
@@ -27,6 +27,7 @@ public class PoolingManager : MonoBehaviour
 
         if (player!=null)
         {
+            // Prefab for projectiles
             prefab = player.transform.GetComponent<AttackAndPowerCasting>().fireballExplosionPrefab;
         }
 

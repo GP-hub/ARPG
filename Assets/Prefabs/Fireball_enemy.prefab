@@ -129,4 +129,5 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   explosionRadius: 5
   damageAmount: 0
-  timeExplosionFadeOut: 2
+  timeProjectileLifeTime: 5
+  timeExplosionFadeOut: 1

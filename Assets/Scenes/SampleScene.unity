@@ -3502,7 +3502,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 963194225}
   m_LocalRotation: {x: 0.55610806, y: 0, z: 0, w: 0.83111}
-  m_LocalPosition: {x: 0, y: 5.67, z: -2.34}
+  m_LocalPosition: {x: 6.2, y: 5.67, z: -9.84}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -4724,8 +4724,8 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1249520369}
-  m_LocalRotation: {x: -0, y: -0.004776021, z: -0, w: 0.9999886}
-  m_LocalPosition: {x: 3.08, y: 0, z: 1.32}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 3, y: 0, z: 1.5}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -4738,7 +4738,7 @@ Transform:
   - {fileID: 136156531}
   m_Father: {fileID: 1881322215}
   m_RootOrder: 2
-  m_LocalEulerAnglesHint: {x: 0, y: -0.547, z: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!208 &1249520371
 NavMeshObstacle:
   m_ObjectHideFlags: 0
@@ -4798,7 +4798,6 @@ MonoBehaviour:
   fireballPrefab: {fileID: 2029881061899082543, guid: 70bdde46f5676434daabb86cc7401809, type: 3}
   fireballExplosionPrefab: {fileID: 7704456569469174909, guid: e10887af2a462724e84175079dbcf1a9, type: 3}
   attackProjectileSpeed: 10
-  attackLifetime: 1.5
 --- !u!143 &1249520374
 CharacterController:
   m_ObjectHideFlags: 0
@@ -8965,7 +8964,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2055046826}
   m_LocalRotation: {x: 0.55610806, y: 0, z: 0, w: 0.83111}
-  m_LocalPosition: {x: 0, y: 5.67, z: -2.34}
+  m_LocalPosition: {x: 6.2, y: 5.67, z: -9.84}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -9855,7 +9854,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2494901959581414798}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalPosition: {x: 6.2, y: 0, z: -7.5}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -13776,7 +13775,7 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 4981679043088961322}
-  m_LocalRotation: {x: -0, y: -0.004776021, z: -0, w: 0.9999886}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 1.5, y: 0, z: -1.5}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
@@ -13790,7 +13789,7 @@ Transform:
   - {fileID: 4983657329643826926}
   m_Father: {fileID: 1881322215}
   m_RootOrder: 1
-  m_LocalEulerAnglesHint: {x: 0, y: -0.547, z: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!208 &4987608374404606435
 NavMeshObstacle:
   m_ObjectHideFlags: 0
@@ -13850,7 +13849,6 @@ MonoBehaviour:
   fireballPrefab: {fileID: 2029881061899082543, guid: d505addd5a9d5374f9e1091533707515, type: 3}
   fireballExplosionPrefab: {fileID: 7704456569469174909, guid: e10887af2a462724e84175079dbcf1a9, type: 3}
   attackProjectileSpeed: 10
-  attackLifetime: 1.5
 --- !u!143 &4987608374404606438
 CharacterController:
   m_ObjectHideFlags: 0
@@ -13987,7 +13985,6 @@ MonoBehaviour:
   fireballPrefab: {fileID: 2029881061899082543, guid: d505addd5a9d5374f9e1091533707515, type: 3}
   fireballExplosionPrefab: {fileID: 7704456569469174909, guid: e10887af2a462724e84175079dbcf1a9, type: 3}
   attackProjectileSpeed: 10
-  attackLifetime: 1.5
   attackCooldownTime: 1
   attackPlayerMovementSpeedPercent: 2
   attackSpeedMultiplier: 1

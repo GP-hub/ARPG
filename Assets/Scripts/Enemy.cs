@@ -24,7 +24,6 @@ public class Enemy : MonoBehaviour
     [SerializeField] private GameObject fireballPrefab;
     [SerializeField] private GameObject fireballExplosionPrefab;
     [SerializeField] private float attackProjectileSpeed;
-    [SerializeField] private float attackLifetime;
     private int maxObjectsForPooling = 5;
 
 
@@ -145,8 +144,6 @@ public class Enemy : MonoBehaviour
 
     public void RangedHit()
     {
-        Debug.Log("RangedHit");
-
         Vector3 targetCorrectedPosition = target.transform.position;
         Vector3 direction = (targetCorrectedPosition - this.transform.position).normalized;
 
@@ -159,7 +156,6 @@ public class Enemy : MonoBehaviour
             if (newObjectRigidbody != null)
             {
                 newObjectRigidbody.velocity = direction * attackProjectileSpeed;
-                StartCoroutine(DisableFireballObjectAfterTime(newObject, attackLifetime));
             }
         }
     }
@@ -291,15 +287,4 @@ public class Enemy : MonoBehaviour
         }
         return null;
     }
-
-    private IEnumerator DisableFireballObjectAfterTime(GameObject objectToDisable, float time)
-    {
-        if (objectToDisable.activeSelf) yield return null;
-
-        yield return new WaitForSeconds(time);
-        PoolingManager.Instance.Pooling(objectToDisable.transform.position, time);
-        Debug.Log("Disabled after: " + time);
-        objectToDisable.SetActive(false);
-    }
-
 }

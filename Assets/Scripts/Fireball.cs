@@ -7,17 +7,29 @@ public class Fireball : MonoBehaviour
 
     [SerializeField] private float explosionRadius = 5f;
     [SerializeField] private int damageAmount = 5;
+    [SerializeField] private float timeProjectileLifeTime = 5f;
     [SerializeField] private float timeExplosionFadeOut = 2f;
 
 
     void OnTriggerEnter(Collider other)
     {
-        Debug.Log("collide with: " + other.name);
         // Instantiate the explosion prefab at the bullet's position
         //Instantiate(explosionPrefab, transform.position, Quaternion.identity);
         if (other.tag == "Player") return;
 
         Explosion();
+    }
+
+    private void OnEnable()
+    {
+        // Start the coroutine when the projectile is enabled
+        StartCoroutine(DisableFireballObjectAfterTime(this.gameObject, timeProjectileLifeTime, timeExplosionFadeOut));
+    }
+
+    private void OnDisable()
+    {
+        // Make sure to stop the coroutine when the projectile is disabled or removed
+        StopAllCoroutines();
     }
 
     private void Explosion()
@@ -39,4 +51,11 @@ public class Fireball : MonoBehaviour
         PoolingManager.Instance.Pooling(this.transform.position, timeExplosionFadeOut);
         gameObject.SetActive(false);
     }
+    private IEnumerator DisableFireballObjectAfterTime(GameObject objectToDisable, float timeProjectileExpire, float timeExplosionExpire)
+    {
+        yield return new WaitForSeconds(timeProjectileExpire);
+        PoolingManager.Instance.Pooling(objectToDisable.transform.position, timeExplosionExpire);
+        objectToDisable.SetActive(false);
+    }
 }
+
