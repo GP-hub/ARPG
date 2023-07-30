@@ -12,6 +12,7 @@ public class Enemy : MonoBehaviour
 {
     [SerializeField] private float health, maxHealth = 30;
     [SerializeField] private float attackRange;
+    private LayerMask groundLayerMask;
 
     [Space(10)]
     [Header("Healthbar")]
@@ -48,6 +49,8 @@ public class Enemy : MonoBehaviour
         animator = GetComponent<Animator>();
         rb = GetComponent<Rigidbody>();
 
+        groundLayerMask = LayerMask.GetMask("Ground");
+
         obstacle.enabled = false;
         obstacle.carveOnlyStationary = false;
         obstacle.carving = true;
@@ -66,6 +69,8 @@ public class Enemy : MonoBehaviour
 
     private void LateUpdate()
     {
+        Debug.Log("CanSeePlayer: " + CanSeePlayer());
+
         HandleAttack();
         HandleAnimation();
         HandleNavMeshAgentObstacle();
@@ -128,8 +133,6 @@ public class Enemy : MonoBehaviour
 
     public void MeleeHit()
     {
-        Debug.Log("MeleeHit");
-
         // Range of the sphere of the melee hit
         Collider[] colliders = Physics.OverlapSphere(transform.position, 5f);
 
@@ -137,7 +140,7 @@ public class Enemy : MonoBehaviour
         {
             if (collider.CompareTag("Player"))
             {
-                Debug.Log("Melee hit player");
+                // Damage player here
             }
         }
     }
@@ -185,8 +188,8 @@ public class Enemy : MonoBehaviour
         {
             float distance = Vector3.Distance(transform.position, target.position);
 
-            //if (distance > agent.stoppingDistance)
-            if (distance > attackRange)
+            //if (distance > attackRange)
+            if (!CanSeePlayer())
             {
                 // Enable NavMeshAgent and disable NavMeshObstacle
                 obstacle.enabled = false;
@@ -196,7 +199,7 @@ public class Enemy : MonoBehaviour
                     StartCoroutine(WaitForAgentEnabling());
                 }
             }
-            else
+            else if (CanSeePlayer())
             {
                 // Disable NavMeshAgent and enable NavMeshObstacle
                 agent.enabled = false;
@@ -227,7 +230,10 @@ public class Enemy : MonoBehaviour
 
         agent.enabled = true;
 
-        agent.SetDestination(AdjustTargetPosition(target));
+        if (!CanSeePlayer())
+        {
+            agent.SetDestination(AdjustTargetPosition(target));
+        }
 
         isCoroutineAgentEnabling = false;
     }
@@ -286,5 +292,26 @@ public class Enemy : MonoBehaviour
             return newObject;
         }
         return null;
+    }
+
+    private bool CanSeePlayer()
+    {
+        // Direction from the enemy to the player
+        Vector3 directionToPlayer = (target.position + new Vector3(0f, 1.5f, 0f)) - (transform.position + new Vector3(0f, 1.5f, 0f));
+
+        // Draw a debug ray to visualize the raycast in the scene view
+        Debug.DrawRay(transform.position + new Vector3(0f, 1.5f, 0f), directionToPlayer, Color.blue);
+
+        // Check if there's a clear line of sight by performing a raycast from the enemy's position to the player's position
+        if (Physics.Raycast(transform.position + new Vector3(0f, 1.5f, 0f), directionToPlayer, out RaycastHit hit, 100, ~groundLayerMask))
+        {
+            Debug.Log("hit: " + hit.collider.name);
+            if (hit.collider.CompareTag("Player"))
+            {
+                return true;
+            }
+        }
+
+        return false;
     }
 }

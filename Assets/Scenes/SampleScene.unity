@@ -1761,7 +1761,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 524165132}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: Props
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -4256,7 +4256,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1109276327}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: Walls
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -4710,13 +4710,13 @@ GameObject:
   - component: {fileID: 1249520373}
   - component: {fileID: 1249520372}
   - component: {fileID: 1249520371}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Enemy Ranged
   m_TagString: Enemy
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &1249520370
 Transform:
   m_ObjectHideFlags: 0
@@ -5042,7 +5042,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1269989252}
-  m_Layer: 3
+  m_Layer: 7
   m_Name: Ramps
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -7945,7 +7945,7 @@ GameObject:
   - component: {fileID: 1831601980}
   - component: {fileID: 1831601979}
   - component: {fileID: 1831601978}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: SM_Buildings_Block_1x1_01 (1)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -9263,7 +9263,7 @@ GameObject:
   - component: {fileID: 33172124442752675}
   - component: {fileID: 23538652759783895}
   - component: {fileID: 64996220807989747}
-  m_Layer: 3
+  m_Layer: 7
   m_Name: SM_Buildings_Ramp_25_1x1_01
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -9282,7 +9282,7 @@ GameObject:
   - component: {fileID: 33699174182673924}
   - component: {fileID: 23966070097116456}
   - component: {fileID: 64881946458500670}
-  m_Layer: 3
+  m_Layer: 7
   m_Name: SM_Buildings_Ramp_40_1x1_01
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -9301,7 +9301,7 @@ GameObject:
   - component: {fileID: 33417690290050206}
   - component: {fileID: 23313093479565130}
   - component: {fileID: 64145787608307316}
-  m_Layer: 3
+  m_Layer: 7
   m_Name: SM_Buildings_Ramp_20_1x1_01
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -11029,6 +11029,7 @@ GameObject:
   m_Component:
   - component: {fileID: 2489162359881497434}
   - component: {fileID: 2580364717049616962}
+  - component: {fileID: 5444040362796816498}
   - component: {fileID: 2580364717049616964}
   - component: {fileID: 2580364717049616963}
   - component: {fileID: 5444040362796816497}
@@ -11036,7 +11037,7 @@ GameObject:
   - component: {fileID: 2580364717049616965}
   - component: {fileID: 5444040362796816495}
   - component: {fileID: 5444040362796816494}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Player
   m_TagString: Player
   m_Icon: {fileID: 0}
@@ -12500,13 +12501,13 @@ GameObject:
   - component: {fileID: 4987608374404606437}
   - component: {fileID: 4987608374404606436}
   - component: {fileID: 4987608374404606435}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Enemy
   m_TagString: Enemy
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!1 &4981692571989382072
 GameObject:
   m_ObjectHideFlags: 0
@@ -14011,6 +14012,20 @@ MonoBehaviour:
   dashDuration: 0.1
   dashCooldown: 5
   dashCooldownImage: {fileID: 1733174547}
+--- !u!136 &5444040362796816498
+CapsuleCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2494901959581414798}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_Enabled: 1
+  m_Radius: 0.5
+  m_Height: 3.02
+  m_Direction: 1
+  m_Center: {x: 0, y: 0.9, z: 0}
 --- !u!1 &6314962405623691228
 GameObject:
   m_ObjectHideFlags: 0
@@ -14023,7 +14038,7 @@ GameObject:
   - component: {fileID: 6327800019909462242}
   - component: {fileID: 6337908598800324272}
   - component: {fileID: 6337908598800324273}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: SM_Buildings_Block_1x1_01
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -14120,7 +14135,7 @@ GameObject:
   - component: {fileID: 8022760618829159341}
   - component: {fileID: 8030591285922168773}
   - component: {fileID: 8053791337319377593}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: SM_Buildings_Wall_5x3_01
   m_TagString: Untagged
   m_Icon: {fileID: 0}
