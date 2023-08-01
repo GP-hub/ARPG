@@ -1,10 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
-using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.AI;
-using UnityEngine.InputSystem.HID;
-using UnityEngine.InputSystem.XR;
 
 [RequireComponent(typeof(NavMeshObstacle))]
 [RequireComponent(typeof(NavMeshAgent))]
@@ -61,6 +58,8 @@ public class Enemy : MonoBehaviour
     {
         health = maxHealth;
         GeneratePlayerHealthBar(this.gameObject);
+
+        // Pass the player as the target for now
         target = GameObject.Find("Player").transform;
 
         PoolingFireballObject();
@@ -69,11 +68,9 @@ public class Enemy : MonoBehaviour
 
     private void LateUpdate()
     {
-        Debug.Log("CanSeePlayer: " + CanSeePlayer());
-
         HandleAttack();
         HandleAnimation();
-        HandleNavMeshAgentObstacle();
+        //HandleNavMeshAgentObstacle();
     }
 
     public void TakeDamage(float damageAmount)
@@ -90,25 +87,67 @@ public class Enemy : MonoBehaviour
 
     void HandleAttack()
     {
-        if (obstacle.enabled && !agent.enabled)
+        float distanceToTarget = Vector3.Distance(transform.position, target.position);
+
+        if (!CanSeePlayer())
         {
-            float distanceToTarget = Vector3.Distance(transform.position, target.position);
+            Move();
+            HandleAttackAnimation(false);
+            return;
+        }
 
-            if (distanceToTarget < attackRange) 
+
+        if (CanSeePlayer())
+        {
+            if (distanceToTarget <= attackRange)
             {
-                animator.SetBool("IsAttacking", true);
-
-                LookTowards();
-
-                animator.SetBool("IsWalking", false);
-                animator.SetBool("IsIdle", false);
+                Stop();
+                HandleAttackAnimation(true);
             }
-            else
+            if (distanceToTarget > attackRange)
             {
-                animator.SetBool("IsAttacking", false);
+                Move();
+                HandleAttackAnimation(false);
             }
         }
-        else if (!obstacle.enabled && agent.enabled)
+
+        //if (obstacle.enabled && !agent.enabled)
+        //{
+        //    float distanceToTarget = Vector3.Distance(transform.position, target.position);
+
+        //    if (distanceToTarget <= attackRange) 
+        //    {
+        //        animator.SetBool("IsAttacking", true);
+
+        //        LookTowards();
+
+        //        animator.SetBool("IsWalking", false);
+        //        animator.SetBool("IsIdle", false);
+        //    }
+        //    else
+        //    {
+        //        animator.SetBool("IsAttacking", false);
+        //    }
+        //}
+        //else if (!obstacle.enabled && agent.enabled)
+        //{
+        //    animator.SetBool("IsAttacking", false);
+        //}
+    }
+
+    void HandleAttackAnimation(bool onRange)
+    {
+        if (onRange)
+        {
+            animator.SetBool("IsAttacking", true);
+
+            LookTowards();
+
+            animator.SetBool("IsWalking", false);
+            animator.SetBool("IsIdle", false);
+
+        }
+        if (!onRange)
         {
             animator.SetBool("IsAttacking", false);
         }
@@ -188,27 +227,38 @@ public class Enemy : MonoBehaviour
         {
             float distance = Vector3.Distance(transform.position, target.position);
 
-            //if (distance > attackRange)
             if (!CanSeePlayer())
             {
-                // Enable NavMeshAgent and disable NavMeshObstacle
-                obstacle.enabled = false;
-
-                if (!isCoroutineAgentEnabling)
-                {
-                    StartCoroutine(WaitForAgentEnabling());
-                }
+                Move();
             }
-            else if (CanSeePlayer())
+            if (CanSeePlayer())
             {
-                // Disable NavMeshAgent and enable NavMeshObstacle
-                agent.enabled = false;
-
-                if (!isCoroutineObstacleEnabling)
-                {
-                    StartCoroutine(WaitForObstacleEnabling());
-                }
+                Stop();
             }
+        }
+    }
+
+    void Move()
+    {
+
+        if (!isCoroutineAgentEnabling)
+        {
+            // Enable NavMeshAgent and disable NavMeshObstacle
+            obstacle.enabled = false;
+
+            StartCoroutine(WaitForAgentEnabling());
+        }
+    }
+
+    void Stop()
+    {
+
+        if (!isCoroutineObstacleEnabling)
+        {
+            // Disable NavMeshAgent and enable NavMeshObstacle
+            agent.enabled = false;
+
+            StartCoroutine(WaitForObstacleEnabling());
         }
     }
 
@@ -230,10 +280,7 @@ public class Enemy : MonoBehaviour
 
         agent.enabled = true;
 
-        if (!CanSeePlayer())
-        {
-            agent.SetDestination(AdjustTargetPosition(target));
-        }
+        agent.SetDestination(AdjustTargetPosition(target));
 
         isCoroutineAgentEnabling = false;
     }
@@ -258,7 +305,7 @@ public class Enemy : MonoBehaviour
         Vector3 direction = vectorAB.normalized;
 
         // Small offset to solve enemy not being close enough not matter the stopping distance .5f
-        Vector3 targetPosition = transform.position + direction * attackRange;
+        Vector3 targetPosition = transform.position + direction * .5f;
 
         return targetPosition;
     }
@@ -297,15 +344,15 @@ public class Enemy : MonoBehaviour
     private bool CanSeePlayer()
     {
         // Direction from the enemy to the player
-        Vector3 directionToPlayer = (target.position + new Vector3(0f, 1.5f, 0f)) - (transform.position + new Vector3(0f, 1.5f, 0f));
+        Vector3 directionToPlayer = (target.position + new Vector3(0f, 1f, 0f)) - (transform.position + new Vector3(0f, 1f, 0f));
 
         // Draw a debug ray to visualize the raycast in the scene view
-        Debug.DrawRay(transform.position + new Vector3(0f, 1.5f, 0f), directionToPlayer, Color.blue);
+        Debug.DrawRay(transform.position + new Vector3(0f, 1f, 0f), directionToPlayer, Color.blue);
 
         // Check if there's a clear line of sight by performing a raycast from the enemy's position to the player's position
-        if (Physics.Raycast(transform.position + new Vector3(0f, 1.5f, 0f), directionToPlayer, out RaycastHit hit, 100, ~groundLayerMask))
+        //if (Physics.Raycast(transform.position + new Vector3(0f, 1f, 0f), directionToPlayer, out RaycastHit hit, 100, ~groundLayerMask))
+        if (Physics.Raycast(transform.position + new Vector3(0f, 1f, 0f), directionToPlayer, out RaycastHit hit, 100, LayerMask.GetMask("Character", "Obstacle")))
         {
-            Debug.Log("hit: " + hit.collider.name);
             if (hit.collider.CompareTag("Player"))
             {
                 return true;
