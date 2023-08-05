@@ -2,8 +2,7 @@ using UnityEngine;
 using UnityEngine.AI;
 
 [RequireComponent(typeof(CharacterController))]
-[RequireComponent(typeof(NavMeshObstacle))]
-[RequireComponent(typeof(NavMeshAgent))]
+
 public class TwinStickMovement : MonoBehaviour
 {
     private float gravity = -9.81f;
@@ -12,8 +11,6 @@ public class TwinStickMovement : MonoBehaviour
 
     private CharacterController controller;
 
-    private NavMeshAgent agent;
-    private NavMeshObstacle obstacle;
 
     private bool isAttackCastHeldDown;
     private bool iPowerCastHeldDown;
@@ -39,12 +36,6 @@ public class TwinStickMovement : MonoBehaviour
         animator = GetComponent<Animator>();
         playerControls = new PlayerControls();
         aimCanvas = transform.GetChild(2).GetComponent<Canvas>();
-
-        agent = GetComponent<NavMeshAgent>();
-        obstacle = GetComponent<NavMeshObstacle>();
-        obstacle.enabled = false;
-        obstacle.carveOnlyStationary = false;
-        obstacle.carving = true;
     }
 
     private void OnEnable()
@@ -147,13 +138,11 @@ public class TwinStickMovement : MonoBehaviour
 
         if (moveDirection.magnitude > 0.01f)
         {
-            agent.enabled = true;
-            obstacle.enabled = false;
+
         }
         else
         {
-            agent.enabled = false;
-            obstacle.enabled = true;
+
         }
     }
 

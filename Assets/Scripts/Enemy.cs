@@ -3,8 +3,6 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.AI;
 
-[RequireComponent(typeof(NavMeshObstacle))]
-[RequireComponent(typeof(NavMeshAgent))]
 public class Enemy : MonoBehaviour
 {
     [SerializeField] private float health, maxHealth = 30;
@@ -27,8 +25,6 @@ public class Enemy : MonoBehaviour
 
     private List<GameObject> fireballObjectPool = new List<GameObject>();
 
-    private NavMeshAgent agent;
-    private NavMeshObstacle obstacle;
     private Animator animator;
     private Rigidbody rb;
 
@@ -36,21 +32,12 @@ public class Enemy : MonoBehaviour
 
     private Transform target;
 
-    private bool isCoroutineAgentEnabling;
-    private bool isCoroutineObstacleEnabling;
-
     private void Awake()
     {
-        agent = GetComponent<NavMeshAgent>();
-        obstacle = GetComponent<NavMeshObstacle>();
         animator = GetComponent<Animator>();
         rb = GetComponent<Rigidbody>();
 
         groundLayerMask = LayerMask.GetMask("Ground");
-
-        obstacle.enabled = false;
-        obstacle.carveOnlyStationary = false;
-        obstacle.carving = true;
     }
 
     // Start is called before the first frame update
@@ -110,29 +97,6 @@ public class Enemy : MonoBehaviour
                 HandleAttackAnimation(false);
             }
         }
-
-        //if (obstacle.enabled && !agent.enabled)
-        //{
-        //    float distanceToTarget = Vector3.Distance(transform.position, target.position);
-
-        //    if (distanceToTarget <= attackRange) 
-        //    {
-        //        animator.SetBool("IsAttacking", true);
-
-        //        LookTowards();
-
-        //        animator.SetBool("IsWalking", false);
-        //        animator.SetBool("IsIdle", false);
-        //    }
-        //    else
-        //    {
-        //        animator.SetBool("IsAttacking", false);
-        //    }
-        //}
-        //else if (!obstacle.enabled && agent.enabled)
-        //{
-        //    animator.SetBool("IsAttacking", false);
-        //}
     }
 
     void HandleAttackAnimation(bool onRange)
@@ -206,7 +170,7 @@ public class Enemy : MonoBehaviour
     {
         if (animator.GetBool("IsAttacking")) return;
 
-        float currentSpeed = agent.velocity.magnitude;
+        float currentSpeed = rb.velocity.magnitude;
 
         if (currentSpeed > 0.1f)
         {
@@ -240,26 +204,10 @@ public class Enemy : MonoBehaviour
 
     void Move()
     {
-
-        if (!isCoroutineAgentEnabling)
-        {
-            // Enable NavMeshAgent and disable NavMeshObstacle
-            obstacle.enabled = false;
-
-            StartCoroutine(WaitForAgentEnabling());
-        }
     }
 
     void Stop()
     {
-
-        if (!isCoroutineObstacleEnabling)
-        {
-            // Disable NavMeshAgent and enable NavMeshObstacle
-            agent.enabled = false;
-
-            StartCoroutine(WaitForObstacleEnabling());
-        }
     }
 
     private void GeneratePlayerHealthBar(GameObject player)
@@ -268,34 +216,6 @@ public class Enemy : MonoBehaviour
         healthBar = healthBarGo.GetComponent<Healthbar>();
         healthBar.SetHealthBarData(player.transform, healthPanelRect);
         healthBar.transform.SetParent(healthPanelRect, false);
-    }
-
-    IEnumerator WaitForAgentEnabling()
-    {
-        StopCoroutine(WaitForObstacleEnabling());
-
-        isCoroutineAgentEnabling = true;
-
-        yield return new WaitForSeconds(.1f);
-
-        agent.enabled = true;
-
-        agent.SetDestination(AdjustTargetPosition(target));
-
-        isCoroutineAgentEnabling = false;
-    }
-
-    IEnumerator WaitForObstacleEnabling()
-    {
-        StopCoroutine(WaitForAgentEnabling());
-
-        isCoroutineObstacleEnabling = true;
-
-        yield return null;
-
-        obstacle.enabled = true;
-
-        isCoroutineObstacleEnabling = false;
     }
 
     Vector3 AdjustTargetPosition(Transform transform)
