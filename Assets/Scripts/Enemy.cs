@@ -170,37 +170,20 @@ public class Enemy : MonoBehaviour
     {
         if (animator.GetBool("IsAttacking")) return;
 
-        float currentSpeed = rb.velocity.magnitude;
+        //float currentSpeed = rb.velocity.magnitude;
 
-        if (currentSpeed > 0.1f)
-        {
-            animator.SetBool("IsWalking", true);
-            animator.SetBool("IsIdle", false);
-        }
-        else
-        {
-            animator.SetBool("IsIdle", true);
-            animator.SetBool("IsWalking", false);
-        }
+        //if (currentSpeed > 0.1f)
+        //{
+        //    animator.SetBool("IsWalking", true);
+        //    animator.SetBool("IsIdle", false);
+        //}
+        //else
+        //{
+        //    animator.SetBool("IsIdle", true);
+        //    animator.SetBool("IsWalking", false);
+        //}
     }
 
-
-    void HandleNavMeshAgentObstacle()
-    {
-        if (target != null)
-        {
-            float distance = Vector3.Distance(transform.position, target.position);
-
-            if (!CanSeePlayer())
-            {
-                Move();
-            }
-            if (CanSeePlayer())
-            {
-                Stop();
-            }
-        }
-    }
 
     void Move()
     {

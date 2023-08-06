@@ -1,22 +1,17 @@
 using UnityEngine;
-using UnityEngine.AI;
 
-[RequireComponent(typeof(CharacterController))]
 
 public class TwinStickMovement : MonoBehaviour
 {
-    private float gravity = -9.81f;
-
     [SerializeField] private float playerSpeed = 5f;
 
-    private CharacterController controller;
-
-
+    private Rigidbody rb;
     private bool isAttackCastHeldDown;
     private bool iPowerCastHeldDown;
 
     private Animator animator;
     private Vector2 movement;
+    private Vector2 move;
     private Vector2 aim;
     private Vector3 playerVelocity;
     private Vector3 worldAim;
@@ -32,7 +27,7 @@ public class TwinStickMovement : MonoBehaviour
     //
     private void Awake()
     {
-        controller = GetComponent<CharacterController>();
+        rb = GetComponent<Rigidbody>();
         animator = GetComponent<Animator>();
         playerControls = new PlayerControls();
         aimCanvas = transform.GetChild(2).GetComponent<Canvas>();
@@ -53,13 +48,18 @@ public class TwinStickMovement : MonoBehaviour
     void Update()
     {
         HandleInput();
-        HandleMovement();
         HandleRotation();
-        HandleAnimation();
         HandleAimCanvasRotation();
 
         isAttackCastHeldDown = playerControls.Controls.Attack.ReadValue<float>() > .1;
         iPowerCastHeldDown = playerControls.Controls.Power.ReadValue<float>() > .1;
+    }
+
+    private void FixedUpdate()
+    {
+        Vector3 move = new Vector3(movement.x, 0, movement.y);
+        HandleAnimation();
+        HandleMovement(move);
     }
 
     private void LateUpdate()
@@ -79,8 +79,8 @@ public class TwinStickMovement : MonoBehaviour
             float targetInputX = Mathf.Sin(angle * Mathf.Deg2Rad);
             float targetInputY = Mathf.Cos(angle * Mathf.Deg2Rad);
 
-            animator.SetFloat("InputX", Mathf.Lerp(animator.GetFloat("InputX"), targetInputX, Time.deltaTime * smoothnessInputTransition));
-            animator.SetFloat("InputY", Mathf.Lerp(animator.GetFloat("InputY"), targetInputY, Time.deltaTime * smoothnessInputTransition));
+            animator.SetFloat("InputX", Mathf.Lerp(animator.GetFloat("InputX"), targetInputX, Time.fixedDeltaTime * smoothnessInputTransition));
+            animator.SetFloat("InputY", Mathf.Lerp(animator.GetFloat("InputY"), targetInputY, Time.fixedDeltaTime * smoothnessInputTransition));
         }
         else
         {
@@ -95,13 +95,11 @@ public class TwinStickMovement : MonoBehaviour
         aim = playerControls.Controls.Aim.ReadValue<Vector2>();
     }
 
-    private void HandleMovement()
+    private void HandleMovement(Vector3 move)
     {
-        Vector3 move = new Vector3(movement.x, 0, movement.y);
-        controller.Move(move * Time.deltaTime * playerSpeed);
-
-        playerVelocity.y += gravity * Time.deltaTime;
-        controller.Move(playerVelocity * Time.deltaTime);
+        //Vector3 move = new Vector3(movement.x, 0, movement.y);
+        rb.MovePosition(transform.position + (move * playerSpeed * Time.fixedDeltaTime));
+        //rb.velocity = move * playerSpeed;
     }
 
     // Constantly rotation toward cursor
