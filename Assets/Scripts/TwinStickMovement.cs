@@ -64,7 +64,7 @@ public class TwinStickMovement : MonoBehaviour
 
     private void LateUpdate()
     {
-        HandleNavMeshAgentObstacle();
+        //HandleNavMeshAgentObstacle();
     }
 
     private void HandleAnimation()
