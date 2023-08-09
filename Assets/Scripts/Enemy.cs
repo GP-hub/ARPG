@@ -22,6 +22,7 @@ public class Enemy : MonoBehaviour
     [SerializeField] private float attackProjectileSpeed;
     private int maxObjectsForPooling = 5;
 
+    private NavMeshAgent agent;
 
     private List<GameObject> fireballObjectPool = new List<GameObject>();
 
@@ -36,6 +37,8 @@ public class Enemy : MonoBehaviour
     {
         animator = GetComponent<Animator>();
         rb = GetComponent<Rigidbody>();
+        agent = GetComponent<NavMeshAgent>();
+
 
         groundLayerMask = LayerMask.GetMask("Ground");
     }
@@ -51,12 +54,16 @@ public class Enemy : MonoBehaviour
 
         PoolingFireballObject();
     }
+    private void Update()
+    {
+        HandleAttack();
+        HandleAnimation();
+        
+    }
 
 
     private void LateUpdate()
     {
-        HandleAttack();
-        HandleAnimation();
         //HandleNavMeshAgentObstacle();
     }
 
@@ -170,7 +177,8 @@ public class Enemy : MonoBehaviour
     {
         if (animator.GetBool("IsAttacking")) return;
 
-        float currentSpeed = rb.velocity.magnitude;
+        //float currentSpeed = rb.velocity.magnitude;
+        float currentSpeed = agent.velocity.magnitude;
 
         if (currentSpeed > 0.1f)
         {
@@ -187,10 +195,15 @@ public class Enemy : MonoBehaviour
 
     void Move()
     {
+        agent.isStopped = false;
+        agent.autoRepath = true;
+        agent.SetDestination(target.transform.position);
     }
 
     void Stop()
     {
+        agent.isStopped = true;
+        agent.ResetPath();
     }
 
     private void GeneratePlayerHealthBar(GameObject player)

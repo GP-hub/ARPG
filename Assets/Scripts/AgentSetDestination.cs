@@ -1,19 +1,16 @@
 using UnityEngine;
-using ProjectDawn.Navigation.Hybrid;
-using ProjectDawn.Navigation;
-using System.Collections;
-using Unity.Transforms;
+
 
 public class AgentSetDestination : MonoBehaviour
 {
     public Transform Target;
-    private AgentAuthoring agentAuthoring;
+    //private AgentAuthoring agentAuthoring;
     private Rigidbody rb;
     private Vector3 move;
 
     void Start()
     {
-        agentAuthoring = GetComponent<AgentAuthoring>();
+        //agentAuthoring = GetComponent<AgentAuthoring>();
         rb = GetComponent<Rigidbody>();
         //StartCoroutine(CurrentAndNextPosition());
     }
@@ -23,11 +20,6 @@ public class AgentSetDestination : MonoBehaviour
     }
     private void FixedUpdate()
     {
-        agentAuthoring.SetDestination(Target.position);
-
-        var body = agentAuthoring.EntityBody;
-        rb.velocity = body.Velocity;
-
         //MoveToTarget();
         //var body = agentAuthoring.EntityBody;
 
