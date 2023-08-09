@@ -7,6 +7,7 @@ public class Enemy : MonoBehaviour
 {
     [SerializeField] private float health, maxHealth = 30;
     [SerializeField] private float attackRange;
+    [SerializeField] private float speed;
     private LayerMask groundLayerMask;
 
     [Space(10)]
@@ -33,11 +34,15 @@ public class Enemy : MonoBehaviour
 
     private Transform target;
 
+    Vector3 velocity = Vector3.zero;
+
     private void Awake()
     {
         animator = GetComponent<Animator>();
         rb = GetComponent<Rigidbody>();
         agent = GetComponent<NavMeshAgent>();
+
+        agent.updatePosition = false;
 
 
         groundLayerMask = LayerMask.GetMask("Ground");
@@ -55,6 +60,10 @@ public class Enemy : MonoBehaviour
         PoolingFireballObject();
     }
     private void Update()
+    {
+        
+    }
+    private void FixedUpdate()
     {
         HandleAttack();
         HandleAnimation();
@@ -111,7 +120,7 @@ public class Enemy : MonoBehaviour
         if (onRange)
         {
             animator.SetBool("IsAttacking", true);
-
+            agent.avoidancePriority = 2;
             LookTowards();
 
             animator.SetBool("IsWalking", false);
@@ -120,6 +129,7 @@ public class Enemy : MonoBehaviour
         }
         if (!onRange)
         {
+            agent.avoidancePriority = 50;
             animator.SetBool("IsAttacking", false);
         }
     }
@@ -197,7 +207,14 @@ public class Enemy : MonoBehaviour
     {
         agent.isStopped = false;
         agent.autoRepath = true;
+
+        if (agent.speed == 0)
+        {
+            agent.speed = speed;
+        }
         agent.SetDestination(target.transform.position);
+
+        transform.position = Vector3.SmoothDamp(transform.position, agent.nextPosition, ref velocity, 0.1f);
     }
 
     void Stop()
