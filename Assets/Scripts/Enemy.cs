@@ -1,8 +1,11 @@
 using System.Collections;
 using System.Collections.Generic;
+using TMPro;
 using UnityEngine;
 using UnityEngine.AI;
 
+[RequireComponent(typeof(NavMeshAgent))]
+[RequireComponent(typeof(Rigidbody))]
 public class Enemy : MonoBehaviour
 {
     [SerializeField] private float health, maxHealth = 30;
@@ -16,12 +19,15 @@ public class Enemy : MonoBehaviour
     [SerializeField] private RectTransform healthPanelRect;
 
     [Space(10)]
-    [Header("Ranged Attack")]
+    [Header("Attack")]
     [SerializeField] private GameObject exitPoint;
     [SerializeField] private GameObject fireballPrefab;
     [SerializeField] private GameObject fireballExplosionPrefab;
     [SerializeField] private float attackProjectileSpeed;
+    [SerializeField] private LayerMask characterLayer;
+    [SerializeField] private float meleeHitboxSize;
     private int maxObjectsForPooling = 5;
+
 
     private NavMeshAgent agent;
 
@@ -48,7 +54,7 @@ public class Enemy : MonoBehaviour
         groundLayerMask = LayerMask.GetMask("Ground");
     }
 
-    // Start is called before the first frame update
+    // 
     void Start()
     {
         health = maxHealth;
@@ -59,21 +65,11 @@ public class Enemy : MonoBehaviour
 
         PoolingFireballObject();
     }
-    private void Update()
-    {
-        
-    }
+
     private void FixedUpdate()
     {
         HandleAttack();
         HandleAnimation();
-        
-    }
-
-
-    private void LateUpdate()
-    {
-        //HandleNavMeshAgentObstacle();
     }
 
     public void TakeDamage(float damageAmount)
@@ -120,7 +116,6 @@ public class Enemy : MonoBehaviour
         if (onRange)
         {
             animator.SetBool("IsAttacking", true);
-            agent.avoidancePriority = 2;
             LookTowards();
 
             animator.SetBool("IsWalking", false);
@@ -129,7 +124,6 @@ public class Enemy : MonoBehaviour
         }
         if (!onRange)
         {
-            agent.avoidancePriority = 50;
             animator.SetBool("IsAttacking", false);
         }
     }
@@ -153,14 +147,16 @@ public class Enemy : MonoBehaviour
 
     public void MeleeHit()
     {
-        // Range of the sphere of the melee hit
-        Collider[] colliders = Physics.OverlapSphere(transform.position, 5f);
+        // Max number of entities in the OverlapSphere
+        int maxColliders = 10;
+        Collider[] hitColliders = new Collider[maxColliders];
+        int numColliders = Physics.OverlapSphereNonAlloc(transform.position, meleeHitboxSize, hitColliders, characterLayer);
 
-        foreach (Collider collider in colliders)
+        for (int i = 0; i < numColliders; i++)
         {
-            if (collider.CompareTag("Player"))
+            if (hitColliders[i].CompareTag("Player"))
             {
-                // Damage player here
+                Debug.Log("Damaging player here");
             }
         }
     }
@@ -175,11 +171,13 @@ public class Enemy : MonoBehaviour
         {
             newObject.transform.position = exitPoint.transform.position;
             newObject.SetActive(true);
-            Rigidbody newObjectRigidbody = newObject.GetComponent<Rigidbody>();
-            if (newObjectRigidbody != null)
-            {
-                newObjectRigidbody.velocity = direction * attackProjectileSpeed;
-            }
+            Quaternion rotationToTarget = Quaternion.LookRotation(direction);
+            newObject.transform.rotation = rotationToTarget;
+            //Rigidbody newObjectRigidbody = newObject.GetComponent<Rigidbody>();
+            //if (newObjectRigidbody != null)
+            //{
+            //    newObjectRigidbody.velocity = direction * attackProjectileSpeed;
+            //}
         }
     }
 
@@ -187,9 +185,10 @@ public class Enemy : MonoBehaviour
     {
         if (animator.GetBool("IsAttacking")) return;
 
-        //float currentSpeed = rb.velocity.magnitude;
-        float currentSpeed = agent.velocity.magnitude;
+        float currentSpeedRb = rb.velocity.magnitude;
 
+        float currentSpeed = agent.velocity.magnitude;
+        Debug.Log("Agent: " + this.gameObject.name + " , agent speed: " + currentSpeed + " , Rb speed: " + currentSpeedRb);
         if (currentSpeed > 0.1f)
         {
             animator.SetBool("IsWalking", true);
@@ -205,6 +204,8 @@ public class Enemy : MonoBehaviour
 
     void Move()
     {
+        agent.avoidancePriority = 50;
+
         agent.isStopped = false;
         agent.autoRepath = true;
 
@@ -214,12 +215,21 @@ public class Enemy : MonoBehaviour
         }
         agent.SetDestination(target.transform.position);
 
-        transform.position = Vector3.SmoothDamp(transform.position, agent.nextPosition, ref velocity, 0.1f);
+        // Calculate the new position using SmoothDamp logic
+        Vector3 smoothDampedPosition = Vector3.SmoothDamp(transform.position, agent.nextPosition, ref velocity, 0.1f);
+
+        // Calculate the direction and distance to move
+        Vector3 moveDelta = smoothDampedPosition - transform.position;
+
+        // Use the NavMeshAgent's MovePosition method to move the agent
+        rb.MovePosition(transform.position + moveDelta);
     }
 
     void Stop()
     {
         agent.isStopped = true;
+        agent.avoidancePriority = 2;
+
         agent.ResetPath();
     }
 

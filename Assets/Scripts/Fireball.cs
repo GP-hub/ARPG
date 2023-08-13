@@ -9,6 +9,14 @@ public class Fireball : MonoBehaviour
     [SerializeField] private int damageAmount = 5;
     [SerializeField] private float timeProjectileLifeTime = 5f;
     [SerializeField] private float timeExplosionFadeOut = 2f;
+    [SerializeField] private LayerMask characterLayer;
+    [SerializeField] private float projectileSpeed;
+
+
+    private void Update()
+    {
+        transform.Translate(Vector3.forward * projectileSpeed * Time.deltaTime);
+    }
 
 
     void OnTriggerEnter(Collider other)
@@ -34,13 +42,16 @@ public class Fireball : MonoBehaviour
 
     private void Explosion()
     {
-        Collider[] colliders = Physics.OverlapSphere(transform.position, explosionRadius);
+        // Max number of entities in the OverlapSphere
+        int maxColliders = 10;
+        Collider[] hitColliders = new Collider[maxColliders];
+        int numColliders = Physics.OverlapSphereNonAlloc(transform.position, explosionRadius, hitColliders, characterLayer);
 
-        foreach (Collider collider in colliders)
+        for (int i = 0; i < numColliders; i++)
         {
-            if (collider.CompareTag("Enemy"))
+            if (hitColliders[i].CompareTag("Enemy"))
             {
-                Enemy healthComponent = collider.GetComponent<Enemy>();
+                Enemy healthComponent = hitColliders[i].GetComponent<Enemy>();
                 if (healthComponent != null)
                 {
                     healthComponent.TakeDamage(damageAmount);

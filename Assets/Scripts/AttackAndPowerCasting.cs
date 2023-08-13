@@ -250,11 +250,14 @@ public class AttackAndPowerCasting : MonoBehaviour
             {
                 newObject.transform.position = exitPoint.transform.position;
                 newObject.SetActive(true);
-                Rigidbody newObjectRigidbody = newObject.GetComponent<Rigidbody>();
-                if (newObjectRigidbody != null)
-                {
-                    newObjectRigidbody.velocity = direction * attackProjectileSpeed;
-                }
+                Quaternion rotationToTarget = Quaternion.LookRotation(direction);
+                newObject.transform.rotation = rotationToTarget;
+                //newObject.transform.position += direction * attackProjectileSpeed * Time.deltaTime;
+                //Rigidbody newObjectRigidbody = newObject.GetComponent<Rigidbody>();
+                //if (newObjectRigidbody != null)
+                //{
+                //    newObjectRigidbody.velocity = direction * attackProjectileSpeed;
+                //}
             }
         }
 
