@@ -47,7 +47,6 @@ public class Enemy : MonoBehaviour
         animator = GetComponent<Animator>();
         rb = GetComponent<Rigidbody>();
         agent = GetComponent<NavMeshAgent>();
-
         agent.updatePosition = false;
 
 
@@ -57,6 +56,7 @@ public class Enemy : MonoBehaviour
     // 
     void Start()
     {
+        AIManager.Instance.Units.Add(this);
         health = maxHealth;
         GeneratePlayerHealthBar(this.gameObject);
 
@@ -66,10 +66,11 @@ public class Enemy : MonoBehaviour
         PoolingFireballObject();
     }
 
+
     private void FixedUpdate()
     {
-        HandleAttack();
         HandleAnimation();
+        HandleAttack();
     }
 
     public void TakeDamage(float damageAmount)
@@ -90,7 +91,8 @@ public class Enemy : MonoBehaviour
 
         if (!CanSeePlayer())
         {
-            Move();
+            //Move(target.transform.position);
+            AIManager.Instance.MakeAgentCircleTarget(target.transform);
             HandleAttackAnimation(false);
             return;
         }
@@ -105,7 +107,8 @@ public class Enemy : MonoBehaviour
             }
             if (distanceToTarget > attackRange)
             {
-                Move();
+                //Move(target.transform.position);
+                AIManager.Instance.MakeAgentCircleTarget(target.transform);
                 HandleAttackAnimation(false);
             }
         }
@@ -188,7 +191,7 @@ public class Enemy : MonoBehaviour
         float currentSpeedRb = rb.velocity.magnitude;
 
         float currentSpeed = agent.velocity.magnitude;
-        Debug.Log("Agent: " + this.gameObject.name + " , agent speed: " + currentSpeed + " , Rb speed: " + currentSpeedRb);
+        //Debug.Log("Agent: " + this.gameObject.name + " , agent speed: " + currentSpeed + " , Rb speed: " + currentSpeedRb);
         if (currentSpeed > 0.1f)
         {
             animator.SetBool("IsWalking", true);
@@ -201,8 +204,8 @@ public class Enemy : MonoBehaviour
         }
     }
 
-
-    void Move()
+    // Directly moving towards the player
+    public void Move(Vector3 targetPos)
     {
         agent.avoidancePriority = 50;
 
@@ -213,7 +216,31 @@ public class Enemy : MonoBehaviour
         {
             agent.speed = speed;
         }
-        agent.SetDestination(target.transform.position);
+        agent.SetDestination(targetPos);
+
+        // Calculate the new position using SmoothDamp logic
+        Vector3 smoothDampedPosition = Vector3.SmoothDamp(transform.position, agent.nextPosition, ref velocity, 0.1f);
+
+        // Calculate the direction and distance to move
+        Vector3 moveDelta = smoothDampedPosition - transform.position;
+
+        // Use the NavMeshAgent's MovePosition method to move the agent
+        rb.MovePosition(transform.position + moveDelta);
+    }
+
+    // Moving around the target via AIManager
+    public void MoveAIUnit(Vector3 targetPos)
+    {
+        agent.avoidancePriority = 50;
+
+        agent.isStopped = false;
+        agent.autoRepath = true;
+
+        if (agent.speed == 0)
+        {
+            agent.speed = speed;
+        }
+        agent.SetDestination(targetPos);
 
         // Calculate the new position using SmoothDamp logic
         Vector3 smoothDampedPosition = Vector3.SmoothDamp(transform.position, agent.nextPosition, ref velocity, 0.1f);
@@ -241,6 +268,7 @@ public class Enemy : MonoBehaviour
         healthBar.transform.SetParent(healthPanelRect, false);
     }
 
+    // If we want to move to a position close to the target instead of the target exact position
     Vector3 AdjustTargetPosition(Transform transform)
     {
         Vector3 vectorAB = transform.position - this.transform.position;
