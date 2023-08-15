@@ -289,7 +289,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &6055202
 Transform:
   m_ObjectHideFlags: 0
@@ -350,6 +350,9 @@ MonoBehaviour:
   maxHealth: 30
   attackRange: 1.5
   speed: 4.5
+  mask:
+    serializedVersion: 2
+    m_Bits: 192
   healthBarPrefab: {fileID: 2505273644731239485, guid: f032af557d41213499ccbdd815c15a7b, type: 3}
   healthPanelRect: {fileID: 1913881814}
   exitPoint: {fileID: 0}
@@ -4239,7 +4242,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &348457988
 Transform:
   m_ObjectHideFlags: 0
@@ -4300,6 +4303,9 @@ MonoBehaviour:
   maxHealth: 30
   attackRange: 1.5
   speed: 4.5
+  mask:
+    serializedVersion: 2
+    m_Bits: 192
   healthBarPrefab: {fileID: 2505273644731239485, guid: f032af557d41213499ccbdd815c15a7b, type: 3}
   healthPanelRect: {fileID: 1913881814}
   exitPoint: {fileID: 0}
@@ -9527,7 +9533,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &734428855
 Transform:
   m_ObjectHideFlags: 0
@@ -9588,6 +9594,9 @@ MonoBehaviour:
   maxHealth: 30
   attackRange: 1.5
   speed: 4.5
+  mask:
+    serializedVersion: 2
+    m_Bits: 192
   healthBarPrefab: {fileID: 2505273644731239485, guid: f032af557d41213499ccbdd815c15a7b, type: 3}
   healthPanelRect: {fileID: 1913881814}
   exitPoint: {fileID: 0}
@@ -10893,7 +10902,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &840593484
 Transform:
   m_ObjectHideFlags: 0
@@ -10954,6 +10963,9 @@ MonoBehaviour:
   maxHealth: 30
   attackRange: 1.5
   speed: 4.5
+  mask:
+    serializedVersion: 2
+    m_Bits: 192
   healthBarPrefab: {fileID: 2505273644731239485, guid: f032af557d41213499ccbdd815c15a7b, type: 3}
   healthPanelRect: {fileID: 1913881814}
   exitPoint: {fileID: 0}
@@ -12263,7 +12275,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &949595713
 Transform:
   m_ObjectHideFlags: 0
@@ -12324,6 +12336,9 @@ MonoBehaviour:
   maxHealth: 30
   attackRange: 1.5
   speed: 4.5
+  mask:
+    serializedVersion: 2
+    m_Bits: 192
   healthBarPrefab: {fileID: 2505273644731239485, guid: f032af557d41213499ccbdd815c15a7b, type: 3}
   healthPanelRect: {fileID: 1913881814}
   exitPoint: {fileID: 0}
@@ -14666,7 +14681,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &1134533326
 Transform:
   m_ObjectHideFlags: 0
@@ -14727,6 +14742,9 @@ MonoBehaviour:
   maxHealth: 30
   attackRange: 1.5
   speed: 4.5
+  mask:
+    serializedVersion: 2
+    m_Bits: 192
   healthBarPrefab: {fileID: 2505273644731239485, guid: f032af557d41213499ccbdd815c15a7b, type: 3}
   healthPanelRect: {fileID: 1913881814}
   exitPoint: {fileID: 0}
@@ -16439,7 +16457,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!4 &1249520370
 Transform:
   m_ObjectHideFlags: 0
@@ -16478,6 +16496,9 @@ MonoBehaviour:
   maxHealth: 30
   attackRange: 20
   speed: 0
+  mask:
+    serializedVersion: 2
+    m_Bits: 192
   healthBarPrefab: {fileID: 2505273644731239485, guid: f032af557d41213499ccbdd815c15a7b, type: 3}
   healthPanelRect: {fileID: 1913881814}
   exitPoint: {fileID: 596666740}
@@ -17444,7 +17465,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &1291462141
 Transform:
   m_ObjectHideFlags: 0
@@ -17505,6 +17526,9 @@ MonoBehaviour:
   maxHealth: 30
   attackRange: 1.5
   speed: 4.5
+  mask:
+    serializedVersion: 2
+    m_Bits: 192
   healthBarPrefab: {fileID: 2505273644731239485, guid: f032af557d41213499ccbdd815c15a7b, type: 3}
   healthPanelRect: {fileID: 1913881814}
   exitPoint: {fileID: 0}
@@ -30864,7 +30888,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!1 &4981692571989382072
 GameObject:
   m_ObjectHideFlags: 0
@@ -32164,6 +32188,9 @@ MonoBehaviour:
   maxHealth: 30
   attackRange: 1.5
   speed: 5
+  mask:
+    serializedVersion: 2
+    m_Bits: 192
   healthBarPrefab: {fileID: 2505273644731239485, guid: f032af557d41213499ccbdd815c15a7b, type: 3}
   healthPanelRect: {fileID: 1913881814}
   exitPoint: {fileID: 0}

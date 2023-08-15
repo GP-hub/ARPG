@@ -12,7 +12,7 @@ public class Enemy : MonoBehaviour
     [SerializeField] private float health, maxHealth = 30;
     [SerializeField] private float attackRange;
     [SerializeField] private float speed;
-    private LayerMask groundLayerMask;
+    [SerializeField] public LayerMask mask;
 
     [Space(10)]
     [Header("Healthbar")]
@@ -36,7 +36,6 @@ public class Enemy : MonoBehaviour
 
     private Animator animator;
 
-    //private Rigidbody rb;
     private CharacterController controller;
 
     private Healthbar healthBar;
@@ -46,17 +45,14 @@ public class Enemy : MonoBehaviour
     Vector3 velocity = Vector3.zero;
 
     private Vector3 lastPosition;
+
     private float calculatedSpeed;
 
     private void Awake()
     {
         animator = GetComponent<Animator>();
         controller = GetComponent<CharacterController>();
-        //rb = GetComponent<Rigidbody>();
         agent = GetComponent<NavMeshAgent>();
-
-
-        groundLayerMask = LayerMask.GetMask("Ground");
     }
 
     // 
@@ -103,7 +99,6 @@ public class Enemy : MonoBehaviour
 
         if (!CanSeePlayer())
         {
-            //Move(target.transform.position);
             AIManager.Instance.MakeAgentCircleTarget(target.transform);
             HandleAttackAnimation(false);
             return;
@@ -122,7 +117,6 @@ public class Enemy : MonoBehaviour
                 }
                 if (distanceToTarget > attackRange)
                 {
-                    //Move(target.transform.position);
                     // HERE THE OTHER UNIT WILL THE ONE ALREADY ATTCKING TO MOVE !!!
                     AIManager.Instance.MakeAgentCircleTarget(target.transform);
                     HandleAttackAnimation(false);
@@ -168,6 +162,7 @@ public class Enemy : MonoBehaviour
         }
     }
 
+    // Triggered via Melee Attack animation
     public void MeleeHit()
     {
         // Max number of entities in the OverlapSphere
@@ -184,6 +179,7 @@ public class Enemy : MonoBehaviour
         }
     }
 
+    // Triggered via Ranged Attack animation
     public void RangedHit()
     {
         Vector3 targetCorrectedPosition = target.transform.position;
@@ -196,22 +192,11 @@ public class Enemy : MonoBehaviour
             newObject.SetActive(true);
             Quaternion rotationToTarget = Quaternion.LookRotation(direction);
             newObject.transform.rotation = rotationToTarget;
-            //Rigidbody newObjectRigidbody = newObject.GetComponent<Rigidbody>();
-            //if (newObjectRigidbody != null)
-            //{
-            //    newObjectRigidbody.velocity = direction * attackProjectileSpeed;
-            //}
         }
     }
 
     void HandleAnimation()
     {
-        //if (animator.GetBool("IsAttacking")) return;
-
-        //float currentSpeedRb = rb.velocity.magnitude;
-
-        float currentSpeed = agent.velocity.magnitude;
-        //Debug.Log("Agent: " + this.gameObject.name + " , agent speed: " + currentSpeed + " , Rb speed: " + currentSpeedRb);
         if (calculatedSpeed > 1f)
         {
             animator.SetBool("IsWalking", true);
@@ -247,12 +232,9 @@ public class Enemy : MonoBehaviour
         Vector3 moveDelta = smoothDampedPosition - transform.position;
 
         controller.Move(transform.position + moveDelta);
-
-        //// Use the NavMeshAgent's MovePosition method to move the agent
-        //rb.MovePosition(transform.position + moveDelta);
     }
 
-    // Moving around the target via AIManager
+    // Moving around the target via AIManager, circling the target
     public void MoveAIUnit(Vector3 targetPos)
     {
         if (isAttacking) return;
@@ -263,17 +245,6 @@ public class Enemy : MonoBehaviour
         agent.autoRepath = true;
 
         agent.SetDestination(targetPos);
-
-        // Calculate the new position using SmoothDamp logic
-        Vector3 smoothDampedPosition = Vector3.SmoothDamp(transform.position, agent.nextPosition, ref velocity, 0.1f);
-
-        // Calculate the direction and distance to move
-        Vector3 moveDelta = smoothDampedPosition - transform.position;
-
-        //controller.Move(transform.position + moveDelta);
-
-        //// Use the NavMeshAgent's MovePosition method to move the agent
-        //rb.MovePosition(transform.position + moveDelta);
     }
 
     void Stop()
@@ -356,9 +327,6 @@ public class Enemy : MonoBehaviour
 
         // Update the last position
         lastPosition = transform.position;
-
-        // Use the calculatedSpeed value as needed
-       Debug.Log(gameObject.name + ": Speed: " + calculatedSpeed);
 
         return calculatedSpeed;
     }
