@@ -1,11 +1,12 @@
 using UnityEngine;
+using UnityEngine.AI;
 
-
+[RequireComponent(typeof(CharacterController))]
 public class TwinStickMovement : MonoBehaviour
 {
     [SerializeField] private float playerSpeed = 5f;
+    private float gravity = -9.81f;
 
-    private Rigidbody rb;
     private bool isAttackCastHeldDown;
     private bool iPowerCastHeldDown;
 
@@ -21,13 +22,15 @@ public class TwinStickMovement : MonoBehaviour
 
     private PlayerControls playerControls;
 
+    private CharacterController controller;
+
     public Vector3 WorldAim { get => worldAim;}
     public float PlayerSpeed { get => playerSpeed; set => playerSpeed = value; }
 
     //
     private void Awake()
     {
-        rb = GetComponent<Rigidbody>();
+        controller = GetComponent<CharacterController>();
         animator = GetComponent<Animator>();
         playerControls = new PlayerControls();
         aimCanvas = transform.GetChild(2).GetComponent<Canvas>();
@@ -51,20 +54,15 @@ public class TwinStickMovement : MonoBehaviour
         HandleRotation();
         HandleAimCanvasRotation();
 
+        HandleAnimation();
+        HandleMovement();
+
         isAttackCastHeldDown = playerControls.Controls.Attack.ReadValue<float>() > .1;
         iPowerCastHeldDown = playerControls.Controls.Power.ReadValue<float>() > .1;
     }
 
     private void FixedUpdate()
     {
-        Vector3 move = new Vector3(movement.x, 0, movement.y);
-        HandleAnimation();
-        HandleMovement(move);
-    }
-
-    private void LateUpdate()
-    {
-        //HandleNavMeshAgentObstacle();
     }
 
     private void HandleAnimation()
@@ -95,11 +93,18 @@ public class TwinStickMovement : MonoBehaviour
         aim = playerControls.Controls.Aim.ReadValue<Vector2>();
     }
 
-    private void HandleMovement(Vector3 move)
+    //private void HandleMovement(Vector3 move)
+    //{
+    //    controller.Move(move * playerSpeed * Time.fixedDeltaTime);
+    //}
+
+    private void HandleMovement()
     {
-        //Vector3 move = new Vector3(movement.x, 0, movement.y);
-        rb.MovePosition(transform.position + (move * playerSpeed * Time.fixedDeltaTime));
-        //rb.velocity = move * playerSpeed;
+        Vector3 move = new Vector3(movement.x, 0, movement.y);
+        controller.Move(move * Time.deltaTime * playerSpeed);
+
+        playerVelocity.y += gravity * Time.deltaTime;
+        controller.Move(playerVelocity * Time.deltaTime);
     }
 
     // Constantly rotation toward cursor

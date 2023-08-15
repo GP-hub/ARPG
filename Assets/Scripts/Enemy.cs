@@ -3,9 +3,10 @@ using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
 using UnityEngine.AI;
+using UnityEngine.InputSystem.XR;
 
 [RequireComponent(typeof(NavMeshAgent))]
-[RequireComponent(typeof(Rigidbody))]
+[RequireComponent(typeof(CharacterController))]
 public class Enemy : MonoBehaviour
 {
     [SerializeField] private float health, maxHealth = 30;
@@ -34,7 +35,9 @@ public class Enemy : MonoBehaviour
     private List<GameObject> fireballObjectPool = new List<GameObject>();
 
     private Animator animator;
-    private Rigidbody rb;
+
+    //private Rigidbody rb;
+    private CharacterController controller;
 
     private Healthbar healthBar;
 
@@ -42,12 +45,15 @@ public class Enemy : MonoBehaviour
 
     Vector3 velocity = Vector3.zero;
 
+    private Vector3 lastPosition;
+    private float calculatedSpeed;
+
     private void Awake()
     {
         animator = GetComponent<Animator>();
-        rb = GetComponent<Rigidbody>();
+        controller = GetComponent<CharacterController>();
+        //rb = GetComponent<Rigidbody>();
         agent = GetComponent<NavMeshAgent>();
-        agent.updatePosition = false;
 
 
         groundLayerMask = LayerMask.GetMask("Ground");
@@ -64,13 +70,16 @@ public class Enemy : MonoBehaviour
         target = GameObject.Find("Player").transform;
 
         PoolingFireballObject();
+        lastPosition = transform.position;
     }
 
 
-    private void FixedUpdate()
+    private void Update()
     {
         HandleAnimation();
         HandleAttack();
+
+        CurrentSpeed();
     }
 
     public void TakeDamage(float damageAmount)
@@ -186,16 +195,18 @@ public class Enemy : MonoBehaviour
 
     void HandleAnimation()
     {
-        if (animator.GetBool("IsAttacking")) return;
+        //if (animator.GetBool("IsAttacking")) return;
 
-        float currentSpeedRb = rb.velocity.magnitude;
+        //float currentSpeedRb = rb.velocity.magnitude;
 
         float currentSpeed = agent.velocity.magnitude;
         //Debug.Log("Agent: " + this.gameObject.name + " , agent speed: " + currentSpeed + " , Rb speed: " + currentSpeedRb);
-        if (currentSpeed > 0.1f)
+        if (calculatedSpeed > 0.1f)
         {
             animator.SetBool("IsWalking", true);
             animator.SetBool("IsIdle", false);
+            animator.SetBool("IsAttacking", false);
+
         }
         else
         {
@@ -224,8 +235,10 @@ public class Enemy : MonoBehaviour
         // Calculate the direction and distance to move
         Vector3 moveDelta = smoothDampedPosition - transform.position;
 
-        // Use the NavMeshAgent's MovePosition method to move the agent
-        rb.MovePosition(transform.position + moveDelta);
+        controller.Move(transform.position + moveDelta);
+
+        //// Use the NavMeshAgent's MovePosition method to move the agent
+        //rb.MovePosition(transform.position + moveDelta);
     }
 
     // Moving around the target via AIManager
@@ -236,10 +249,6 @@ public class Enemy : MonoBehaviour
         agent.isStopped = false;
         agent.autoRepath = true;
 
-        if (agent.speed == 0)
-        {
-            agent.speed = speed;
-        }
         agent.SetDestination(targetPos);
 
         // Calculate the new position using SmoothDamp logic
@@ -248,14 +257,16 @@ public class Enemy : MonoBehaviour
         // Calculate the direction and distance to move
         Vector3 moveDelta = smoothDampedPosition - transform.position;
 
-        // Use the NavMeshAgent's MovePosition method to move the agent
-        rb.MovePosition(transform.position + moveDelta);
+        //controller.Move(transform.position + moveDelta);
+
+        //// Use the NavMeshAgent's MovePosition method to move the agent
+        //rb.MovePosition(transform.position + moveDelta);
     }
 
     void Stop()
     {
-        agent.ResetPath();
-        agent.isStopped = true;
+        //agent.ResetPath();
+        //agent.isStopped = true;
         agent.avoidancePriority = 2;
 
     }
@@ -331,5 +342,25 @@ public class Enemy : MonoBehaviour
         }
 
         return false;
+    }
+
+    private float CurrentSpeed()
+    {
+        // Calculate the displacement vector since the last frame
+        Vector3 displacement = transform.position - lastPosition;
+
+        // Calculate the magnitude of the displacement vector
+        float distanceMoved = displacement.magnitude;
+
+        // Calculate the speed based on the distance and time
+        calculatedSpeed = distanceMoved / Time.deltaTime;
+
+        // Update the last position
+        lastPosition = transform.position;
+
+        // Use the calculatedSpeed value as needed
+        Debug.Log(gameObject.name + ": Speed: " + calculatedSpeed);
+
+        return calculatedSpeed;
     }
 }
