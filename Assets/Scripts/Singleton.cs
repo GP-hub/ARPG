@@ -8,7 +8,6 @@ using UnityEngine;
 /// </summary>
 /// <typeparam name="T">The singleton class, of type MonoBehaviour.</typeparam>
 /// 
-[DefaultExecutionOrder(0)]
 public abstract class Singleton<T> : MonoBehaviour where T : MonoBehaviour
 {
     private static T instance;

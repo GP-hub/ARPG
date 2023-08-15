@@ -6,20 +6,23 @@ public class AttractionZone : MonoBehaviour
     public float attractionForce;
 
     public float explosionForce = 100f;
-    public float explosionRadius = 5f;
+    public float explosionRadius = 10f;
 
     public bool explode;
 
     public float pullingForce = 10000f;
     public float pullingRange = 5f;
 
+    [SerializeField] private LayerMask characterLayer;
+
+    private void Start()
+    {
+        InvokeRepeating("Explode", 1f, 3f);
+    }
+
     private void FixedUpdate()
     {
-        Explode();
-        //if (explode)
-        //{
-        //    Invoke("Explode", 0f);
-        //}
+        //Explode();
     }
 
 
@@ -52,31 +55,10 @@ public class AttractionZone : MonoBehaviour
         //    }
         //}
 
+        Debug.Log("exploded");
 
-        //RIGIDBODY EXPLOSION
-        Collider[] colliders = Physics.OverlapSphere(this.transform.position, explosionRadius);
-
-        foreach (Collider col in colliders)
-        {
-            Rigidbody rb = col.GetComponent<Rigidbody>();
-
-            if (rb != null)
-            {
-                Debug.Log("exploded");
-                // Calculate the explosion force based on distance
-                float distance = Vector3.Distance(rb.transform.position, this.transform.position);
-                float forceMagnitude = 1 - (distance / explosionRadius);
-                forceMagnitude = Mathf.Clamp01(forceMagnitude); // Clamp to [0, 1]
-
-                // Apply explosion force
-                //rb.AddExplosionForce(explosionForce * forceMagnitude, explosionCenter, explosionRadius);
-                rb.AddExplosionForce(50, this.transform.position, 10);
-            }
-        }
-
-        // CHARACTER CONTROLLER PUSHING
-        //Vector3 explosionCenter = transform.position; // Use your explosion's center
-        //Collider[] colliders = Physics.OverlapSphere(explosionCenter, explosionRadius);
+        ////RIGIDBODY EXPLOSION
+        //Collider[] colliders = Physics.OverlapSphere(this.transform.position, explosionRadius);
 
         //foreach (Collider col in colliders)
         //{
@@ -84,22 +66,39 @@ public class AttractionZone : MonoBehaviour
 
         //    if (rb != null)
         //    {
-        //        // Calculate the push direction based on the distance
-        //        Vector3 pushDirection = rb.transform.position - explosionCenter;
-        //        float distance = pushDirection.magnitude;
+        //        // Calculate the explosion force based on distance
+        //        float distance = Vector3.Distance(rb.transform.position, this.transform.position);
         //        float forceMagnitude = 1 - (distance / explosionRadius);
         //        forceMagnitude = Mathf.Clamp01(forceMagnitude); // Clamp to [0, 1]
 
-        //        // Apply push and pull effect
-        //        Vector3 pushForce = pushDirection.normalized * explosionForce * forceMagnitude;
-        //        rb.AddForce(pushForce, ForceMode.Impulse);
-
-        //        // Move character controller in opposite direction for pull effect
-        //        StartCoroutine(PullEffect(characterController, pushForce, pushDuration));
+        //        // Apply explosion force
+        //        //rb.AddExplosionForce(explosionForce * forceMagnitude, explosionCenter, explosionRadius);
+        //        rb.AddExplosionForce(50, this.transform.position, 10);
         //    }
         //}
 
 
+        // Max number of entities in the OverlapSphere
+        int maxColliders = 10;
+        Collider[] hitColliders = new Collider[maxColliders];
+        int numColliders = Physics.OverlapSphereNonAlloc(transform.position, explosionRadius, hitColliders, characterLayer);
+
+
+        for (int i = 0; i < numColliders; i++)
+        {
+            Rigidbody rb = hitColliders[i].GetComponent<Rigidbody>();
+            if (rb != null)
+            {
+                // Calculate the explosion force based on distance
+                float distance = Vector3.Distance(rb.transform.position, this.transform.position);
+                float forceMagnitude = 1 - (distance / explosionRadius);
+                forceMagnitude = Mathf.Clamp01(forceMagnitude); // Clamp to [0, 1]
+
+                // Apply explosion force
+                //rb.AddExplosionForce(explosionForce * forceMagnitude, explosionCenter, explosionRadius);
+                rb.AddExplosionForce(300, this.transform.position, 200);
+            }
+        }
 
         explode = false;
     }

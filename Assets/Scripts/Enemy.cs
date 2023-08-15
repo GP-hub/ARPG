@@ -254,10 +254,10 @@ public class Enemy : MonoBehaviour
 
     void Stop()
     {
+        agent.ResetPath();
         agent.isStopped = true;
         agent.avoidancePriority = 2;
 
-        agent.ResetPath();
     }
 
     private void GeneratePlayerHealthBar(GameObject player)
