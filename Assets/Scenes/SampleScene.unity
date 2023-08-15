@@ -3240,7 +3240,7 @@ SkinnedMeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: f685a57b9da560a448bb95374a652f90, type: 2}
+  - {fileID: 2100000, guid: 7d22fc6b9a431b043a917fb89a80bcfc, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -10490,7 +10490,7 @@ SkinnedMeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: f685a57b9da560a448bb95374a652f90, type: 2}
+  - {fileID: 2100000, guid: dcc9a0b939c99774089653966acc8d75, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -11563,7 +11563,7 @@ SkinnedMeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: f685a57b9da560a448bb95374a652f90, type: 2}
+  - {fileID: 2100000, guid: 25af05085d2957e42ac6b80b69ddd26a, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -16204,7 +16204,7 @@ SkinnedMeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: f685a57b9da560a448bb95374a652f90, type: 2}
+  - {fileID: 2100000, guid: 673443bdcb7bf2f47be93ce60e68966f, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -16911,7 +16911,7 @@ SkinnedMeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: f685a57b9da560a448bb95374a652f90, type: 2}
+  - {fileID: 2100000, guid: 4d1c11ecf91c18d4e86d3818e8c650cc, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -17444,7 +17444,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!4 &1291462141
 Transform:
   m_ObjectHideFlags: 0
@@ -19756,7 +19756,7 @@ SkinnedMeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: f685a57b9da560a448bb95374a652f90, type: 2}
+  - {fileID: 2100000, guid: 1e3f4dd6698853844b8cab4c33a09c96, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -21709,7 +21709,7 @@ SkinnedMeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: f685a57b9da560a448bb95374a652f90, type: 2}
+  - {fileID: 2100000, guid: 40347e2344b3ed04a8165ea238a93a0b, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -29904,7 +29904,7 @@ SkinnedMeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: f685a57b9da560a448bb95374a652f90, type: 2}
+  - {fileID: 2100000, guid: 673443bdcb7bf2f47be93ce60e68966f, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -32163,7 +32163,7 @@ MonoBehaviour:
   health: 0
   maxHealth: 30
   attackRange: 1.5
-  speed: 4.5
+  speed: 5
   healthBarPrefab: {fileID: 2505273644731239485, guid: f032af557d41213499ccbdd815c15a7b, type: 3}
   healthPanelRect: {fileID: 1913881814}
   exitPoint: {fileID: 0}

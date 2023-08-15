@@ -8,6 +8,8 @@ public class AIManager : Singleton<AIManager>
     [SerializeField] private float radius;
     [SerializeField] public List<Enemy> Units = new List<Enemy>();
 
+    public float Radius { get => radius;}
+
     public void MakeAgentCircleTarget(Transform target)
     {
         for (int i = 0; i < Units.Count; i++)

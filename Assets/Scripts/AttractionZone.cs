@@ -55,7 +55,6 @@ public class AttractionZone : MonoBehaviour
         //    }
         //}
 
-        Debug.Log("exploded");
 
         ////RIGIDBODY EXPLOSION
         //Collider[] colliders = Physics.OverlapSphere(this.transform.position, explosionRadius);

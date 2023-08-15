@@ -29,7 +29,7 @@ public class Enemy : MonoBehaviour
     [SerializeField] private float meleeHitboxSize;
     private int maxObjectsForPooling = 5;
 
-
+    private bool isAttacking;
     private NavMeshAgent agent;
 
     private List<GameObject> fireballObjectPool = new List<GameObject>();
@@ -78,7 +78,10 @@ public class Enemy : MonoBehaviour
     {
         HandleAnimation();
         HandleAttack();
+    }
 
+    private void FixedUpdate()
+    {
         CurrentSpeed();
     }
 
@@ -109,16 +112,22 @@ public class Enemy : MonoBehaviour
 
         if (CanSeePlayer())
         {
-            if (distanceToTarget <= attackRange)
+            if (!agent.pathPending && agent.remainingDistance < AIManager.Instance.Radius || attackRange > agent.remainingDistance/* || !agent.pathPending && agent.remainingDistance < attackRange*/) 
             {
-                Stop();
-                HandleAttackAnimation(true);
-            }
-            if (distanceToTarget > attackRange)
-            {
-                //Move(target.transform.position);
-                AIManager.Instance.MakeAgentCircleTarget(target.transform);
-                HandleAttackAnimation(false);
+                if (distanceToTarget <= attackRange)
+                {
+                    Stop();
+                    HandleAttackAnimation(true);
+                    return;
+                }
+                if (distanceToTarget > attackRange)
+                {
+                    //Move(target.transform.position);
+                    // HERE THE OTHER UNIT WILL THE ONE ALREADY ATTCKING TO MOVE !!!
+                    AIManager.Instance.MakeAgentCircleTarget(target.transform);
+                    HandleAttackAnimation(false);
+                    return;
+                }
             }
         }
     }
@@ -128,6 +137,7 @@ public class Enemy : MonoBehaviour
         if (onRange)
         {
             animator.SetBool("IsAttacking", true);
+            isAttacking = true;
             LookTowards();
 
             animator.SetBool("IsWalking", false);
@@ -137,6 +147,7 @@ public class Enemy : MonoBehaviour
         if (!onRange)
         {
             animator.SetBool("IsAttacking", false);
+            isAttacking = false;
         }
     }
 
@@ -201,12 +212,12 @@ public class Enemy : MonoBehaviour
 
         float currentSpeed = agent.velocity.magnitude;
         //Debug.Log("Agent: " + this.gameObject.name + " , agent speed: " + currentSpeed + " , Rb speed: " + currentSpeedRb);
-        if (calculatedSpeed > 0.1f)
+        if (calculatedSpeed > 1f)
         {
             animator.SetBool("IsWalking", true);
             animator.SetBool("IsIdle", false);
             animator.SetBool("IsAttacking", false);
-
+            isAttacking = false;
         }
         else
         {
@@ -244,6 +255,8 @@ public class Enemy : MonoBehaviour
     // Moving around the target via AIManager
     public void MoveAIUnit(Vector3 targetPos)
     {
+        if (isAttacking) return;
+
         agent.avoidancePriority = 50;
 
         agent.isStopped = false;
@@ -265,10 +278,9 @@ public class Enemy : MonoBehaviour
 
     void Stop()
     {
-        //agent.ResetPath();
-        //agent.isStopped = true;
+        agent.ResetPath();
+        agent.isStopped = true;
         agent.avoidancePriority = 2;
-
     }
 
     private void GeneratePlayerHealthBar(GameObject player)
@@ -277,19 +289,6 @@ public class Enemy : MonoBehaviour
         healthBar = healthBarGo.GetComponent<Healthbar>();
         healthBar.SetHealthBarData(player.transform, healthPanelRect);
         healthBar.transform.SetParent(healthPanelRect, false);
-    }
-
-    // If we want to move to a position close to the target instead of the target exact position
-    Vector3 AdjustTargetPosition(Transform transform)
-    {
-        Vector3 vectorAB = transform.position - this.transform.position;
-
-        Vector3 direction = vectorAB.normalized;
-
-        // Small offset to solve enemy not being close enough not matter the stopping distance .5f
-        Vector3 targetPosition = transform.position + direction * .5f;
-
-        return targetPosition;
     }
 
 
@@ -359,7 +358,7 @@ public class Enemy : MonoBehaviour
         lastPosition = transform.position;
 
         // Use the calculatedSpeed value as needed
-        Debug.Log(gameObject.name + ": Speed: " + calculatedSpeed);
+       Debug.Log(gameObject.name + ": Speed: " + calculatedSpeed);
 
         return calculatedSpeed;
     }
