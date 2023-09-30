@@ -27,4 +27,4 @@ public class ImpactReceiver : MonoBehaviour
         impact += dir.normalized * force / mass;
     }
 }
-}
+

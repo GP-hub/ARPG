@@ -76,26 +76,49 @@ public class AttractionZone : MonoBehaviour
         //    }
         //}
 
+        // OLD SCRIPT FOR USING RIGIDBODY
+        // Max number of entities in the OverlapSphere
+        //int maxColliders = 10;
+        //Collider[] hitColliders = new Collider[maxColliders];
+        //int numColliders = Physics.OverlapSphereNonAlloc(transform.position, explosionRadius, hitColliders, characterLayer);
 
+        //for (int i = 0; i < numColliders; i++)
+        //{
+        //    Rigidbody rb = hitColliders[i].GetComponent<Rigidbody>();
+        //    if (rb != null)
+        //    {
+        //        // Calculate the explosion force based on distance
+        //        float distance = Vector3.Distance(rb.transform.position, this.transform.position);
+        //        float forceMagnitude = 1 - (distance / explosionRadius);
+        //        forceMagnitude = Mathf.Clamp01(forceMagnitude); // Clamp to [0, 1]
+
+        //        // Apply explosion force
+        //        //rb.AddExplosionForce(explosionForce * forceMagnitude, explosionCenter, explosionRadius);
+        //        rb.AddExplosionForce(300, this.transform.position, 200);
+        //    }
+        //}
+
+        // PUSHING AND PULLING USING CHARACTER CONTROLLER
         // Max number of entities in the OverlapSphere
         int maxColliders = 10;
         Collider[] hitColliders = new Collider[maxColliders];
         int numColliders = Physics.OverlapSphereNonAlloc(transform.position, explosionRadius, hitColliders, characterLayer);
 
-
         for (int i = 0; i < numColliders; i++)
         {
-            Rigidbody rb = hitColliders[i].GetComponent<Rigidbody>();
-            if (rb != null)
+            CharacterController cc = hitColliders[i].GetComponent<CharacterController>();
+            if (cc != null)
             {
-                // Calculate the explosion force based on distance
-                float distance = Vector3.Distance(rb.transform.position, this.transform.position);
-                float forceMagnitude = 1 - (distance / explosionRadius);
-                forceMagnitude = Mathf.Clamp01(forceMagnitude); // Clamp to [0, 1]
+                ImpactReceiver ir = cc.GetComponent<ImpactReceiver>();
+                
+                if (ir!=null)
+                {
+                    // PUSHING
+                    //ir.AddImpact(cc.transform.position-this.transform.position, 50);
 
-                // Apply explosion force
-                //rb.AddExplosionForce(explosionForce * forceMagnitude, explosionCenter, explosionRadius);
-                rb.AddExplosionForce(300, this.transform.position, 200);
+                    // PULLING
+                    //ir.AddImpact(this.transform.position-cc.transform.position, 50);
+                }
             }
         }
 
