@@ -1,15 +1,18 @@
 using System.Collections;
 using System.Collections.Generic;
+using TMPro;
 using UnityEngine;
 using UnityEngine.AI;
+using UnityEngine.InputSystem.XR;
 
-[RequireComponent(typeof(NavMeshObstacle))]
 [RequireComponent(typeof(NavMeshAgent))]
+[RequireComponent(typeof(CharacterController))]
 public class Enemy : MonoBehaviour
 {
     [SerializeField] private float health, maxHealth = 30;
     [SerializeField] private float attackRange;
-    private LayerMask groundLayerMask;
+    [SerializeField] private float speed;
+    [SerializeField] public LayerMask mask;
 
     [Space(10)]
     [Header("Healthbar")]
@@ -17,45 +20,47 @@ public class Enemy : MonoBehaviour
     [SerializeField] private RectTransform healthPanelRect;
 
     [Space(10)]
-    [Header("Ranged Attack")]
+    [Header("Attack")]
     [SerializeField] private GameObject exitPoint;
     [SerializeField] private GameObject fireballPrefab;
     [SerializeField] private GameObject fireballExplosionPrefab;
     [SerializeField] private float attackProjectileSpeed;
+    [SerializeField] private LayerMask characterLayer;
+    [SerializeField] private float meleeHitboxSize;
     private int maxObjectsForPooling = 5;
 
+    private bool isAttacking;
+    private NavMeshAgent agent;
 
     private List<GameObject> fireballObjectPool = new List<GameObject>();
 
-    private NavMeshAgent agent;
-    private NavMeshObstacle obstacle;
     private Animator animator;
-    private Rigidbody rb;
+
+    private CharacterController controller;
 
     private Healthbar healthBar;
 
     private Transform target;
 
-    private bool isCoroutineAgentEnabling;
-    private bool isCoroutineObstacleEnabling;
+    Vector3 velocity = Vector3.zero;
+
+    private Vector3 lastPosition;
+
+    private float calculatedSpeed;
+
+    private bool isGrounded = true;
 
     private void Awake()
     {
-        agent = GetComponent<NavMeshAgent>();
-        obstacle = GetComponent<NavMeshObstacle>();
         animator = GetComponent<Animator>();
-        rb = GetComponent<Rigidbody>();
-
-        groundLayerMask = LayerMask.GetMask("Ground");
-
-        obstacle.enabled = false;
-        obstacle.carveOnlyStationary = false;
-        obstacle.carving = true;
+        controller = GetComponent<CharacterController>();
+        agent = GetComponent<NavMeshAgent>();
     }
 
-    // Start is called before the first frame update
+    // 
     void Start()
     {
+        AIManager.Instance.Units.Add(this);
         health = maxHealth;
         GeneratePlayerHealthBar(this.gameObject);
 
@@ -63,14 +68,38 @@ public class Enemy : MonoBehaviour
         target = GameObject.Find("Player").transform;
 
         PoolingFireballObject();
+        lastPosition = transform.position;
+
+        StartCoroutine(CheckGroundedStatus());
     }
 
 
-    private void LateUpdate()
+    private void Update()
     {
-        HandleAttack();
         HandleAnimation();
-        //HandleNavMeshAgentObstacle();
+        HandleAttack();
+    }
+
+
+    private IEnumerator CheckGroundedStatus()
+    {
+        while (true)
+        {
+            // Check if the character controller is grounded
+            isGrounded = controller.isGrounded;
+
+            // Enable/disable the NavMeshAgent based on grounding status
+            if (isGrounded) agent.enabled = true;
+            else agent.enabled = false;
+
+            // Wait for a short duration before checking again
+            yield return new WaitForSeconds(0.1f);
+        }
+    }
+
+    private void FixedUpdate()
+    {
+        CurrentSpeed();
     }
 
     public void TakeDamage(float damageAmount)
@@ -91,48 +120,37 @@ public class Enemy : MonoBehaviour
 
         if (!CanSeePlayer())
         {
-            Move();
-            HandleAttackAnimation(false);
-            return;
+            if (agent.enabled)
+            {
+                AIManager.Instance.MakeAgentCircleTarget(target.transform);
+                HandleAttackAnimation(false);
+                return;
+            }
         }
 
 
         if (CanSeePlayer())
         {
-            if (distanceToTarget <= attackRange)
+            if (agent.enabled)
             {
-                Stop();
-                HandleAttackAnimation(true);
-            }
-            if (distanceToTarget > attackRange)
-            {
-                Move();
-                HandleAttackAnimation(false);
+                if (!agent.pathPending && agent.remainingDistance < AIManager.Instance.Radius || attackRange > agent.remainingDistance/* || !agent.pathPending && agent.remainingDistance < attackRange*/) 
+                {
+                    if (distanceToTarget <= attackRange)
+                    {
+                        Stop();
+                        HandleAttackAnimation(true);
+                        return;
+                    }
+                    if (distanceToTarget > attackRange)
+                    {
+                        // HERE THE OTHER UNIT WILL THE ONE ALREADY ATTCKING TO MOVE !!!
+                        AIManager.Instance.MakeAgentCircleTarget(target.transform);
+                        HandleAttackAnimation(false);
+                        return;
+                    }
+                }
             }
         }
-
-        //if (obstacle.enabled && !agent.enabled)
-        //{
-        //    float distanceToTarget = Vector3.Distance(transform.position, target.position);
-
-        //    if (distanceToTarget <= attackRange) 
-        //    {
-        //        animator.SetBool("IsAttacking", true);
-
-        //        LookTowards();
-
-        //        animator.SetBool("IsWalking", false);
-        //        animator.SetBool("IsIdle", false);
-        //    }
-        //    else
-        //    {
-        //        animator.SetBool("IsAttacking", false);
-        //    }
-        //}
-        //else if (!obstacle.enabled && agent.enabled)
-        //{
-        //    animator.SetBool("IsAttacking", false);
-        //}
     }
 
     void HandleAttackAnimation(bool onRange)
@@ -140,7 +158,7 @@ public class Enemy : MonoBehaviour
         if (onRange)
         {
             animator.SetBool("IsAttacking", true);
-
+            isAttacking = true;
             LookTowards();
 
             animator.SetBool("IsWalking", false);
@@ -150,6 +168,7 @@ public class Enemy : MonoBehaviour
         if (!onRange)
         {
             animator.SetBool("IsAttacking", false);
+            isAttacking = false;
         }
     }
 
@@ -170,20 +189,24 @@ public class Enemy : MonoBehaviour
         }
     }
 
+    // Triggered via Melee Attack animation
     public void MeleeHit()
     {
-        // Range of the sphere of the melee hit
-        Collider[] colliders = Physics.OverlapSphere(transform.position, 5f);
+        // Max number of entities in the OverlapSphere
+        int maxColliders = 10;
+        Collider[] hitColliders = new Collider[maxColliders];
+        int numColliders = Physics.OverlapSphereNonAlloc(transform.position, meleeHitboxSize, hitColliders, characterLayer);
 
-        foreach (Collider collider in colliders)
+        for (int i = 0; i < numColliders; i++)
         {
-            if (collider.CompareTag("Player"))
+            if (hitColliders[i].CompareTag("Player"))
             {
-                // Damage player here
+                Debug.Log("Damaging player here");
             }
         }
     }
 
+    // Triggered via Ranged Attack animation
     public void RangedHit()
     {
         Vector3 targetCorrectedPosition = target.transform.position;
@@ -194,24 +217,19 @@ public class Enemy : MonoBehaviour
         {
             newObject.transform.position = exitPoint.transform.position;
             newObject.SetActive(true);
-            Rigidbody newObjectRigidbody = newObject.GetComponent<Rigidbody>();
-            if (newObjectRigidbody != null)
-            {
-                newObjectRigidbody.velocity = direction * attackProjectileSpeed;
-            }
+            Quaternion rotationToTarget = Quaternion.LookRotation(direction);
+            newObject.transform.rotation = rotationToTarget;
         }
     }
 
     void HandleAnimation()
     {
-        if (animator.GetBool("IsAttacking")) return;
-
-        float currentSpeed = agent.velocity.magnitude;
-
-        if (currentSpeed > 0.1f)
+        if (calculatedSpeed > 1f)
         {
             animator.SetBool("IsWalking", true);
             animator.SetBool("IsIdle", false);
+            animator.SetBool("IsAttacking", false);
+            isAttacking = false;
         }
         else
         {
@@ -220,46 +238,50 @@ public class Enemy : MonoBehaviour
         }
     }
 
-
-    void HandleNavMeshAgentObstacle()
+    // Directly moving towards the player
+    public void Move(Vector3 targetPos)
     {
-        if (target != null)
-        {
-            float distance = Vector3.Distance(transform.position, target.position);
+        agent.avoidancePriority = 50;
 
-            if (!CanSeePlayer())
-            {
-                Move();
-            }
-            if (CanSeePlayer())
-            {
-                Stop();
-            }
+        agent.isStopped = false;
+        agent.autoRepath = true;
+
+        if (agent.speed == 0)
+        {
+            agent.speed = speed;
         }
+        agent.SetDestination(targetPos);
+
+        // Calculate the new position using SmoothDamp logic
+        Vector3 smoothDampedPosition = Vector3.SmoothDamp(transform.position, agent.nextPosition, ref velocity, 0.1f);
+
+        // Calculate the direction and distance to move
+        Vector3 moveDelta = smoothDampedPosition - transform.position;
+
+        controller.Move(transform.position + moveDelta);
     }
 
-    void Move()
+    // Moving around the target via AIManager, circling the target
+    public void MoveAIUnit(Vector3 targetPos)
     {
-
-        if (!isCoroutineAgentEnabling)
+        if (agent.enabled)
         {
-            // Enable NavMeshAgent and disable NavMeshObstacle
-            obstacle.enabled = false;
+            if (isAttacking) return;
 
-            StartCoroutine(WaitForAgentEnabling());
+            agent.avoidancePriority = 50;
+
+            agent.isStopped = false;
+            agent.autoRepath = true;
+
+            agent.SetDestination(targetPos);
         }
     }
 
     void Stop()
     {
-
-        if (!isCoroutineObstacleEnabling)
-        {
-            // Disable NavMeshAgent and enable NavMeshObstacle
-            agent.enabled = false;
-
-            StartCoroutine(WaitForObstacleEnabling());
-        }
+        agent.ResetPath();
+        agent.isStopped = true;
+        agent.avoidancePriority = 2;
     }
 
     private void GeneratePlayerHealthBar(GameObject player)
@@ -268,46 +290,6 @@ public class Enemy : MonoBehaviour
         healthBar = healthBarGo.GetComponent<Healthbar>();
         healthBar.SetHealthBarData(player.transform, healthPanelRect);
         healthBar.transform.SetParent(healthPanelRect, false);
-    }
-
-    IEnumerator WaitForAgentEnabling()
-    {
-        StopCoroutine(WaitForObstacleEnabling());
-
-        isCoroutineAgentEnabling = true;
-
-        yield return new WaitForSeconds(.1f);
-
-        agent.enabled = true;
-
-        agent.SetDestination(AdjustTargetPosition(target));
-
-        isCoroutineAgentEnabling = false;
-    }
-
-    IEnumerator WaitForObstacleEnabling()
-    {
-        StopCoroutine(WaitForAgentEnabling());
-
-        isCoroutineObstacleEnabling = true;
-
-        yield return null;
-
-        obstacle.enabled = true;
-
-        isCoroutineObstacleEnabling = false;
-    }
-
-    Vector3 AdjustTargetPosition(Transform transform)
-    {
-        Vector3 vectorAB = transform.position - this.transform.position;
-
-        Vector3 direction = vectorAB.normalized;
-
-        // Small offset to solve enemy not being close enough not matter the stopping distance .5f
-        Vector3 targetPosition = transform.position + direction * .5f;
-
-        return targetPosition;
     }
 
 
@@ -360,5 +342,22 @@ public class Enemy : MonoBehaviour
         }
 
         return false;
+    }
+
+    private float CurrentSpeed()
+    {
+        // Calculate the displacement vector since the last frame
+        Vector3 displacement = transform.position - lastPosition;
+
+        // Calculate the magnitude of the displacement vector
+        float distanceMoved = displacement.magnitude;
+
+        // Calculate the speed based on the distance and time
+        calculatedSpeed = distanceMoved / Time.deltaTime;
+
+        // Update the last position
+        lastPosition = transform.position;
+
+        return calculatedSpeed;
     }
 }

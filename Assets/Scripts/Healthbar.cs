@@ -12,10 +12,14 @@ public class Healthbar : MonoBehaviour
 
     void Update()
     {
+    }
+    private void FixedUpdate()
+    {
         if (objectToFollow != null)
         {
             RepositionHealthBar(objectToFollow);
         }
+        
     }
 
     public void SetHealthBarData(Transform target, RectTransform healthBarPanel)

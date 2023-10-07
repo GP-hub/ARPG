@@ -2,24 +2,17 @@ using UnityEngine;
 using UnityEngine.AI;
 
 [RequireComponent(typeof(CharacterController))]
-[RequireComponent(typeof(NavMeshObstacle))]
-[RequireComponent(typeof(NavMeshAgent))]
 public class TwinStickMovement : MonoBehaviour
 {
-    private float gravity = -9.81f;
-
     [SerializeField] private float playerSpeed = 5f;
-
-    private CharacterController controller;
-
-    private NavMeshAgent agent;
-    private NavMeshObstacle obstacle;
+    private float gravity = -9.81f;
 
     private bool isAttackCastHeldDown;
     private bool iPowerCastHeldDown;
 
     private Animator animator;
     private Vector2 movement;
+    private Vector2 move;
     private Vector2 aim;
     private Vector3 playerVelocity;
     private Vector3 worldAim;
@@ -28,6 +21,8 @@ public class TwinStickMovement : MonoBehaviour
     private Canvas aimCanvas;
 
     private PlayerControls playerControls;
+
+    private CharacterController controller;
 
     public Vector3 WorldAim { get => worldAim;}
     public float PlayerSpeed { get => playerSpeed; set => playerSpeed = value; }
@@ -39,12 +34,6 @@ public class TwinStickMovement : MonoBehaviour
         animator = GetComponent<Animator>();
         playerControls = new PlayerControls();
         aimCanvas = transform.GetChild(2).GetComponent<Canvas>();
-
-        agent = GetComponent<NavMeshAgent>();
-        obstacle = GetComponent<NavMeshObstacle>();
-        obstacle.enabled = false;
-        obstacle.carveOnlyStationary = false;
-        obstacle.carving = true;
     }
 
     private void OnEnable()
@@ -62,18 +51,18 @@ public class TwinStickMovement : MonoBehaviour
     void Update()
     {
         HandleInput();
-        HandleMovement();
         HandleRotation();
-        HandleAnimation();
         HandleAimCanvasRotation();
+
+        HandleAnimation();
+        HandleMovement();
 
         isAttackCastHeldDown = playerControls.Controls.Attack.ReadValue<float>() > .1;
         iPowerCastHeldDown = playerControls.Controls.Power.ReadValue<float>() > .1;
     }
 
-    private void LateUpdate()
+    private void FixedUpdate()
     {
-        HandleNavMeshAgentObstacle();
     }
 
     private void HandleAnimation()
@@ -88,8 +77,8 @@ public class TwinStickMovement : MonoBehaviour
             float targetInputX = Mathf.Sin(angle * Mathf.Deg2Rad);
             float targetInputY = Mathf.Cos(angle * Mathf.Deg2Rad);
 
-            animator.SetFloat("InputX", Mathf.Lerp(animator.GetFloat("InputX"), targetInputX, Time.deltaTime * smoothnessInputTransition));
-            animator.SetFloat("InputY", Mathf.Lerp(animator.GetFloat("InputY"), targetInputY, Time.deltaTime * smoothnessInputTransition));
+            animator.SetFloat("InputX", Mathf.Lerp(animator.GetFloat("InputX"), targetInputX, Time.fixedDeltaTime * smoothnessInputTransition));
+            animator.SetFloat("InputY", Mathf.Lerp(animator.GetFloat("InputY"), targetInputY, Time.fixedDeltaTime * smoothnessInputTransition));
         }
         else
         {
@@ -104,13 +93,21 @@ public class TwinStickMovement : MonoBehaviour
         aim = playerControls.Controls.Aim.ReadValue<Vector2>();
     }
 
+    //private void HandleMovement(Vector3 move)
+    //{
+    //    controller.Move(move * playerSpeed * Time.fixedDeltaTime);
+    //}
+
     private void HandleMovement()
     {
         Vector3 move = new Vector3(movement.x, 0, movement.y);
         controller.Move(move * Time.deltaTime * playerSpeed);
 
-        playerVelocity.y += gravity * Time.deltaTime;
-        controller.Move(playerVelocity * Time.deltaTime);
+        if (!controller.isGrounded)
+        {
+            playerVelocity.y += gravity * Time.deltaTime;
+            controller.Move(playerVelocity * Time.deltaTime);
+        }
     }
 
     // Constantly rotation toward cursor
@@ -147,13 +144,11 @@ public class TwinStickMovement : MonoBehaviour
 
         if (moveDirection.magnitude > 0.01f)
         {
-            agent.enabled = true;
-            obstacle.enabled = false;
+
         }
         else
         {
-            agent.enabled = false;
-            obstacle.enabled = true;
+
         }
     }
 
