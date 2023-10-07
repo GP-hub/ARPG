@@ -48,6 +48,8 @@ public class Enemy : MonoBehaviour
 
     private float calculatedSpeed;
 
+    private bool isGrounded = true;
+
     private void Awake()
     {
         animator = GetComponent<Animator>();
@@ -67,6 +69,8 @@ public class Enemy : MonoBehaviour
 
         PoolingFireballObject();
         lastPosition = transform.position;
+
+        StartCoroutine(CheckGroundedStatus());
     }
 
 
@@ -74,6 +78,23 @@ public class Enemy : MonoBehaviour
     {
         HandleAnimation();
         HandleAttack();
+    }
+
+
+    private IEnumerator CheckGroundedStatus()
+    {
+        while (true)
+        {
+            // Check if the character controller is grounded
+            isGrounded = controller.isGrounded;
+
+            // Enable/disable the NavMeshAgent based on grounding status
+            if (isGrounded) agent.enabled = true;
+            else agent.enabled = false;
+
+            // Wait for a short duration before checking again
+            yield return new WaitForSeconds(0.1f);
+        }
     }
 
     private void FixedUpdate()
@@ -95,9 +116,10 @@ public class Enemy : MonoBehaviour
 
     void HandleAttack()
     {
+        if (!agent.enabled) return;
         float distanceToTarget = Vector3.Distance(transform.position, target.position);
 
-        if (!CanSeePlayer())
+        if (!CanSeePlayer() && agent.enabled)
         {
             AIManager.Instance.MakeAgentCircleTarget(target.transform);
             HandleAttackAnimation(false);
@@ -105,7 +127,7 @@ public class Enemy : MonoBehaviour
         }
 
 
-        if (CanSeePlayer())
+        if (CanSeePlayer() && agent.enabled)
         {
             if (!agent.pathPending && agent.remainingDistance < AIManager.Instance.Radius || attackRange > agent.remainingDistance/* || !agent.pathPending && agent.remainingDistance < attackRange*/) 
             {

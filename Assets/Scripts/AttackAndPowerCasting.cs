@@ -281,7 +281,11 @@ public class AttackAndPowerCasting : MonoBehaviour
             {
                 newObject.transform.position = targetPosition;
                 newObject.SetActive(true);
-                Rigidbody newObjectRigidbody = newObject.GetComponent<Rigidbody>();
+
+                // Trying to make the meteor explode when we cast them
+                newObject.GetComponent<Blackhole>().Explode();
+
+                Transform newObjectRigidbody = newObject.GetComponent<Transform>();
                 if (newObjectRigidbody != null)
                 {
                     StartCoroutine(DisablePowerObjectAfterTime(newObject, powerLifetime));

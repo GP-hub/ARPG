@@ -3,15 +3,16 @@ using UnityEngine.AI;
 
 public class AttractionZone : MonoBehaviour
 {
-    public float attractionForce;
+    //public float attractionForce;
 
-    public float explosionForce = 100f;
+    //public float explosionForce = 100f;
+
     public float explosionRadius = 10f;
 
     public bool explode;
 
-    public float pullingForce = 10000f;
-    public float pullingRange = 5f;
+    //public float pullingForce = 10000f;
+    //public float pullingRange = 5f;
 
     [SerializeField] private LayerMask characterLayer;
 
