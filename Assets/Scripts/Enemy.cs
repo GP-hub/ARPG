@@ -116,33 +116,38 @@ public class Enemy : MonoBehaviour
 
     void HandleAttack()
     {
-        if (!agent.enabled) return;
         float distanceToTarget = Vector3.Distance(transform.position, target.position);
 
-        if (!CanSeePlayer() && agent.enabled)
+        if (!CanSeePlayer())
         {
-            AIManager.Instance.MakeAgentCircleTarget(target.transform);
-            HandleAttackAnimation(false);
-            return;
+            if (agent.enabled)
+            {
+                AIManager.Instance.MakeAgentCircleTarget(target.transform);
+                HandleAttackAnimation(false);
+                return;
+            }
         }
 
 
-        if (CanSeePlayer() && agent.enabled)
+        if (CanSeePlayer())
         {
-            if (!agent.pathPending && agent.remainingDistance < AIManager.Instance.Radius || attackRange > agent.remainingDistance/* || !agent.pathPending && agent.remainingDistance < attackRange*/) 
+            if (agent.enabled)
             {
-                if (distanceToTarget <= attackRange)
+                if (!agent.pathPending && agent.remainingDistance < AIManager.Instance.Radius || attackRange > agent.remainingDistance/* || !agent.pathPending && agent.remainingDistance < attackRange*/) 
                 {
-                    Stop();
-                    HandleAttackAnimation(true);
-                    return;
-                }
-                if (distanceToTarget > attackRange)
-                {
-                    // HERE THE OTHER UNIT WILL THE ONE ALREADY ATTCKING TO MOVE !!!
-                    AIManager.Instance.MakeAgentCircleTarget(target.transform);
-                    HandleAttackAnimation(false);
-                    return;
+                    if (distanceToTarget <= attackRange)
+                    {
+                        Stop();
+                        HandleAttackAnimation(true);
+                        return;
+                    }
+                    if (distanceToTarget > attackRange)
+                    {
+                        // HERE THE OTHER UNIT WILL THE ONE ALREADY ATTCKING TO MOVE !!!
+                        AIManager.Instance.MakeAgentCircleTarget(target.transform);
+                        HandleAttackAnimation(false);
+                        return;
+                    }
                 }
             }
         }
@@ -259,14 +264,17 @@ public class Enemy : MonoBehaviour
     // Moving around the target via AIManager, circling the target
     public void MoveAIUnit(Vector3 targetPos)
     {
-        if (isAttacking) return;
+        if (agent.enabled)
+        {
+            if (isAttacking) return;
 
-        agent.avoidancePriority = 50;
+            agent.avoidancePriority = 50;
 
-        agent.isStopped = false;
-        agent.autoRepath = true;
+            agent.isStopped = false;
+            agent.autoRepath = true;
 
-        agent.SetDestination(targetPos);
+            agent.SetDestination(targetPos);
+        }
     }
 
     void Stop()
