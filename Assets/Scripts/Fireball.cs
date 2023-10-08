@@ -11,6 +11,7 @@ public class Fireball : MonoBehaviour
     [SerializeField] private float timeExplosionFadeOut = 2f;
     [SerializeField] private LayerMask characterLayer;
     [SerializeField] private float projectileSpeed;
+    [SerializeField] private int procChance = 25;
 
 
     private void Update()
@@ -18,13 +19,12 @@ public class Fireball : MonoBehaviour
         transform.Translate(Vector3.forward * projectileSpeed * Time.deltaTime);
     }
 
-
     void OnTriggerEnter(Collider other)
     {
         // Instantiate the explosion prefab at the bullet's position
         //Instantiate(explosionPrefab, transform.position, Quaternion.identity);
         if (other.tag == "Player") return;
-
+        SpellCharge.IncreaseSpellCount(procChance);
         Explosion();
     }
 

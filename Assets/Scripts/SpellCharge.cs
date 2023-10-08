@@ -14,9 +14,15 @@ public static class SpellCharge
 
     public static int SpellCount { get; private set; }
 
-    public static void IncreaseSpellCount()
+    public static void IncreaseSpellCount(int percentChance)
     {
-        SpellCount++;
+        int randomChance = Random.Range(0, 101);
+
+        if (randomChance <= percentChance)
+        {
+            SpellCount++;
+            Debug.Log("Charge increased!: " + SpellCount);
+        }
     }
 
     public static void DecreaseSpellCount()

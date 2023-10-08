@@ -18,13 +18,12 @@ public class Fireball_enemy : MonoBehaviour
         transform.Translate(Vector3.forward * projectileSpeed * Time.deltaTime);
     }
 
+
     void OnTriggerEnter(Collider other)
     {
         // Instantiate the explosion prefab at the bullet's position
         //Instantiate(explosionPrefab, transform.position, Quaternion.identity);
-
         if (other.tag == "Enemy") return;
-
         Explosion();
     }
     private void OnEnable()

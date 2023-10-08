@@ -151,6 +151,9 @@ public class AttackAndPowerCasting : MonoBehaviour
         // Speed of the player when casting power
         twinStickMovement.PlayerSpeed -= powerPlayerMovementSpeedPercent;
 
+        // IF spellCount is 0 THEN powerSpeed is 1, ELSE powerSpeed is equal to spellCount
+        powerSpeedMultiplier = (SpellCharge.SpellCount == 0) ? 1 : SpellCharge.SpellCount;
+
         // Animation speed when using power
         animator.SetFloat("PowerSpeed", powerSpeedMultiplier);
     }

@@ -12,7 +12,8 @@ public class Enemy : MonoBehaviour
     [SerializeField] private float health, maxHealth = 30;
     [SerializeField] private float attackRange;
     [SerializeField] private float speed;
-    [SerializeField] public LayerMask mask;
+    // Idk 
+    //[SerializeField] public LayerMask mask;
 
     [Space(10)]
     [Header("Healthbar")]
