@@ -13772,13 +13772,14 @@ GameObject:
   - component: {fileID: 1071605009}
   - component: {fileID: 1071605011}
   - component: {fileID: 1071605010}
+  - component: {fileID: 1071605012}
   m_Layer: 6
   m_Name: Trail
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &1071605008
 Transform:
   m_ObjectHideFlags: 0
@@ -13928,7 +13929,7 @@ ParticleSystemRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 10301, guid: 0000000000000000f000000000000000, type: 0}
+  - {fileID: 2100000, guid: 1e75d51d555dec54b90544819dd5e13a, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -13949,7 +13950,7 @@ ParticleSystemRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
-  m_RenderMode: 0
+  m_RenderMode: 4
   m_MeshDistribution: 0
   m_SortMode: 0
   m_MinParticleSize: 0
@@ -13970,7 +13971,7 @@ ParticleSystemRenderer:
   m_FreeformStretching: 0
   m_RotateWithStretchDirection: 1
   m_VertexStreams: 00010304
-  m_Mesh: {fileID: 0}
+  m_Mesh: {fileID: 10207, guid: 0000000000000000e000000000000000, type: 0}
   m_Mesh1: {fileID: 0}
   m_Mesh2: {fileID: 0}
   m_Mesh3: {fileID: 0}
@@ -14115,7 +14116,7 @@ ParticleSystem:
     startSpeed:
       serializedVersion: 2
       minMaxState: 0
-      scalar: 0
+      scalar: 0.05
       minScalar: 5
       maxCurve:
         serializedVersion: 2
@@ -17569,10 +17570,10 @@ ParticleSystem:
     serializedVersion: 4
     type: 1
     collisionMode: 0
-    colliderForce: 1
+    colliderForce: 0
     multiplyColliderForceByParticleSize: 0
     multiplyColliderForceByParticleSpeed: 0
-    multiplyColliderForceByCollisionAngle: 1
+    multiplyColliderForceByCollisionAngle: 0
     m_Planes: []
     m_Dampen:
       serializedVersion: 2
@@ -17630,7 +17631,7 @@ ParticleSystem:
     m_Bounce:
       serializedVersion: 2
       minMaxState: 0
-      scalar: 1
+      scalar: 0
       minScalar: 1
       maxCurve:
         serializedVersion: 2
@@ -17748,13 +17749,14 @@ ParticleSystem:
   TriggerModule:
     enabled: 0
     serializedVersion: 2
-    inside: 2
-    outside: 2
+    inside: 0
+    outside: 0
     enter: 2
-    exit: 2
+    exit: 0
     colliderQueryMode: 2
     radiusScale: 1
-    primitives: []
+    primitives:
+    - {fileID: 0}
   SubModule:
     serializedVersion: 2
     enabled: 0
@@ -18702,6 +18704,18 @@ ParticleSystem:
         m_PostInfinity: 2
         m_RotationOrder: 4
     vectorLabel1_3: W
+--- !u!114 &1071605012
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1071605007}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3f767ed359e68bb47895f18f68d4b624, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1001 &1083426010
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -33930,6 +33944,7 @@ GameObject:
   - component: {fileID: 2580364717049616965}
   - component: {fileID: 5444040362796816501}
   - component: {fileID: 5444040362796816504}
+  - component: {fileID: 5444040362796816505}
   m_Layer: 6
   m_Name: Player
   m_TagString: Player
@@ -36842,7 +36857,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   dashSpeed: 5
-  dashDuration: 0.1
+  dashDuration: 2
   dashCooldown: 5
   dashCooldownImage: {fileID: 1733174547}
 --- !u!195 &5444040362796816501
@@ -36905,6 +36920,20 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9c18389bd7ccb55408949813ac67ac64, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!114 &5444040362796816505
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2494901959581414798}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: db894c1471f215942ba871c755fbf844, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  firewallPrefab: {fileID: 277609163221870987, guid: f12365c0ac545b646a8a091dc484be19, type: 3}
+  firewallLifetime: 3
 --- !u!1 &6314962405623691228
 GameObject:
   m_ObjectHideFlags: 0

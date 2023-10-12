@@ -19,7 +19,6 @@ public class Dash : MonoBehaviour
     private TwinStickMovement twinStickMovement;
     private PlayerInput playerInput;
 
-
     private void Awake()
     {
         twinStickMovement = GetComponent<TwinStickMovement>();
@@ -55,11 +54,13 @@ public class Dash : MonoBehaviour
     private IEnumerator ModifyPlayerMovementSpeed()
     {
         EventManager.Instance.Dashing(true);
+
         twinStickMovement.PlayerSpeed += dashSpeed;
 
         yield return new WaitForSeconds(dashDuration);
 
         twinStickMovement.PlayerSpeed -= dashSpeed;
+
         EventManager.Instance.Dashing(false);
     }
 
@@ -78,4 +79,6 @@ public class Dash : MonoBehaviour
         dashCooldownImage.fillAmount = 0;
         isDashOnCooldown = false;
     }
+
+  
 }

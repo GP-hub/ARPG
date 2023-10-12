@@ -255,12 +255,6 @@ public class AttackAndPowerCasting : MonoBehaviour
                 newObject.SetActive(true);
                 Quaternion rotationToTarget = Quaternion.LookRotation(direction);
                 newObject.transform.rotation = rotationToTarget;
-                //newObject.transform.position += direction * attackProjectileSpeed * Time.deltaTime;
-                //Rigidbody newObjectRigidbody = newObject.GetComponent<Rigidbody>();
-                //if (newObjectRigidbody != null)
-                //{
-                //    newObjectRigidbody.velocity = direction * attackProjectileSpeed;
-                //}
             }
         }
 
@@ -288,8 +282,8 @@ public class AttackAndPowerCasting : MonoBehaviour
                 // Trying to make the meteor explode when we cast them
                 newObject.GetComponent<Blackhole>().Explode();
 
-                Transform newObjectRigidbody = newObject.GetComponent<Transform>();
-                if (newObjectRigidbody != null)
+                Transform newObjectTransform = newObject.GetComponent<Transform>();
+                if (newObjectTransform != null)
                 {
                     StartCoroutine(DisablePowerObjectAfterTime(newObject, powerLifetime));
                 }

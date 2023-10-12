@@ -21,7 +21,7 @@ public static class SpellCharge
         if (randomChance <= percentChance)
         {
             SpellCount++;
-            Debug.Log("Charge increased!: " + SpellCount);
+            //Debug.Log("Charge increased!: " + SpellCount);
         }
     }
 

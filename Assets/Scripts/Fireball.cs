@@ -10,8 +10,10 @@ public class Fireball : MonoBehaviour
     [SerializeField] private float timeProjectileLifeTime = 5f;
     [SerializeField] private float timeExplosionFadeOut = 2f;
     [SerializeField] private LayerMask characterLayer;
+    [SerializeField] private LayerMask allowedLayersToCollideWith;
     [SerializeField] private float projectileSpeed;
     [SerializeField] private int procChance = 25;
+
 
 
     private void Update()
@@ -21,11 +23,12 @@ public class Fireball : MonoBehaviour
 
     void OnTriggerEnter(Collider other)
     {
-        // Instantiate the explosion prefab at the bullet's position
-        //Instantiate(explosionPrefab, transform.position, Quaternion.identity);
         if (other.tag == "Player") return;
-        SpellCharge.IncreaseSpellCount(procChance);
-        Explosion();
+        if (allowedLayersToCollideWith == (allowedLayersToCollideWith | (1 << other.gameObject.layer)))
+        {
+            SpellCharge.IncreaseSpellCount(procChance);
+            Explosion();
+        }
     }
 
     private void OnEnable()
