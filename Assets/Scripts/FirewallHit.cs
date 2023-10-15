@@ -4,8 +4,12 @@ using UnityEngine;
 
 public class FirewallHit : MonoBehaviour
 {
+
     private void OnTriggerEnter(Collider other)
     {
-        Debug.Log("Hit:" + other.transform.name);
+        if (other.transform.name.ToLower().Contains("fireball"))
+        {
+            other.transform.GetComponent<Fireball>().currentProcChance = 100;
+        }
     }
 }

@@ -12,8 +12,9 @@ public class Fireball : MonoBehaviour
     [SerializeField] private LayerMask characterLayer;
     [SerializeField] private LayerMask allowedLayersToCollideWith;
     [SerializeField] private float projectileSpeed;
-    [SerializeField] private int procChance = 25;
 
+    [SerializeField] private int baseProcChance = 0;
+    [HideInInspector] public int currentProcChance = 0;
 
 
     private void Update()
@@ -26,7 +27,6 @@ public class Fireball : MonoBehaviour
         if (other.tag == "Player") return;
         if (allowedLayersToCollideWith == (allowedLayersToCollideWith | (1 << other.gameObject.layer)))
         {
-            SpellCharge.IncreaseSpellCount(procChance);
             Explosion();
         }
     }
@@ -62,6 +62,8 @@ public class Fireball : MonoBehaviour
             }
         }
 
+        SpellCharge.IncreaseSpellCount(currentProcChance);
+        currentProcChance = baseProcChance;
         PoolingManager.Instance.Pooling(this.transform.position, timeExplosionFadeOut);
         gameObject.SetActive(false);
     }

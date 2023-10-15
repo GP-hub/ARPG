@@ -82,7 +82,9 @@ public class AttackAndPowerCasting : MonoBehaviour
     private void HandlingCasting()
     {
         if (isCasting) return;
-        if (isDashing) return;
+
+        // If we want to be able to cast while dashing
+        //if (isDashing) return;
 
         if (isAttacking && !isAttackCooldown)
         {

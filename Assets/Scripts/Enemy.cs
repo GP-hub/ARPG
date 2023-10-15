@@ -11,6 +11,7 @@ public class Enemy : MonoBehaviour
 {
     [SerializeField] private float health, maxHealth = 30;
     [SerializeField] private float attackRange;
+    [Tooltip("Animator issue when speed is below 2")]
     [SerializeField] private float speed;
     // Idk 
     //[SerializeField] public LayerMask mask;
@@ -61,6 +62,7 @@ public class Enemy : MonoBehaviour
     // 
     void Start()
     {
+        agent.speed = speed;
         AIManager.Instance.Units.Add(this);
         health = maxHealth;
         GeneratePlayerHealthBar(this.gameObject);
@@ -109,6 +111,7 @@ public class Enemy : MonoBehaviour
 
         if (health <= 0)
         {
+            // Do the correct logic to get rid of dead enemies here
             Destroy(gameObject);
         }
         healthBar.OnHealthChanged(health / maxHealth);
@@ -240,27 +243,27 @@ public class Enemy : MonoBehaviour
     }
 
     // Directly moving towards the player
-    public void Move(Vector3 targetPos)
-    {
-        agent.avoidancePriority = 50;
+    //public void Move(Vector3 targetPos)
+    //{
+    //    agent.avoidancePriority = 50;
 
-        agent.isStopped = false;
-        agent.autoRepath = true;
+    //    agent.isStopped = false;
+    //    agent.autoRepath = true;
 
-        if (agent.speed == 0)
-        {
-            agent.speed = speed;
-        }
-        agent.SetDestination(targetPos);
+    //    if (agent.speed == 0)
+    //    {
+    //        agent.speed = speed;
+    //    }
+    //    agent.SetDestination(targetPos);
 
-        // Calculate the new position using SmoothDamp logic
-        Vector3 smoothDampedPosition = Vector3.SmoothDamp(transform.position, agent.nextPosition, ref velocity, 0.1f);
+    //    // Calculate the new position using SmoothDamp logic
+    //    Vector3 smoothDampedPosition = Vector3.SmoothDamp(transform.position, agent.nextPosition, ref velocity, 0.1f);
 
-        // Calculate the direction and distance to move
-        Vector3 moveDelta = smoothDampedPosition - transform.position;
+    //    // Calculate the direction and distance to move
+    //    Vector3 moveDelta = smoothDampedPosition - transform.position;
 
-        controller.Move(transform.position + moveDelta);
-    }
+    //    controller.Move(transform.position + moveDelta);
+    //}
 
     // Moving around the target via AIManager, circling the target
     public void MoveAIUnit(Vector3 targetPos)

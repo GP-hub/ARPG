@@ -33,6 +33,15 @@ public class EventManager : Singleton<EventManager>
         }
     }
 
+    public event Action<bool> onUltimate;
+    public void Ultimate(bool ultimate)
+    {
+        if (onUltimate != null)
+        {
+            onUltimate(ultimate);
+        }
+    }
+
     public event Action<bool> onCasting;
     public void Casting(bool dashing)
     {
