@@ -1,5 +1,4 @@
 using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 public class Fireball : MonoBehaviour
@@ -13,8 +12,7 @@ public class Fireball : MonoBehaviour
     [SerializeField] private LayerMask allowedLayersToCollideWith;
     [SerializeField] private float projectileSpeed;
 
-    [SerializeField] private int baseProcChance = 0;
-    [HideInInspector] public int currentProcChance = 0;
+    [HideInInspector] public int procChance;
 
 
     private void Update()
@@ -33,12 +31,14 @@ public class Fireball : MonoBehaviour
 
     private void OnEnable()
     {
+        procChance = PlayerStats.CalculateTotalChance();
         // Start the coroutine when the projectile is enabled
         StartCoroutine(DisableFireballObjectAfterTime(this.gameObject, timeProjectileLifeTime, timeExplosionFadeOut));
     }
 
     private void OnDisable()
     {
+        procChance = PlayerStats.fireballBaseProcChance;
         // Make sure to stop the coroutine when the projectile is disabled or removed
         StopAllCoroutines();
     }
@@ -62,16 +62,18 @@ public class Fireball : MonoBehaviour
             }
         }
 
-        SpellCharge.IncreaseSpellCount(currentProcChance);
-        currentProcChance = baseProcChance;
+        SpellCharge.IncreaseSpellCount(Mathf.Clamp(procChance, 0, 100));
+
         PoolingManager.Instance.Pooling(this.transform.position, timeExplosionFadeOut);
         gameObject.SetActive(false);
     }
+
     private IEnumerator DisableFireballObjectAfterTime(GameObject objectToDisable, float timeProjectileExpire, float timeExplosionExpire)
     {
         yield return new WaitForSeconds(timeProjectileExpire);
         PoolingManager.Instance.Pooling(objectToDisable.transform.position, timeExplosionExpire);
         objectToDisable.SetActive(false);
     }
+
 }
 

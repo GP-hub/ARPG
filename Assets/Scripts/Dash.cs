@@ -16,12 +16,12 @@ public class Dash : MonoBehaviour
     private bool isDashOnCooldown;
     private bool isCasting = false;
 
-    private TwinStickMovement twinStickMovement;
+    private PlayerMovement twinStickMovement;
     private PlayerInput playerInput;
 
     private void Awake()
     {
-        twinStickMovement = GetComponent<TwinStickMovement>();
+        twinStickMovement = GetComponent<PlayerMovement>();
         playerInput = GetComponent<PlayerInput>();
 
         playerInput.actions.FindAction("Dash").performed += OnDash;

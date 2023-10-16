@@ -49,11 +49,13 @@ public class Fireball_enemy : MonoBehaviour
         {
             if (hitColliders[i].CompareTag("Player"))
             {
-                Enemy healthComponent = hitColliders[i].GetComponent<Enemy>();
-                if (healthComponent != null)
-                {
-                    healthComponent.TakeDamage(damageAmount);
-                }
+
+                Debug.Log("DAMAGE PLAYER");
+                //Enemy healthComponent = hitColliders[i].GetComponent<Enemy>();
+                //if (healthComponent != null)
+                //{
+                //    healthComponent.TakeDamage(damageAmount);
+                //}
             }
         }
 

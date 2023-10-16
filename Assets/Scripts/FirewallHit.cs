@@ -9,7 +9,7 @@ public class FirewallHit : MonoBehaviour
     {
         if (other.transform.name.ToLower().Contains("fireball"))
         {
-            other.transform.GetComponent<Fireball>().currentProcChance = 100;
+            other.transform.GetComponent<Fireball>().procChance += 100;
         }
     }
 }

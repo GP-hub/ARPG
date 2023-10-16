@@ -45,7 +45,7 @@ public class AttackAndPowerCasting : MonoBehaviour
     private float attackCooldownTimeElapsed;
     private float powerCooldownTimeElapsed;
 
-    private TwinStickMovement twinStickMovement;
+    private PlayerMovement playerMovement;
 
     private List<GameObject> fireballObjectPool = new List<GameObject>();
     private List<GameObject> fireballExplosionObjectPool = new List<GameObject>();
@@ -55,7 +55,7 @@ public class AttackAndPowerCasting : MonoBehaviour
 
     private void Awake()
     {
-        twinStickMovement = GetComponent<TwinStickMovement>();
+        playerMovement = GetComponent<PlayerMovement>();
         playerInput = GetComponent<PlayerInput>();
         animator = GetComponent<Animator>();
 
@@ -131,7 +131,7 @@ public class AttackAndPowerCasting : MonoBehaviour
     public void MoveSpeedPlayerOnAttack()
     {
         // Speed of the player when casting attack
-        twinStickMovement.PlayerSpeed -= attackPlayerMovementSpeedPercent;
+        playerMovement.PlayerSpeed -= attackPlayerMovementSpeedPercent;
 
         // Animation speed when using attacking
         animator.SetFloat("AttackSpeed", attackSpeedMultiplier);
@@ -151,7 +151,7 @@ public class AttackAndPowerCasting : MonoBehaviour
     public void MoveSpeedPlayerOnPower()
     {
         // Speed of the player when casting power
-        twinStickMovement.PlayerSpeed -= powerPlayerMovementSpeedPercent;
+        playerMovement.PlayerSpeed -= powerPlayerMovementSpeedPercent;
 
         // IF spellCount is 0 THEN powerSpeed is 1, ELSE powerSpeed is equal to spellCount
         powerSpeedMultiplier = (SpellCharge.SpellCount == 0) ? 1 : SpellCharge.SpellCount;
@@ -238,7 +238,7 @@ public class AttackAndPowerCasting : MonoBehaviour
     public void CastFireball()
     {
         // We return the player speed to its original value
-        twinStickMovement.PlayerSpeed += attackPlayerMovementSpeedPercent;
+        playerMovement.PlayerSpeed += attackPlayerMovementSpeedPercent;
         animator.ResetTrigger("Attack");
 
         Ray cursorRay = Camera.main.ScreenPointToRay(Input.mousePosition);
@@ -267,7 +267,7 @@ public class AttackAndPowerCasting : MonoBehaviour
     // Called by Player Power Animation Keyframe
     public void CastMeteor()
     {
-        twinStickMovement.PlayerSpeed += powerPlayerMovementSpeedPercent;
+        playerMovement.PlayerSpeed += powerPlayerMovementSpeedPercent;
         animator.ResetTrigger("Power");
 
         Ray cursorRay = Camera.main.ScreenPointToRay(Input.mousePosition);

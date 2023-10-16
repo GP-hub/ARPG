@@ -13,20 +13,30 @@ public class Combustion : MonoBehaviour
 
     private float ultimateCooldownTimeElapsed;
 
+    private int fireballProcChance;
+
 
     private bool isUltimateOnCooldown;
     private bool isCasting = false;
 
-    private TwinStickMovement twinStickMovement;
+    private PlayerMovement twinStickMovement;
     private PlayerInput playerInput;
 
     private void Awake()
     {
-        twinStickMovement = GetComponent<TwinStickMovement>();
+        twinStickMovement = GetComponent<PlayerMovement>();
         playerInput = GetComponent<PlayerInput>();
 
         playerInput.actions.FindAction("Ultimate").performed += OnUltimate;
+
+        //fireballProcChance = this.transform.GetComponent<AttackAndPowerCasting>().fireballPrefab.GetComponent<Fireball>().currentProcChance;
     }
+
+    private void Update()
+    {
+        Debug.Log("Chance%: " + PlayerStats.CalculateTotalChance());
+    }
+
 
     private void OnEnable()
     {
@@ -56,11 +66,12 @@ public class Combustion : MonoBehaviour
     {
         EventManager.Instance.Ultimate(true);
 
-        // Modification to player stats
+        PlayerStats.AddBonusProbability(100);
 
+        // Modification to player stats
         yield return new WaitForSeconds(ultimateDuration);
 
-        // Back to basic stats
+        PlayerStats.RemoveBonusProbability(100);
 
         EventManager.Instance.Ultimate(false);
     }
