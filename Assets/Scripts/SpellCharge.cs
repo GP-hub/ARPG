@@ -10,7 +10,7 @@ public static class SpellCharge
     /// Debug.Log(SpellCharge.SpellCount);
     /// 
     /// </summary>
-
+    public static int maxFireCharge = 3;
 
     public static int SpellCount { get; private set; }
 
@@ -18,11 +18,12 @@ public static class SpellCharge
     {
         int randomChance = Random.Range(0, 101);
 
-        if (randomChance <= percentChance)
+        if (randomChance <= percentChance && SpellCount < maxFireCharge)
         {
             SpellCount++;
-            Debug.Log("Charge increased!: " + SpellCount);
         }
+
+        EventManager.Instance.FireChargeCountChange(SpellCount);
     }
 
     public static void DecreaseSpellCount()

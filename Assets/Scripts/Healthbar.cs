@@ -9,17 +9,31 @@ public class Healthbar : MonoBehaviour
     [SerializeField] private RectTransform healthBar;
     [SerializeField] private Transform objectToFollow;
     [SerializeField] private Image healthbarImage;
+    [SerializeField] private Image fireChargeBarImage;
+    private bool isPlayerBar;
+
+    private void Start()
+    {
+
+        if (objectToFollow.name.ToLower().Contains("player"))
+        {
+            isPlayerBar = true;
+        }
+
+        if (isPlayerBar) EventManager.Instance.onFireChargeCountChange += UpdateFireChargeBarUI;
+
+        EventManager.Instance.FireChargeCountChange(SpellCharge.SpellCount);
+    }
 
     void Update()
-    {
-    }
-    private void FixedUpdate()
     {
         if (objectToFollow != null)
         {
             RepositionHealthBar(objectToFollow);
-        }
-        
+        }     
+    }
+    private void FixedUpdate()
+    {
     }
 
     public void SetHealthBarData(Transform target, RectTransform healthBarPanel)
@@ -41,9 +55,15 @@ public class Healthbar : MonoBehaviour
         }
     }
 
+    public void UpdateFireChargeBarUI(int fireChargeFill)
+    {
+        float normalizedValue = (float)fireChargeFill / (float)SpellCharge.maxFireCharge;
+        fireChargeBarImage.fillAmount = normalizedValue;
+    }
+
     private void RepositionHealthBar(Transform objectToFollow)
     {
-        Vector2 ViewportPosition = Camera.main.WorldToViewportPoint(objectToFollow.position + new Vector3(0, 1.8f, 0));
+        Vector2 ViewportPosition = Camera.main.WorldToViewportPoint(objectToFollow.position + new Vector3(0, 0, 0));
         Vector2 WorldObject_ScreenPosition = new Vector2(
         ((ViewportPosition.x * targetCanvas.sizeDelta.x) - (targetCanvas.sizeDelta.x * 0.5f)),
         ((ViewportPosition.y * targetCanvas.sizeDelta.y) - (targetCanvas.sizeDelta.y * 0.5f)));

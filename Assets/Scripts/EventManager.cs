@@ -24,7 +24,7 @@ public class EventManager : Singleton<EventManager>
         }
     }
 
-    public event Action <bool> onDashing;
+    public event Action<bool> onDashing;
     public void Dashing(bool dashing)
     {
         if (onDashing != null)
@@ -48,6 +48,15 @@ public class EventManager : Singleton<EventManager>
         if (onCasting != null)
         {
             onCasting(dashing);
+        }
+    }
+
+    public event Action<int> onFireChargeCountChange;
+    public void FireChargeCountChange(int chargeNbr)
+    {
+        if (onFireChargeCountChange != null)
+        {
+            onFireChargeCountChange(chargeNbr);
         }
     }
 

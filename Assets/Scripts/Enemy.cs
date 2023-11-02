@@ -20,6 +20,7 @@ public class Enemy : MonoBehaviour
     [Header("Healthbar")]
     [SerializeField] private GameObject healthBarPrefab;
     [SerializeField] private RectTransform healthPanelRect;
+    [SerializeField] private Transform hpBarProxyFollow;
 
     [Space(10)]
     [Header("Attack")]
@@ -65,7 +66,7 @@ public class Enemy : MonoBehaviour
         agent.speed = speed;
         AIManager.Instance.Units.Add(this);
         health = maxHealth;
-        GeneratePlayerHealthBar(this.gameObject);
+        GeneratePlayerHealthBar(hpBarProxyFollow);
 
         // Pass the player as the target for now
         target = GameObject.Find("Player").transform;
@@ -288,11 +289,11 @@ public class Enemy : MonoBehaviour
         agent.avoidancePriority = 2;
     }
 
-    private void GeneratePlayerHealthBar(GameObject player)
+    private void GeneratePlayerHealthBar(Transform hpProxy)
     {
         GameObject healthBarGo = Instantiate(healthBarPrefab);
         healthBar = healthBarGo.GetComponent<Healthbar>();
-        healthBar.SetHealthBarData(player.transform, healthPanelRect);
+        healthBar.SetHealthBarData(hpProxy, healthPanelRect);
         healthBar.transform.SetParent(healthPanelRect, false);
     }
 

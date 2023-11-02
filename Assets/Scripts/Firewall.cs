@@ -47,7 +47,7 @@ public class Firewall : MonoBehaviour
             // Get the current position of the player
             currentPos = this.transform.position;
 
-            TestFireWall(previousPos, currentPos);
+            FirewallGenerator(previousPos, currentPos);
 
             // Store the current position in previousPosition
             previousPos = currentPos;
@@ -56,7 +56,7 @@ public class Firewall : MonoBehaviour
         }
     }
 
-    private void TestFireWall(Vector3 pointA, Vector3 pointB)
+    private void FirewallGenerator(Vector3 pointA, Vector3 pointB)
     {
         if (pointA == null || pointB == null) return;
         if (pointA == pointB) return;
