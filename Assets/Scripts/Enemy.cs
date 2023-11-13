@@ -1,9 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
-using TMPro;
 using UnityEngine;
 using UnityEngine.AI;
-using UnityEngine.InputSystem.XR;
 
 [RequireComponent(typeof(NavMeshAgent))]
 [RequireComponent(typeof(CharacterController))]
@@ -26,7 +24,8 @@ public class Enemy : MonoBehaviour
     [Header("Attack")]
     [SerializeField] private GameObject exitPoint;
     [SerializeField] private GameObject fireballPrefab;
-    [SerializeField] private GameObject fireballExplosionPrefab;
+    // We are getting the explosion gameobject from the player through the pooling manager, terrible but yeah..
+    //[SerializeField] private GameObject fireballExplosionPrefab;
     [SerializeField] private float attackProjectileSpeed;
     [SerializeField] private LayerMask characterLayer;
     [SerializeField] private float meleeHitboxSize;
