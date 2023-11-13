@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Security.Cryptography;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.UI;
@@ -276,10 +277,13 @@ public class AttackAndPowerCasting : MonoBehaviour
         {
             Vector3 targetPosition = hit.point;
             GameObject newObject = GetPooledMeteorObject(targetPosition);
+
             if (newObject != null)
             {
                 newObject.transform.position = targetPosition;
                 newObject.SetActive(true);
+
+                SpellCharge.ResetSpellCount();
 
                 // Trying to make the meteor explode when we cast them
                 newObject.GetComponent<Blackhole>().Explode();

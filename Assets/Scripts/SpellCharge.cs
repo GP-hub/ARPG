@@ -23,16 +23,23 @@ public static class SpellCharge
             SpellCount++;
         }
 
-        EventManager.Instance.FireChargeCountChange(SpellCount);
+        UpdateUIFireCharge();
     }
 
     public static void DecreaseSpellCount()
     {
         SpellCount--;
+        UpdateUIFireCharge();
     }
 
     public static void ResetSpellCount()
     {
         SpellCount = 0;
+        UpdateUIFireCharge();
+    }
+
+    private static void UpdateUIFireCharge()
+    {
+        EventManager.Instance.FireChargeCountChange(SpellCount);
     }
 }

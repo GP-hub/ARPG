@@ -32,11 +32,6 @@ public class Combustion : MonoBehaviour
         //fireballProcChance = this.transform.GetComponent<AttackAndPowerCasting>().fireballPrefab.GetComponent<Fireball>().currentProcChance;
     }
 
-    private void Update()
-    {
-        Debug.Log("Chance%: " + PlayerStats.CalculateTotalChance());
-    }
-
 
     private void OnEnable()
     {
