@@ -121,7 +121,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   explosionRadius: 5
   damageAmount: 0
-  timeProjectileLifeTime: 5
+  timeProjectileLifeTime: 2
   timeExplosionFadeOut: 1
   characterLayer:
     serializedVersion: 2

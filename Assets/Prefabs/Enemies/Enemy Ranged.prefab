@@ -2133,8 +2133,8 @@ MonoBehaviour:
   healthPanelRect: {fileID: 0}
   hpBarProxyFollow: {fileID: 3375167359443177057}
   exitPoint: {fileID: 4549108603498995564}
-  fireballPrefab: {fileID: 2029881061899082543, guid: 70bdde46f5676434daabb86cc7401809, type: 3}
-  fireballExplosionPrefab: {fileID: 7704456569469174909, guid: e10887af2a462724e84175079dbcf1a9, type: 3}
+  fireballPrefabName: Fireball_enemy
+  AoePrefabName: AoE_Enemy
   attackProjectileSpeed: 10
   characterLayer:
     serializedVersion: 2

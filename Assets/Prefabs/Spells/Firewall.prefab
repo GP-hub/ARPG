@@ -13,6 +13,7 @@ GameObject:
   - component: {fileID: 1438135049739881614}
   - component: {fileID: 2015357623483641822}
   - component: {fileID: 4360155179406731337}
+  - component: {fileID: 4682597826410924397}
   m_Layer: 0
   m_Name: Firewall
   m_TagString: Untagged
@@ -118,3 +119,16 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 484a643c00cbd5b4787db783c22a2a48, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!114 &4682597826410924397
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 277609163221870987}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 05d9b991a3e8e90429d13804899a0f2c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  disableTime: 3

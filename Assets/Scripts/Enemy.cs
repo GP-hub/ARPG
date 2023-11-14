@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.AI;
+using static UnityEditor.FilePathAttribute;
 
 [RequireComponent(typeof(NavMeshAgent))]
 [RequireComponent(typeof(CharacterController))]
@@ -23,18 +24,16 @@ public class Enemy : MonoBehaviour
     [Space(10)]
     [Header("Attack")]
     [SerializeField] private GameObject exitPoint;
-    [SerializeField] private GameObject fireballPrefab;
+    [SerializeField] private string fireballPrefabName;
+    [SerializeField] private string AoePrefabName;
     // We are getting the explosion gameobject from the player through the pooling manager, terrible but yeah..
     //[SerializeField] private GameObject fireballExplosionPrefab;
     [SerializeField] private float attackProjectileSpeed;
     [SerializeField] private LayerMask characterLayer;
     [SerializeField] private float meleeHitboxSize;
-    private int maxObjectsForPooling = 5;
 
     private bool isAttacking;
     private NavMeshAgent agent;
-
-    private List<GameObject> fireballObjectPool = new List<GameObject>();
 
     private Animator animator;
 
@@ -70,7 +69,6 @@ public class Enemy : MonoBehaviour
         // Pass the player as the target for now
         target = GameObject.Find("Player").transform;
 
-        PoolingFireballObject();
         lastPosition = transform.position;
 
         StartCoroutine(CheckGroundedStatus());
@@ -210,17 +208,22 @@ public class Enemy : MonoBehaviour
         }
     }
 
+    public void SpawnAOE()
+    {
+        PoolingManagerSingleton.Instance.GetObjectFromPool(AoePrefabName, target.transform.position + new Vector3(0, 0.2f, 0));
+    }
+
+
     // Triggered via Ranged Attack animation
     public void RangedHit()
     {
         Vector3 targetCorrectedPosition = target.transform.position;
         Vector3 direction = (targetCorrectedPosition - this.transform.position).normalized;
 
-        GameObject newObject = GetPooledFireballObject();
+        GameObject newObject = PoolingManagerSingleton.Instance.GetObjectFromPool(fireballPrefabName, exitPoint.transform.position);
+
         if (newObject != null)
         {
-            newObject.transform.position = exitPoint.transform.position;
-            newObject.SetActive(true);
             Quaternion rotationToTarget = Quaternion.LookRotation(direction);
             newObject.transform.rotation = rotationToTarget;
         }
@@ -294,37 +297,6 @@ public class Enemy : MonoBehaviour
         healthBar = healthBarGo.GetComponent<Healthbar>();
         healthBar.SetHealthBarData(hpProxy, healthPanelRect);
         healthBar.transform.SetParent(healthPanelRect, false);
-    }
-
-
-    private void PoolingFireballObject()
-    {
-        for (int i = 0; i < maxObjectsForPooling; i++)
-        {
-            GameObject newFireballObject = Instantiate(fireballPrefab, Vector3.zero, Quaternion.identity);
-            newFireballObject.SetActive(false);
-            fireballObjectPool.Add(newFireballObject);
-        }
-    }
-
-    private GameObject GetPooledFireballObject()
-    {
-        for (int i = 0; i < fireballObjectPool.Count; i++)
-        {
-            if (!fireballObjectPool[i].activeInHierarchy)
-            {
-                return fireballObjectPool[i];
-            }
-        }
-
-        if (fireballObjectPool.Count < maxObjectsForPooling)
-        {
-            GameObject newObject = Instantiate(fireballPrefab, exitPoint.transform.position, Quaternion.identity);
-            newObject.SetActive(false);
-            fireballObjectPool.Add(newObject);
-            return newObject;
-        }
-        return null;
     }
 
     private bool CanSeePlayer()

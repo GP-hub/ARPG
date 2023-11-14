@@ -272,8 +272,8 @@ MonoBehaviour:
   healthPanelRect: {fileID: 1913881814}
   hpBarProxyFollow: {fileID: 1340500735}
   exitPoint: {fileID: 0}
-  fireballPrefab: {fileID: 2029881061899082543, guid: d505addd5a9d5374f9e1091533707515, type: 3}
-  fireballExplosionPrefab: {fileID: 7704456569469174909, guid: e10887af2a462724e84175079dbcf1a9, type: 3}
+  fireballPrefabName: 
+  AoePrefabName: 
   attackProjectileSpeed: 10
   characterLayer:
     serializedVersion: 2
@@ -3245,8 +3245,8 @@ MonoBehaviour:
   healthPanelRect: {fileID: 1913881814}
   hpBarProxyFollow: {fileID: 1835788910}
   exitPoint: {fileID: 0}
-  fireballPrefab: {fileID: 2029881061899082543, guid: d505addd5a9d5374f9e1091533707515, type: 3}
-  fireballExplosionPrefab: {fileID: 7704456569469174909, guid: e10887af2a462724e84175079dbcf1a9, type: 3}
+  fireballPrefabName: 
+  AoePrefabName: 
   attackProjectileSpeed: 10
   characterLayer:
     serializedVersion: 2
@@ -7623,8 +7623,8 @@ MonoBehaviour:
   healthPanelRect: {fileID: 1913881814}
   hpBarProxyFollow: {fileID: 2024546384}
   exitPoint: {fileID: 0}
-  fireballPrefab: {fileID: 2029881061899082543, guid: d505addd5a9d5374f9e1091533707515, type: 3}
-  fireballExplosionPrefab: {fileID: 7704456569469174909, guid: e10887af2a462724e84175079dbcf1a9, type: 3}
+  fireballPrefabName: 
+  AoePrefabName: 
   attackProjectileSpeed: 10
   characterLayer:
     serializedVersion: 2
@@ -8678,8 +8678,8 @@ MonoBehaviour:
   healthPanelRect: {fileID: 1913881814}
   hpBarProxyFollow: {fileID: 1677641115}
   exitPoint: {fileID: 0}
-  fireballPrefab: {fileID: 2029881061899082543, guid: d505addd5a9d5374f9e1091533707515, type: 3}
-  fireballExplosionPrefab: {fileID: 7704456569469174909, guid: e10887af2a462724e84175079dbcf1a9, type: 3}
+  fireballPrefabName: 
+  AoePrefabName: 
   attackProjectileSpeed: 10
   characterLayer:
     serializedVersion: 2
@@ -9891,8 +9891,8 @@ MonoBehaviour:
   healthPanelRect: {fileID: 1913881814}
   hpBarProxyFollow: {fileID: 1988422784}
   exitPoint: {fileID: 0}
-  fireballPrefab: {fileID: 2029881061899082543, guid: d505addd5a9d5374f9e1091533707515, type: 3}
-  fireballExplosionPrefab: {fileID: 7704456569469174909, guid: e10887af2a462724e84175079dbcf1a9, type: 3}
+  fireballPrefabName: 
+  AoePrefabName: 
   attackProjectileSpeed: 10
   characterLayer:
     serializedVersion: 2
@@ -18450,8 +18450,8 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1269496524}
-  - component: {fileID: 1269496523}
   - component: {fileID: 1269496525}
+  - component: {fileID: 1269496526}
   m_Layer: 0
   m_Name: Managers
   m_TagString: Untagged
@@ -18459,19 +18459,6 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!114 &1269496523
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1269496522}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: f884c309f2181434d996fb8b57bfe5d1, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  player: {fileID: 2494901959581414798}
 --- !u!4 &1269496524
 Transform:
   m_ObjectHideFlags: 0
@@ -18501,6 +18488,37 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   radius: 1
   Units: []
+--- !u!114 &1269496526
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1269496522}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 70fb103ea9607664b81dc8cbe463bfbe, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  objectPools:
+  - prefab: {fileID: 8762737198241174101, guid: 3ca115d91ca41d14a932113d1b874b1f, type: 3}
+    poolSize: 5
+    objects: []
+  - prefab: {fileID: 7704456569469174909, guid: e10887af2a462724e84175079dbcf1a9, type: 3}
+    poolSize: 5
+    objects: []
+  - prefab: {fileID: 1127485153584772817, guid: 4094a67b479e5524d955e9dd7d16567c, type: 3}
+    poolSize: 5
+    objects: []
+  - prefab: {fileID: 2029881061899082543, guid: d505addd5a9d5374f9e1091533707515, type: 3}
+    poolSize: 5
+    objects: []
+  - prefab: {fileID: 2029881061899082543, guid: 70bdde46f5676434daabb86cc7401809, type: 3}
+    poolSize: 5
+    objects: []
+  - prefab: {fileID: 277609163221870987, guid: f12365c0ac545b646a8a091dc484be19, type: 3}
+    poolSize: 20
+    objects: []
 --- !u!1 &1269989251
 GameObject:
   m_ObjectHideFlags: 0
@@ -18761,8 +18779,8 @@ MonoBehaviour:
   healthPanelRect: {fileID: 1913881814}
   hpBarProxyFollow: {fileID: 1239248458}
   exitPoint: {fileID: 0}
-  fireballPrefab: {fileID: 2029881061899082543, guid: d505addd5a9d5374f9e1091533707515, type: 3}
-  fireballExplosionPrefab: {fileID: 7704456569469174909, guid: e10887af2a462724e84175079dbcf1a9, type: 3}
+  fireballPrefabName: 
+  AoePrefabName: 
   attackProjectileSpeed: 10
   characterLayer:
     serializedVersion: 2
@@ -29668,7 +29686,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 6894551819877516500, guid: c030b677f1aa4a043837074f45635c7a, type: 3}
       propertyPath: m_IsActive
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 8237003867044120221, guid: c030b677f1aa4a043837074f45635c7a, type: 3}
       propertyPath: m_LocalPosition.x
@@ -29795,7 +29813,7 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 839425786960260319, guid: db2ab821124dfaa428eb41235a2e4794, type: 3}
       propertyPath: m_LocalPosition.x
-      value: 3
+      value: 3.4
       objectReference: {fileID: 0}
     - target: {fileID: 839425786960260319, guid: db2ab821124dfaa428eb41235a2e4794, type: 3}
       propertyPath: m_LocalPosition.y
@@ -29803,7 +29821,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 839425786960260319, guid: db2ab821124dfaa428eb41235a2e4794, type: 3}
       propertyPath: m_LocalPosition.z
-      value: 1.5
+      value: -5.54
       objectReference: {fileID: 0}
     - target: {fileID: 839425786960260319, guid: db2ab821124dfaa428eb41235a2e4794, type: 3}
       propertyPath: m_LocalRotation.w
@@ -29866,15 +29884,13 @@ MonoBehaviour:
   groundLayer:
     serializedVersion: 2
     m_Bits: 136
-  fireballPrefab: {fileID: 2029881061899082543, guid: d505addd5a9d5374f9e1091533707515, type: 3}
-  fireballExplosionPrefab: {fileID: 7704456569469174909, guid: e10887af2a462724e84175079dbcf1a9, type: 3}
+  fireballPrefabName: Fireball
   attackProjectileSpeed: 10
   attackCooldownTime: 1
   attackPlayerMovementSpeedPercent: 2
   attackSpeedMultiplier: 1
   attackCooldownImage: {fileID: 1312029674}
-  meteorPrefab: {fileID: 1127485153584772817, guid: 4094a67b479e5524d955e9dd7d16567c, type: 3}
-  powerLifetime: 1.5
+  meteorPrefabName: Meteor
   powerCooldownTime: 5
   powerPlayerMovementSpeedPercent: 5
   powerSpeedMultiplier: 1
@@ -29967,8 +29983,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: db894c1471f215942ba871c755fbf844, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  firewallPrefab: {fileID: 277609163221870987, guid: f12365c0ac545b646a8a091dc484be19, type: 3}
-  firewallLifetime: 3
+  firewallPrefabName: Firewall
 --- !u!114 &5444040362796816506
 MonoBehaviour:
   m_ObjectHideFlags: 0

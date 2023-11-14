@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Net;
 using System.Security.Cryptography;
 using UnityEngine;
 using UnityEngine.InputSystem;
@@ -10,14 +11,12 @@ public class AttackAndPowerCasting : MonoBehaviour
     [Header("Spells")]
     [SerializeField] private GameObject exitPoint;
     [SerializeField] private LayerMask groundLayer;
-    private int maxObjectsForPooling = 5;
 
 
     [Space(10)]
     [Header("Attack")]
-    public GameObject fireballPrefab;
-    public GameObject fireballExplosionPrefab;
-    public float attackProjectileSpeed = 10f;
+    [SerializeField] private string fireballPrefabName;
+    [SerializeField] private float attackProjectileSpeed = 10f;
     [SerializeField] private float attackCooldownTime = 1f;
     [SerializeField] private float attackPlayerMovementSpeedPercent = 2;
     [SerializeField] private float attackSpeedMultiplier = 1;
@@ -25,8 +24,7 @@ public class AttackAndPowerCasting : MonoBehaviour
 
     [Space(10)]
     [Header("Power")]
-    public GameObject meteorPrefab;
-    public float powerLifetime = 1.5f;
+    [SerializeField] private string meteorPrefabName;
     [SerializeField] private float powerCooldownTime = 5f;
     [SerializeField] private float powerPlayerMovementSpeedPercent = 5;
     [SerializeField] private float powerSpeedMultiplier = 1;
@@ -48,10 +46,6 @@ public class AttackAndPowerCasting : MonoBehaviour
 
     private PlayerMovement playerMovement;
 
-    private List<GameObject> fireballObjectPool = new List<GameObject>();
-    private List<GameObject> fireballExplosionObjectPool = new List<GameObject>();
-    private List<GameObject> powerObjectPool = new List<GameObject>();
-
     private Animator animator;
 
     private void Awake()
@@ -65,9 +59,6 @@ public class AttackAndPowerCasting : MonoBehaviour
 
         playerInput.actions.FindAction("Power").performed += OnPowerChanged;
         playerInput.actions.FindAction("Power").canceled += OnPowerChanged;
-
-        PoolingMeteorObject();
-        PoolingFireballObject();
     }
 
     private void OnEnable()
@@ -251,11 +242,11 @@ public class AttackAndPowerCasting : MonoBehaviour
             Vector3 targetCorrectedPosition = new Vector3(CorrectingAimPosition(targetPosition).x, targetPosition.y, CorrectingAimPosition(targetPosition).z);
             Vector3 direction = (targetCorrectedPosition - this.transform.position).normalized;
 
-            GameObject newObject = GetPooledFireballObject();
+            GameObject newObject = PoolingManagerSingleton.Instance.GetObjectFromPool(fireballPrefabName, exitPoint.transform.position);
+
             if (newObject != null)
             {
-                newObject.transform.position = exitPoint.transform.position;
-                newObject.SetActive(true);
+
                 Quaternion rotationToTarget = Quaternion.LookRotation(direction);
                 newObject.transform.rotation = rotationToTarget;
             }
@@ -276,23 +267,15 @@ public class AttackAndPowerCasting : MonoBehaviour
         if (Physics.Raycast(cursorRay, out RaycastHit hit, 100f, groundLayer))
         {
             Vector3 targetPosition = hit.point;
-            GameObject newObject = GetPooledMeteorObject(targetPosition);
+
+            GameObject newObject = PoolingManagerSingleton.Instance.GetObjectFromPool(meteorPrefabName, targetPosition);
 
             if (newObject != null)
             {
-                newObject.transform.position = targetPosition;
-                newObject.SetActive(true);
-
                 SpellCharge.ResetSpellCount();
 
                 // Trying to make the meteor explode when we cast them
                 newObject.GetComponent<Blackhole>().Explode();
-
-                Transform newObjectTransform = newObject.GetComponent<Transform>();
-                if (newObjectTransform != null)
-                {
-                    StartCoroutine(DisablePowerObjectAfterTime(newObject, powerLifetime));
-                }
             }
         }
 
@@ -300,71 +283,6 @@ public class AttackAndPowerCasting : MonoBehaviour
         isCasting = false;
     }
 
-    private IEnumerator DisablePowerObjectAfterTime(GameObject objectToDisable, float time)
-    {
-        yield return new WaitForSeconds(time);
-        objectToDisable.SetActive(false);
-    }
-
-    private GameObject GetPooledFireballObject()
-    {
-        for (int i = 0; i < fireballObjectPool.Count; i++)
-        {
-            if (!fireballObjectPool[i].activeInHierarchy)
-            {
-                return fireballObjectPool[i];
-            }
-        }
-
-        if (fireballObjectPool.Count < maxObjectsForPooling)
-        {
-            GameObject newObject = Instantiate(fireballPrefab, exitPoint.transform.position, Quaternion.identity);
-            newObject.SetActive(false);
-            fireballObjectPool.Add(newObject);
-            return newObject;
-        }
-        return null;
-    }
-
-    private GameObject GetPooledMeteorObject(Vector3 pos)
-    {
-        for (int i = 0; i < powerObjectPool.Count; i++)
-        {
-            if (!powerObjectPool[i].activeInHierarchy)
-            {
-                return powerObjectPool[i];
-            }
-        }
-
-        if (powerObjectPool.Count < maxObjectsForPooling)
-        {
-            GameObject newObject = Instantiate(meteorPrefab, pos, Quaternion.identity);
-            newObject.SetActive(false);
-            powerObjectPool.Add(newObject);
-            return newObject;
-        }
-        return null;
-    }
-
-    private void PoolingMeteorObject()
-    {
-        for (int i = 0; i < maxObjectsForPooling; i++)
-        {
-            GameObject newPowerObject = Instantiate(meteorPrefab, Vector3.zero, Quaternion.identity);
-            newPowerObject.SetActive(false);
-            powerObjectPool.Add(newPowerObject);
-        }
-    }
-
-    private void PoolingFireballObject()
-    {
-        for (int i = 0; i < maxObjectsForPooling; i++)
-        {
-            GameObject newFireballObject = Instantiate(fireballPrefab, Vector3.zero, Quaternion.identity);
-            newFireballObject.SetActive(false);
-            fireballObjectPool.Add(newFireballObject);
-        }
-    }
 
 }
 
