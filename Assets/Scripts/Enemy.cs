@@ -206,6 +206,7 @@ public class Enemy : MonoBehaviour
         }
     }
 
+    // Triggered via SpawnAoe Attack Animation
     public void SpawnAOE()
     {
         PoolingManagerSingleton.Instance.GetObjectFromPool(AoePrefabName, target.transform.position + new Vector3(0, 0.2f, 0));
