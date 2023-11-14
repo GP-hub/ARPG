@@ -26,8 +26,6 @@ public class Enemy : MonoBehaviour
     [SerializeField] private GameObject exitPoint;
     [SerializeField] private string fireballPrefabName;
     [SerializeField] private string AoePrefabName;
-    // We are getting the explosion gameobject from the player through the pooling manager, terrible but yeah..
-    //[SerializeField] private GameObject fireballExplosionPrefab;
     [SerializeField] private float attackProjectileSpeed;
     [SerializeField] private LayerMask characterLayer;
     [SerializeField] private float meleeHitboxSize;
