@@ -1,15 +1,12 @@
 using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.AI;
-using static UnityEditor.FilePathAttribute;
 
 [RequireComponent(typeof(NavMeshAgent))]
 [RequireComponent(typeof(CharacterController))]
 public class Enemy : MonoBehaviour
 {
     [SerializeField] private float health, maxHealth = 30;
-    [SerializeField] private float attackRange;
     [Tooltip("Animator issue when speed is below 2")]
     [SerializeField] private float speed;
     // Idk 
@@ -23,12 +20,26 @@ public class Enemy : MonoBehaviour
 
     [Space(10)]
     [Header("Attack")]
+    [SerializeField] private float attackRange;
     [SerializeField] private GameObject exitPoint;
+    [SerializeField] private float attackCooldown;
+    [SerializeField] private LayerMask characterLayer;
+
+    [Space(10)]
+    [Header("Attack: Ranged")]
     [SerializeField] private string fireballPrefabName;
     [SerializeField] private string AoePrefabName;
     [SerializeField] private float attackProjectileSpeed;
-    [SerializeField] private LayerMask characterLayer;
+
+    [Space(10)]
+    [Header("Attack: Melee")]
     [SerializeField] private float meleeHitboxSize;
+
+    [Space(10)]
+    [Header("Power")]
+    [SerializeField] private float powerRange;
+    [SerializeField] private float powerCooldown;
+
 
     private bool isAttacking;
     private NavMeshAgent agent;
@@ -40,14 +51,16 @@ public class Enemy : MonoBehaviour
     private Healthbar healthBar;
 
     private Transform target;
-
-    Vector3 velocity = Vector3.zero;
+    private GameObject player;
 
     private Vector3 lastPosition;
 
     private float calculatedSpeed;
 
     private bool isGrounded = true;
+    private bool isCharging = false;
+
+
 
     private void Awake()
     {
@@ -64,8 +77,13 @@ public class Enemy : MonoBehaviour
         health = maxHealth;
         GeneratePlayerHealthBar(hpBarProxyFollow);
 
-        // Pass the player as the target for now
-        target = GameObject.Find("Player").transform;
+        player = GameObject.Find("Player");
+
+        if (player)
+        {
+            // Pass the player as the target for now
+            target = player.transform;
+        }
 
         lastPosition = transform.position;
 
@@ -75,10 +93,57 @@ public class Enemy : MonoBehaviour
 
     private void Update()
     {
-        HandleAnimation();
-        HandleAttack();
+        HandleMovmentAnimation();
+        HandleBehaviorAnimation();
     }
 
+    private void ChargingCoroutineStart()
+    {
+        StartCoroutine(MoveForwardCoroutine());
+    }
+
+    IEnumerator MoveForwardCoroutine()
+    {
+        float timer = .5f;
+
+        while (timer > 0f)
+        {
+            isCharging = true;
+            // Move the CharacterController forward
+
+            controller.Move(transform.forward * speed * 2 * Time.deltaTime);
+            
+            agent.avoidancePriority = 10;
+            agent.obstacleAvoidanceType = ObstacleAvoidanceType.NoObstacleAvoidance;
+
+            // Check for collisions with objects on the 'Player' layer
+            Collider[] colliders = Physics.OverlapBox(transform.position, transform.localScale / 2, Quaternion.identity, LayerMask.GetMask("Character"));
+
+            foreach (Collider collider in colliders)
+            {
+                if (collider.CompareTag("Player"))
+                {
+                    Debug.Log("Collided with a character: " + collider.name);
+
+                    // Handle collision with 'Player' here
+                }
+            }
+
+            // Decrease the timer
+            timer -= Time.deltaTime;
+
+            // Wait for the next frame
+            yield return null;
+        }
+
+        isCharging = false;
+
+        agent.obstacleAvoidanceType = ObstacleAvoidanceType.LowQualityObstacleAvoidance;
+        agent.avoidancePriority = 50;
+
+        // Stop the CharacterController when the time is up
+        controller.Move(Vector3.zero);
+    }
 
     private IEnumerator CheckGroundedStatus()
     {
@@ -114,8 +179,10 @@ public class Enemy : MonoBehaviour
         //Debug.Log("Enemy hp: " + health);
     }
 
-    void HandleAttack()
+    void HandleBehaviorAnimation()
     {
+        if (target == null) return;
+
         float distanceToTarget = Vector3.Distance(transform.position, target.position);
 
         if (!CanSeePlayer())
@@ -135,6 +202,7 @@ public class Enemy : MonoBehaviour
             {
                 if (!agent.pathPending && agent.remainingDistance < AIManager.Instance.Radius || attackRange > agent.remainingDistance/* || !agent.pathPending && agent.remainingDistance < attackRange*/) 
                 {
+
                     if (distanceToTarget <= attackRange)
                     {
                         Stop();
@@ -143,6 +211,8 @@ public class Enemy : MonoBehaviour
                     }
                     if (distanceToTarget > attackRange)
                     {
+                        if (isCharging) return;
+
                         // HERE THE OTHER UNIT WILL THE ONE ALREADY ATTCKING TO MOVE !!!
                         AIManager.Instance.MakeAgentCircleTarget(target.transform);
                         HandleAttackAnimation(false);
@@ -228,7 +298,7 @@ public class Enemy : MonoBehaviour
         }
     }
 
-    void HandleAnimation()
+    void HandleMovmentAnimation()
     {
         if (calculatedSpeed > 1f)
         {

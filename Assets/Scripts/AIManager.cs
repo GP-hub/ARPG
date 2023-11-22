@@ -20,4 +20,5 @@ public class AIManager : Singleton<AIManager>
                 ));
         }
     }
+
 }
