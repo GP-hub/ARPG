@@ -266,19 +266,22 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   health: 0
   maxHealth: 30
-  attackRange: 1.5
   speed: 4.5
   healthBarPrefab: {fileID: 2505273644731239485, guid: f032af557d41213499ccbdd815c15a7b, type: 3}
   healthPanelRect: {fileID: 1913881814}
   hpBarProxyFollow: {fileID: 1340500735}
+  attackRange: 1.5
   exitPoint: {fileID: 0}
-  fireballPrefab: {fileID: 2029881061899082543, guid: d505addd5a9d5374f9e1091533707515, type: 3}
-  fireballExplosionPrefab: {fileID: 7704456569469174909, guid: e10887af2a462724e84175079dbcf1a9, type: 3}
-  attackProjectileSpeed: 10
+  attackCooldown: 0
   characterLayer:
     serializedVersion: 2
     m_Bits: 64
+  fireballPrefabName: 
+  AoePrefabName: 
+  attackProjectileSpeed: 10
   meleeHitboxSize: 5
+  powerRange: 0
+  powerCooldown: 0
 --- !u!143 &6055206
 CharacterController:
   m_ObjectHideFlags: 0
@@ -3239,19 +3242,22 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   health: 0
   maxHealth: 30
-  attackRange: 1.5
   speed: 4.5
   healthBarPrefab: {fileID: 2505273644731239485, guid: f032af557d41213499ccbdd815c15a7b, type: 3}
   healthPanelRect: {fileID: 1913881814}
   hpBarProxyFollow: {fileID: 1835788910}
+  attackRange: 1.5
   exitPoint: {fileID: 0}
-  fireballPrefab: {fileID: 2029881061899082543, guid: d505addd5a9d5374f9e1091533707515, type: 3}
-  fireballExplosionPrefab: {fileID: 7704456569469174909, guid: e10887af2a462724e84175079dbcf1a9, type: 3}
-  attackProjectileSpeed: 10
+  attackCooldown: 0
   characterLayer:
     serializedVersion: 2
     m_Bits: 64
+  fireballPrefabName: 
+  AoePrefabName: 
+  attackProjectileSpeed: 10
   meleeHitboxSize: 5
+  powerRange: 0
+  powerCooldown: 0
 --- !u!143 &348457992
 CharacterController:
   m_ObjectHideFlags: 0
@@ -7617,19 +7623,22 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   health: 0
   maxHealth: 30
-  attackRange: 1.5
   speed: 4.5
   healthBarPrefab: {fileID: 2505273644731239485, guid: f032af557d41213499ccbdd815c15a7b, type: 3}
   healthPanelRect: {fileID: 1913881814}
   hpBarProxyFollow: {fileID: 2024546384}
+  attackRange: 1.5
   exitPoint: {fileID: 0}
-  fireballPrefab: {fileID: 2029881061899082543, guid: d505addd5a9d5374f9e1091533707515, type: 3}
-  fireballExplosionPrefab: {fileID: 7704456569469174909, guid: e10887af2a462724e84175079dbcf1a9, type: 3}
-  attackProjectileSpeed: 10
+  attackCooldown: 0
   characterLayer:
     serializedVersion: 2
     m_Bits: 64
+  fireballPrefabName: 
+  AoePrefabName: 
+  attackProjectileSpeed: 10
   meleeHitboxSize: 5
+  powerRange: 0
+  powerCooldown: 0
 --- !u!143 &734428859
 CharacterController:
   m_ObjectHideFlags: 0
@@ -8672,19 +8681,22 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   health: 0
   maxHealth: 30
-  attackRange: 1.5
   speed: 4.5
   healthBarPrefab: {fileID: 2505273644731239485, guid: f032af557d41213499ccbdd815c15a7b, type: 3}
   healthPanelRect: {fileID: 1913881814}
   hpBarProxyFollow: {fileID: 1677641115}
+  attackRange: 1.5
   exitPoint: {fileID: 0}
-  fireballPrefab: {fileID: 2029881061899082543, guid: d505addd5a9d5374f9e1091533707515, type: 3}
-  fireballExplosionPrefab: {fileID: 7704456569469174909, guid: e10887af2a462724e84175079dbcf1a9, type: 3}
-  attackProjectileSpeed: 10
+  attackCooldown: 0
   characterLayer:
     serializedVersion: 2
     m_Bits: 64
+  fireballPrefabName: 
+  AoePrefabName: 
+  attackProjectileSpeed: 10
   meleeHitboxSize: 5
+  powerRange: 0
+  powerCooldown: 0
 --- !u!143 &840593488
 CharacterController:
   m_ObjectHideFlags: 0
@@ -9885,19 +9897,22 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   health: 0
   maxHealth: 30
-  attackRange: 1.5
   speed: 4.5
   healthBarPrefab: {fileID: 2505273644731239485, guid: f032af557d41213499ccbdd815c15a7b, type: 3}
   healthPanelRect: {fileID: 1913881814}
   hpBarProxyFollow: {fileID: 1988422784}
+  attackRange: 1.5
   exitPoint: {fileID: 0}
-  fireballPrefab: {fileID: 2029881061899082543, guid: d505addd5a9d5374f9e1091533707515, type: 3}
-  fireballExplosionPrefab: {fileID: 7704456569469174909, guid: e10887af2a462724e84175079dbcf1a9, type: 3}
-  attackProjectileSpeed: 10
+  attackCooldown: 0
   characterLayer:
     serializedVersion: 2
     m_Bits: 64
+  fireballPrefabName: 
+  AoePrefabName: 
+  attackProjectileSpeed: 10
   meleeHitboxSize: 5
+  powerRange: 0
+  powerCooldown: 0
 --- !u!143 &949595717
 CharacterController:
   m_ObjectHideFlags: 0
@@ -18450,8 +18465,8 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1269496524}
-  - component: {fileID: 1269496523}
   - component: {fileID: 1269496525}
+  - component: {fileID: 1269496526}
   m_Layer: 0
   m_Name: Managers
   m_TagString: Untagged
@@ -18459,19 +18474,6 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!114 &1269496523
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1269496522}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: f884c309f2181434d996fb8b57bfe5d1, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  player: {fileID: 2494901959581414798}
 --- !u!4 &1269496524
 Transform:
   m_ObjectHideFlags: 0
@@ -18501,6 +18503,37 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   radius: 1
   Units: []
+--- !u!114 &1269496526
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1269496522}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 70fb103ea9607664b81dc8cbe463bfbe, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  objectPools:
+  - prefab: {fileID: 8762737198241174101, guid: 3ca115d91ca41d14a932113d1b874b1f, type: 3}
+    poolSize: 5
+    objects: []
+  - prefab: {fileID: 7704456569469174909, guid: e10887af2a462724e84175079dbcf1a9, type: 3}
+    poolSize: 5
+    objects: []
+  - prefab: {fileID: 1127485153584772817, guid: 4094a67b479e5524d955e9dd7d16567c, type: 3}
+    poolSize: 5
+    objects: []
+  - prefab: {fileID: 2029881061899082543, guid: d505addd5a9d5374f9e1091533707515, type: 3}
+    poolSize: 5
+    objects: []
+  - prefab: {fileID: 2029881061899082543, guid: 70bdde46f5676434daabb86cc7401809, type: 3}
+    poolSize: 5
+    objects: []
+  - prefab: {fileID: 277609163221870987, guid: f12365c0ac545b646a8a091dc484be19, type: 3}
+    poolSize: 20
+    objects: []
 --- !u!1 &1269989251
 GameObject:
   m_ObjectHideFlags: 0
@@ -18755,19 +18788,22 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   health: 0
   maxHealth: 30
-  attackRange: 1.5
   speed: 4.5
   healthBarPrefab: {fileID: 2505273644731239485, guid: f032af557d41213499ccbdd815c15a7b, type: 3}
   healthPanelRect: {fileID: 1913881814}
   hpBarProxyFollow: {fileID: 1239248458}
+  attackRange: 1.5
   exitPoint: {fileID: 0}
-  fireballPrefab: {fileID: 2029881061899082543, guid: d505addd5a9d5374f9e1091533707515, type: 3}
-  fireballExplosionPrefab: {fileID: 7704456569469174909, guid: e10887af2a462724e84175079dbcf1a9, type: 3}
-  attackProjectileSpeed: 10
+  attackCooldown: 0
   characterLayer:
     serializedVersion: 2
     m_Bits: 64
+  fireballPrefabName: 
+  AoePrefabName: 
+  attackProjectileSpeed: 10
   meleeHitboxSize: 5
+  powerRange: 0
+  powerCooldown: 0
 --- !u!143 &1291462145
 CharacterController:
   m_ObjectHideFlags: 0
@@ -25482,6 +25518,7 @@ Transform:
   - {fileID: 949595713}
   - {fileID: 840593484}
   - {fileID: 1291462141}
+  - {fileID: 4144566061409941701}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1890856063
@@ -29303,7 +29340,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!1 &2494903400913212680
 GameObject:
   m_ObjectHideFlags: 0
@@ -29650,6 +29687,75 @@ MonoBehaviour:
   m_DefaultActionMap: Controls
   m_SplitScreenIndex: -1
   m_Camera: {fileID: 0}
+--- !u!1001 &2690789254254042443
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    serializedVersion: 3
+    m_TransformParent: {fileID: 1881322215}
+    m_Modifications:
+    - target: {fileID: 627681713311991238, guid: 448b5d9eb02995b4b9d26f340a2e76bf, type: 3}
+      propertyPath: m_Enabled
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 627681713311991238, guid: 448b5d9eb02995b4b9d26f340a2e76bf, type: 3}
+      propertyPath: attackRange
+      value: 20
+      objectReference: {fileID: 0}
+    - target: {fileID: 627681713311991238, guid: 448b5d9eb02995b4b9d26f340a2e76bf, type: 3}
+      propertyPath: healthPanelRect
+      value: 
+      objectReference: {fileID: 1913881814}
+    - target: {fileID: 1478289978232646481, guid: 448b5d9eb02995b4b9d26f340a2e76bf, type: 3}
+      propertyPath: m_Name
+      value: Enemy_Small
+      objectReference: {fileID: 0}
+    - target: {fileID: 4217945113749544676, guid: 448b5d9eb02995b4b9d26f340a2e76bf, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 2.06
+      objectReference: {fileID: 0}
+    - target: {fileID: 4217945113749544676, guid: 448b5d9eb02995b4b9d26f340a2e76bf, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4217945113749544676, guid: 448b5d9eb02995b4b9d26f340a2e76bf, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4217945113749544676, guid: 448b5d9eb02995b4b9d26f340a2e76bf, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 4217945113749544676, guid: 448b5d9eb02995b4b9d26f340a2e76bf, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4217945113749544676, guid: 448b5d9eb02995b4b9d26f340a2e76bf, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4217945113749544676, guid: 448b5d9eb02995b4b9d26f340a2e76bf, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4217945113749544676, guid: 448b5d9eb02995b4b9d26f340a2e76bf, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4217945113749544676, guid: 448b5d9eb02995b4b9d26f340a2e76bf, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4217945113749544676, guid: 448b5d9eb02995b4b9d26f340a2e76bf, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: 448b5d9eb02995b4b9d26f340a2e76bf, type: 3}
 --- !u!1001 &2767247233555095997
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -29658,6 +29764,14 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 1881322215}
     m_Modifications:
+    - target: {fileID: 6631623146585664489, guid: c030b677f1aa4a043837074f45635c7a, type: 3}
+      propertyPath: speed
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 6631623146585664489, guid: c030b677f1aa4a043837074f45635c7a, type: 3}
+      propertyPath: m_Enabled
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 6631623146585664489, guid: c030b677f1aa4a043837074f45635c7a, type: 3}
       propertyPath: healthPanelRect
       value: 
@@ -29668,7 +29782,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 6894551819877516500, guid: c030b677f1aa4a043837074f45635c7a, type: 3}
       propertyPath: m_IsActive
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 8237003867044120221, guid: c030b677f1aa4a043837074f45635c7a, type: 3}
       propertyPath: m_LocalPosition.x
@@ -29680,7 +29794,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 8237003867044120221, guid: c030b677f1aa4a043837074f45635c7a, type: 3}
       propertyPath: m_LocalPosition.z
-      value: -9.32
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 8237003867044120221, guid: c030b677f1aa4a043837074f45635c7a, type: 3}
       propertyPath: m_LocalRotation.w
@@ -29725,7 +29839,7 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 361067721089019045, guid: c7e2f6a1b195de74f850e180d6abb20c, type: 3}
       propertyPath: m_LocalPosition.x
-      value: 0
+      value: -1.656
       objectReference: {fileID: 0}
     - target: {fileID: 361067721089019045, guid: c7e2f6a1b195de74f850e180d6abb20c, type: 3}
       propertyPath: m_LocalPosition.y
@@ -29733,7 +29847,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 361067721089019045, guid: c7e2f6a1b195de74f850e180d6abb20c, type: 3}
       propertyPath: m_LocalPosition.z
-      value: 0
+      value: 0.007
       objectReference: {fileID: 0}
     - target: {fileID: 361067721089019045, guid: c7e2f6a1b195de74f850e180d6abb20c, type: 3}
       propertyPath: m_LocalRotation.w
@@ -29780,6 +29894,11 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: c7e2f6a1b195de74f850e180d6abb20c, type: 3}
+--- !u!4 &4144566061409941701 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 4217945113749544676, guid: 448b5d9eb02995b4b9d26f340a2e76bf, type: 3}
+  m_PrefabInstance: {fileID: 2690789254254042443}
+  m_PrefabAsset: {fileID: 0}
 --- !u!4 &4987608374404606434 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 8237003867044120221, guid: c030b677f1aa4a043837074f45635c7a, type: 3}
@@ -29795,7 +29914,7 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 839425786960260319, guid: db2ab821124dfaa428eb41235a2e4794, type: 3}
       propertyPath: m_LocalPosition.x
-      value: 3
+      value: 3.4
       objectReference: {fileID: 0}
     - target: {fileID: 839425786960260319, guid: db2ab821124dfaa428eb41235a2e4794, type: 3}
       propertyPath: m_LocalPosition.y
@@ -29803,7 +29922,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 839425786960260319, guid: db2ab821124dfaa428eb41235a2e4794, type: 3}
       propertyPath: m_LocalPosition.z
-      value: 1.5
+      value: -5.54
       objectReference: {fileID: 0}
     - target: {fileID: 839425786960260319, guid: db2ab821124dfaa428eb41235a2e4794, type: 3}
       propertyPath: m_LocalRotation.w
@@ -29866,15 +29985,13 @@ MonoBehaviour:
   groundLayer:
     serializedVersion: 2
     m_Bits: 136
-  fireballPrefab: {fileID: 2029881061899082543, guid: d505addd5a9d5374f9e1091533707515, type: 3}
-  fireballExplosionPrefab: {fileID: 7704456569469174909, guid: e10887af2a462724e84175079dbcf1a9, type: 3}
+  fireballPrefabName: Fireball
   attackProjectileSpeed: 10
   attackCooldownTime: 1
   attackPlayerMovementSpeedPercent: 2
   attackSpeedMultiplier: 1
   attackCooldownImage: {fileID: 1312029674}
-  meteorPrefab: {fileID: 1127485153584772817, guid: 4094a67b479e5524d955e9dd7d16567c, type: 3}
-  powerLifetime: 1.5
+  meteorPrefabName: Meteor
   powerCooldownTime: 5
   powerPlayerMovementSpeedPercent: 5
   powerSpeedMultiplier: 1
@@ -29967,8 +30084,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: db894c1471f215942ba871c755fbf844, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  firewallPrefab: {fileID: 277609163221870987, guid: f12365c0ac545b646a8a091dc484be19, type: 3}
-  firewallLifetime: 3
+  firewallPrefabName: Firewall
 --- !u!114 &5444040362796816506
 MonoBehaviour:
   m_ObjectHideFlags: 0

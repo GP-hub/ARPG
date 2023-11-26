@@ -59,14 +59,17 @@ public class Fireball_enemy : MonoBehaviour
             }
         }
 
-        PoolingManager.Instance.Pooling(this.transform.position, timeExplosionFadeOut);
+        PoolingManagerSingleton.Instance.GetObjectFromPool("placeholder_puff", this.transform.position);
+
         gameObject.SetActive(false);
     }
 
     private IEnumerator DisableFireballObjectAfterTime(GameObject objectToDisable, float timeProjectileExpire, float timeExplosionExpire)
     {
         yield return new WaitForSeconds(timeProjectileExpire);
-        PoolingManager.Instance.Pooling(objectToDisable.transform.position, timeExplosionExpire);
+
+        PoolingManagerSingleton.Instance.GetObjectFromPool("placeholder_puff", objectToDisable.transform.position);
+
         objectToDisable.SetActive(false);
     }
 }

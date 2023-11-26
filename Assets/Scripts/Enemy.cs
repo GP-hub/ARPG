@@ -1,5 +1,4 @@
 using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.AI;
 
@@ -8,7 +7,6 @@ using UnityEngine.AI;
 public class Enemy : MonoBehaviour
 {
     [SerializeField] private float health, maxHealth = 30;
-    [SerializeField] private float attackRange;
     [Tooltip("Animator issue when speed is below 2")]
     [SerializeField] private float speed;
     // Idk 
@@ -22,19 +20,29 @@ public class Enemy : MonoBehaviour
 
     [Space(10)]
     [Header("Attack")]
+    [SerializeField] private float attackRange;
     [SerializeField] private GameObject exitPoint;
-    [SerializeField] private GameObject fireballPrefab;
-    // We are getting the explosion gameobject from the player through the pooling manager, terrible but yeah..
-    //[SerializeField] private GameObject fireballExplosionPrefab;
-    [SerializeField] private float attackProjectileSpeed;
+    [SerializeField] private float attackCooldown;
     [SerializeField] private LayerMask characterLayer;
+
+    [Space(10)]
+    [Header("Attack: Ranged")]
+    [SerializeField] private string fireballPrefabName;
+    [SerializeField] private string AoePrefabName;
+    [SerializeField] private float attackProjectileSpeed;
+
+    [Space(10)]
+    [Header("Attack: Melee")]
     [SerializeField] private float meleeHitboxSize;
-    private int maxObjectsForPooling = 5;
+
+    [Space(10)]
+    [Header("Power")]
+    [SerializeField] private float powerRange;
+    [SerializeField] private float powerCooldown;
+
 
     private bool isAttacking;
     private NavMeshAgent agent;
-
-    private List<GameObject> fireballObjectPool = new List<GameObject>();
 
     private Animator animator;
 
@@ -43,14 +51,16 @@ public class Enemy : MonoBehaviour
     private Healthbar healthBar;
 
     private Transform target;
-
-    Vector3 velocity = Vector3.zero;
+    private GameObject player;
 
     private Vector3 lastPosition;
 
     private float calculatedSpeed;
 
     private bool isGrounded = true;
+    private bool isCharging = false;
+
+
 
     private void Awake()
     {
@@ -67,10 +77,14 @@ public class Enemy : MonoBehaviour
         health = maxHealth;
         GeneratePlayerHealthBar(hpBarProxyFollow);
 
-        // Pass the player as the target for now
-        target = GameObject.Find("Player").transform;
+        player = GameObject.Find("Player");
 
-        PoolingFireballObject();
+        if (player)
+        {
+            // Pass the player as the target for now
+            target = player.transform;
+        }
+
         lastPosition = transform.position;
 
         StartCoroutine(CheckGroundedStatus());
@@ -79,10 +93,57 @@ public class Enemy : MonoBehaviour
 
     private void Update()
     {
-        HandleAnimation();
-        HandleAttack();
+        HandleMovmentAnimation();
+        HandleBehaviorAnimation();
     }
 
+    private void ChargingCoroutineStart()
+    {
+        StartCoroutine(MoveForwardCoroutine());
+    }
+
+    IEnumerator MoveForwardCoroutine()
+    {
+        float timer = .5f;
+
+        while (timer > 0f)
+        {
+            isCharging = true;
+            // Move the CharacterController forward
+
+            controller.Move(transform.forward * speed * 2 * Time.deltaTime);
+            
+            agent.avoidancePriority = 10;
+            agent.obstacleAvoidanceType = ObstacleAvoidanceType.NoObstacleAvoidance;
+
+            // Check for collisions with objects on the 'Player' layer
+            Collider[] colliders = Physics.OverlapBox(transform.position, transform.localScale / 2, Quaternion.identity, LayerMask.GetMask("Character"));
+
+            foreach (Collider collider in colliders)
+            {
+                if (collider.CompareTag("Player"))
+                {
+                    Debug.Log("Collided with a character: " + collider.name);
+
+                    // Handle collision with 'Player' here
+                }
+            }
+
+            // Decrease the timer
+            timer -= Time.deltaTime;
+
+            // Wait for the next frame
+            yield return null;
+        }
+
+        isCharging = false;
+
+        agent.obstacleAvoidanceType = ObstacleAvoidanceType.LowQualityObstacleAvoidance;
+        agent.avoidancePriority = 50;
+
+        // Stop the CharacterController when the time is up
+        controller.Move(Vector3.zero);
+    }
 
     private IEnumerator CheckGroundedStatus()
     {
@@ -118,8 +179,10 @@ public class Enemy : MonoBehaviour
         //Debug.Log("Enemy hp: " + health);
     }
 
-    void HandleAttack()
+    void HandleBehaviorAnimation()
     {
+        if (target == null) return;
+
         float distanceToTarget = Vector3.Distance(transform.position, target.position);
 
         if (!CanSeePlayer())
@@ -139,6 +202,7 @@ public class Enemy : MonoBehaviour
             {
                 if (!agent.pathPending && agent.remainingDistance < AIManager.Instance.Radius || attackRange > agent.remainingDistance/* || !agent.pathPending && agent.remainingDistance < attackRange*/) 
                 {
+
                     if (distanceToTarget <= attackRange)
                     {
                         Stop();
@@ -147,6 +211,8 @@ public class Enemy : MonoBehaviour
                     }
                     if (distanceToTarget > attackRange)
                     {
+                        if (isCharging) return;
+
                         // HERE THE OTHER UNIT WILL THE ONE ALREADY ATTCKING TO MOVE !!!
                         AIManager.Instance.MakeAgentCircleTarget(target.transform);
                         HandleAttackAnimation(false);
@@ -210,23 +276,29 @@ public class Enemy : MonoBehaviour
         }
     }
 
+    // Triggered via SpawnAoe Attack Animation
+    public void SpawnAOE()
+    {
+        PoolingManagerSingleton.Instance.GetObjectFromPool(AoePrefabName, target.transform.position + new Vector3(0, 0.2f, 0));
+    }
+
+
     // Triggered via Ranged Attack animation
     public void RangedHit()
     {
         Vector3 targetCorrectedPosition = target.transform.position;
         Vector3 direction = (targetCorrectedPosition - this.transform.position).normalized;
 
-        GameObject newObject = GetPooledFireballObject();
+        GameObject newObject = PoolingManagerSingleton.Instance.GetObjectFromPool(fireballPrefabName, exitPoint.transform.position);
+
         if (newObject != null)
         {
-            newObject.transform.position = exitPoint.transform.position;
-            newObject.SetActive(true);
             Quaternion rotationToTarget = Quaternion.LookRotation(direction);
             newObject.transform.rotation = rotationToTarget;
         }
     }
 
-    void HandleAnimation()
+    void HandleMovmentAnimation()
     {
         if (calculatedSpeed > 1f)
         {
@@ -294,37 +366,6 @@ public class Enemy : MonoBehaviour
         healthBar = healthBarGo.GetComponent<Healthbar>();
         healthBar.SetHealthBarData(hpProxy, healthPanelRect);
         healthBar.transform.SetParent(healthPanelRect, false);
-    }
-
-
-    private void PoolingFireballObject()
-    {
-        for (int i = 0; i < maxObjectsForPooling; i++)
-        {
-            GameObject newFireballObject = Instantiate(fireballPrefab, Vector3.zero, Quaternion.identity);
-            newFireballObject.SetActive(false);
-            fireballObjectPool.Add(newFireballObject);
-        }
-    }
-
-    private GameObject GetPooledFireballObject()
-    {
-        for (int i = 0; i < fireballObjectPool.Count; i++)
-        {
-            if (!fireballObjectPool[i].activeInHierarchy)
-            {
-                return fireballObjectPool[i];
-            }
-        }
-
-        if (fireballObjectPool.Count < maxObjectsForPooling)
-        {
-            GameObject newObject = Instantiate(fireballPrefab, exitPoint.transform.position, Quaternion.identity);
-            newObject.SetActive(false);
-            fireballObjectPool.Add(newObject);
-            return newObject;
-        }
-        return null;
     }
 
     private bool CanSeePlayer()
