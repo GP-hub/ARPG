@@ -29340,7 +29340,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!1 &2494903400913212680
 GameObject:
   m_ObjectHideFlags: 0
@@ -29696,12 +29696,16 @@ PrefabInstance:
     m_TransformParent: {fileID: 1881322215}
     m_Modifications:
     - target: {fileID: 627681713311991238, guid: 448b5d9eb02995b4b9d26f340a2e76bf, type: 3}
+      propertyPath: speed
+      value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 627681713311991238, guid: 448b5d9eb02995b4b9d26f340a2e76bf, type: 3}
       propertyPath: m_Enabled
       value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 627681713311991238, guid: 448b5d9eb02995b4b9d26f340a2e76bf, type: 3}
       propertyPath: attackRange
-      value: 20
+      value: 1.5
       objectReference: {fileID: 0}
     - target: {fileID: 627681713311991238, guid: 448b5d9eb02995b4b9d26f340a2e76bf, type: 3}
       propertyPath: healthPanelRect
@@ -29710,6 +29714,10 @@ PrefabInstance:
     - target: {fileID: 1478289978232646481, guid: 448b5d9eb02995b4b9d26f340a2e76bf, type: 3}
       propertyPath: m_Name
       value: Enemy_Small
+      objectReference: {fileID: 0}
+    - target: {fileID: 1478289978232646481, guid: 448b5d9eb02995b4b9d26f340a2e76bf, type: 3}
+      propertyPath: m_IsActive
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 4217945113749544676, guid: 448b5d9eb02995b4b9d26f340a2e76bf, type: 3}
       propertyPath: m_LocalPosition.x
@@ -29914,7 +29922,7 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 839425786960260319, guid: db2ab821124dfaa428eb41235a2e4794, type: 3}
       propertyPath: m_LocalPosition.x
-      value: 3.4
+      value: 1.06
       objectReference: {fileID: 0}
     - target: {fileID: 839425786960260319, guid: db2ab821124dfaa428eb41235a2e4794, type: 3}
       propertyPath: m_LocalPosition.y
@@ -29922,7 +29930,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 839425786960260319, guid: db2ab821124dfaa428eb41235a2e4794, type: 3}
       propertyPath: m_LocalPosition.z
-      value: -5.54
+      value: -1.35
       objectReference: {fileID: 0}
     - target: {fileID: 839425786960260319, guid: db2ab821124dfaa428eb41235a2e4794, type: 3}
       propertyPath: m_LocalRotation.w
@@ -29956,13 +29964,17 @@ PrefabInstance:
       propertyPath: healthPanelRect
       value: 
       objectReference: {fileID: 1913881814}
+    - target: {fileID: 2105299005440825275, guid: db2ab821124dfaa428eb41235a2e4794, type: 3}
+      propertyPath: characterLayer.m_Bits
+      value: 64
+      objectReference: {fileID: 0}
     - target: {fileID: 6695187827382280720, guid: db2ab821124dfaa428eb41235a2e4794, type: 3}
       propertyPath: m_Name
       value: Enemy Ranged
       objectReference: {fileID: 0}
     - target: {fileID: 6695187827382280720, guid: db2ab821124dfaa428eb41235a2e4794, type: 3}
       propertyPath: m_IsActive
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []

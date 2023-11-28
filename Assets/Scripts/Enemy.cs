@@ -1,4 +1,6 @@
+using System;
 using System.Collections;
+using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.AI;
 
@@ -41,7 +43,6 @@ public class Enemy : MonoBehaviour
     [SerializeField] private float powerCooldown;
 
 
-    private bool isAttacking;
     private NavMeshAgent agent;
 
     private Animator animator;
@@ -51,6 +52,7 @@ public class Enemy : MonoBehaviour
     private Healthbar healthBar;
 
     private Transform target;
+
     private GameObject player;
 
     private Vector3 lastPosition;
@@ -58,9 +60,15 @@ public class Enemy : MonoBehaviour
     private float calculatedSpeed;
 
     private bool isGrounded = true;
-    private bool isCharging = false;
+    private bool isAttacking;
+    private bool isPowering = false;
+    private bool isMoving;
+    private bool isIdle;
 
+    private IState currentState;
 
+    public Transform Target { get => target; set => target = value; }
+    public NavMeshAgent Agent { get => agent; set => agent = value; }
 
     private void Awake()
     {
@@ -87,14 +95,21 @@ public class Enemy : MonoBehaviour
 
         lastPosition = transform.position;
 
+        ChangeState(new IdleState());
+
         StartCoroutine(CheckGroundedStatus());
     }
 
 
     private void Update()
     {
-        HandleMovmentAnimation();
-        HandleBehaviorAnimation();
+        currentState.Update();
+
+        HandleStatesAnimator();
+
+        HandleStateMachine();
+
+        //HandleMovementAnimation();
     }
 
     private void ChargingCoroutineStart()
@@ -108,11 +123,11 @@ public class Enemy : MonoBehaviour
 
         while (timer > 0f)
         {
-            isCharging = true;
+            isPowering = true;
             // Move the CharacterController forward
 
             controller.Move(transform.forward * speed * 2 * Time.deltaTime);
-            
+
             agent.avoidancePriority = 10;
             agent.obstacleAvoidanceType = ObstacleAvoidanceType.NoObstacleAvoidance;
 
@@ -136,7 +151,7 @@ public class Enemy : MonoBehaviour
             yield return null;
         }
 
-        isCharging = false;
+        isPowering = false;
 
         agent.obstacleAvoidanceType = ObstacleAvoidanceType.LowQualityObstacleAvoidance;
         agent.avoidancePriority = 50;
@@ -161,11 +176,6 @@ public class Enemy : MonoBehaviour
         }
     }
 
-    private void FixedUpdate()
-    {
-        CurrentSpeed();
-    }
-
     public void TakeDamage(float damageAmount)
     {
         health -= damageAmount;
@@ -179,68 +189,35 @@ public class Enemy : MonoBehaviour
         //Debug.Log("Enemy hp: " + health);
     }
 
-    void HandleBehaviorAnimation()
+    void HandleStateMachine()
     {
-        if (target == null) return;
-
-        float distanceToTarget = Vector3.Distance(transform.position, target.position);
-
-        if (!CanSeePlayer())
+        if (target == null)
         {
-            if (agent.enabled)
+            StartCoroutine(SphereCastRoutine());
+            return;
+        }
+
+        if (CanSeeTarget(target))
+        {
+            float distanceToTarget = Vector3.Distance(transform.position, target.position);
+
+            if (distanceToTarget <= attackRange)
             {
-                AIManager.Instance.MakeAgentCircleTarget(target.transform);
-                HandleAttackAnimation(false);
+                ChangeState(new AttackState());
+                return;
+            }
+            if (distanceToTarget > attackRange)
+            {
+                ChangeState(new FollowState());
                 return;
             }
         }
-
-
-        if (CanSeePlayer())
+        if (!CanSeeTarget(target))
         {
-            if (agent.enabled)
-            {
-                if (!agent.pathPending && agent.remainingDistance < AIManager.Instance.Radius || attackRange > agent.remainingDistance/* || !agent.pathPending && agent.remainingDistance < attackRange*/) 
-                {
-
-                    if (distanceToTarget <= attackRange)
-                    {
-                        Stop();
-                        HandleAttackAnimation(true);
-                        return;
-                    }
-                    if (distanceToTarget > attackRange)
-                    {
-                        if (isCharging) return;
-
-                        // HERE THE OTHER UNIT WILL THE ONE ALREADY ATTCKING TO MOVE !!!
-                        AIManager.Instance.MakeAgentCircleTarget(target.transform);
-                        HandleAttackAnimation(false);
-                        return;
-                    }
-                }
-            }
+            ChangeState(new FollowState());
+            return;
         }
-    }
-
-    void HandleAttackAnimation(bool onRange)
-    {
-        if (onRange)
-        {
-            animator.SetBool("IsAttacking", true);
-            isAttacking = true;
-            LookTowards();
-
-            animator.SetBool("IsWalking", false);
-            animator.SetBool("IsIdle", false);
-
-        }
-        if (!onRange)
-        {
-            animator.SetBool("IsAttacking", false);
-            isAttacking = false;
-        }
-    }
+    }    
 
     void LookTowards()
     {
@@ -298,43 +275,22 @@ public class Enemy : MonoBehaviour
         }
     }
 
-    void HandleMovmentAnimation()
-    {
-        if (calculatedSpeed > 1f)
-        {
-            animator.SetBool("IsWalking", true);
-            animator.SetBool("IsIdle", false);
-            animator.SetBool("IsAttacking", false);
-            isAttacking = false;
-        }
-        else
-        {
-            animator.SetBool("IsIdle", true);
-            animator.SetBool("IsWalking", false);
-        }
-    }
-
-    // Directly moving towards the player
-    //public void Move(Vector3 targetPos)
+    //void HandleMovementAnimation()
     //{
-    //    agent.avoidancePriority = 50;
-
-    //    agent.isStopped = false;
-    //    agent.autoRepath = true;
-
-    //    if (agent.speed == 0)
+    //    if (calculatedSpeed > 1f)
     //    {
-    //        agent.speed = speed;
+    //        isMoving = true;
+    //        //animator.SetBool("IsWalking", true);
+    //        //animator.SetBool("IsIdle", false);
+    //        //animator.SetBool("IsAttacking", false);
+    //        //isAttacking = false;
     //    }
-    //    agent.SetDestination(targetPos);
-
-    //    // Calculate the new position using SmoothDamp logic
-    //    Vector3 smoothDampedPosition = Vector3.SmoothDamp(transform.position, agent.nextPosition, ref velocity, 0.1f);
-
-    //    // Calculate the direction and distance to move
-    //    Vector3 moveDelta = smoothDampedPosition - transform.position;
-
-    //    controller.Move(transform.position + moveDelta);
+    //    else
+    //    {
+    //        isMoving = false;
+    //        //animator.SetBool("IsIdle", true);
+    //        //animator.SetBool("IsWalking", false);
+    //    }
     //}
 
     // Moving around the target via AIManager, circling the target
@@ -353,7 +309,7 @@ public class Enemy : MonoBehaviour
         }
     }
 
-    void Stop()
+    public void Stop()
     {
         agent.ResetPath();
         agent.isStopped = true;
@@ -368,7 +324,7 @@ public class Enemy : MonoBehaviour
         healthBar.transform.SetParent(healthPanelRect, false);
     }
 
-    private bool CanSeePlayer()
+    private bool CanSeeTarget(Transform target)
     {
         // Direction from the enemy to the player
         Vector3 directionToPlayer = (target.position + new Vector3(0f, 1f, 0f)) - (transform.position + new Vector3(0f, 1f, 0f));
@@ -389,20 +345,86 @@ public class Enemy : MonoBehaviour
         return false;
     }
 
-    private float CurrentSpeed()
+    public void ChangeState(IState newState)
     {
-        // Calculate the displacement vector since the last frame
-        Vector3 displacement = transform.position - lastPosition;
+        if (newState == currentState) return;
 
-        // Calculate the magnitude of the displacement vector
-        float distanceMoved = displacement.magnitude;
+        if (currentState != null)
+        {
+            currentState.Exit();
+        }
 
-        // Calculate the speed based on the distance and time
-        calculatedSpeed = distanceMoved / Time.deltaTime;
+        currentState = newState;
+        currentState.Enter(this);
+    }
 
-        // Update the last position
-        lastPosition = transform.position;
+    private void HandleStatesAnimator()
+    {
+        if (currentState is FollowState)
+        {
+            SetTriggerSingle("TriggerWalking");
+            return;
+        }
+        if (currentState is AttackState)
+        {
+            SetTriggerSingle("TriggerAttacking");
+            return;
+        }
+        if (currentState is IdleState)
+        {
+            SetTriggerSingle("TriggerIdle");
+            return;
+        }
+    }
 
-        return calculatedSpeed;
+    public IEnumerator SphereCastRoutine()
+    {
+        while (target == null) 
+        {
+            // Max number of entities in the OverlapSphere
+            int maxColliders = 10;
+            Collider[] hitColliders = new Collider[maxColliders];
+            int numColliders = Physics.OverlapSphereNonAlloc(transform.position, 50f, hitColliders, characterLayer);
+
+            for (int i = 0; i < numColliders; i++)
+            {
+                if (hitColliders[i].CompareTag("Player"))
+                {
+                    Transform t = hitColliders[i].transform;
+                    if (CanSeeTarget(t))
+                    {
+                        target = t;
+                        Debug.Log("Can see player in aggro range.");
+                    }
+                    if (!CanSeeTarget(t))
+                    {
+                        Debug.Log("Player in range but cannot see.");
+                    }
+                }
+            }
+            if (hitColliders.Length <= 0)
+            {
+                // No character hit
+                Debug.Log("No character hit.");
+            }
+
+            // Wait for 2 seconds before performing the next SphereCast
+            yield return new WaitForSeconds(2f);
+        }
+    }
+
+    public void SetTriggerSingle(string triggerName)
+    {
+        // Disable all triggers
+        foreach (AnimatorControllerParameter param in animator.parameters)
+        {
+            if (param.type == AnimatorControllerParameterType.Trigger)
+            {
+                animator.ResetTrigger(param.name);
+            }
+        }
+
+        // Enable the desired trigger
+        animator.SetTrigger(triggerName);
     }
 }
