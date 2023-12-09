@@ -60,4 +60,13 @@ public class EventManager : Singleton<EventManager>
         }
     }
 
+    public event Action onEnemyDecideNextMove;
+    public void EnemyDecideNextMove()
+    {
+        if (onEnemyDecideNextMove !=null)
+        {
+            onEnemyDecideNextMove();
+        }
+    }
+
 }

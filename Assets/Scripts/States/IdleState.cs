@@ -6,9 +6,9 @@ class IdleState : IState
 
     public void Enter(Enemy enemy)
     {
-        Debug.Log("Enter: IdleState");
         this.enemy = enemy;
         this.enemy.Target = null;
+        enemy.SetTriggerSingle("TriggerIdle");
     }
 
     public void Exit()
@@ -23,4 +23,10 @@ class IdleState : IState
             enemy.ChangeState(new FollowState());
         }
     }
+
+    public string GetStateName()
+    {
+        return "IdleState";
+    }
+
 }

@@ -282,6 +282,8 @@ MonoBehaviour:
   meleeHitboxSize: 5
   powerRange: 0
   powerCooldown: 0
+  isPowerOnCooldown: 0
+  isAttackOnCooldown: 0
 --- !u!143 &6055206
 CharacterController:
   m_ObjectHideFlags: 0
@@ -3258,6 +3260,8 @@ MonoBehaviour:
   meleeHitboxSize: 5
   powerRange: 0
   powerCooldown: 0
+  isPowerOnCooldown: 0
+  isAttackOnCooldown: 0
 --- !u!143 &348457992
 CharacterController:
   m_ObjectHideFlags: 0
@@ -7639,6 +7643,8 @@ MonoBehaviour:
   meleeHitboxSize: 5
   powerRange: 0
   powerCooldown: 0
+  isPowerOnCooldown: 0
+  isAttackOnCooldown: 0
 --- !u!143 &734428859
 CharacterController:
   m_ObjectHideFlags: 0
@@ -8697,6 +8703,8 @@ MonoBehaviour:
   meleeHitboxSize: 5
   powerRange: 0
   powerCooldown: 0
+  isPowerOnCooldown: 0
+  isAttackOnCooldown: 0
 --- !u!143 &840593488
 CharacterController:
   m_ObjectHideFlags: 0
@@ -9913,6 +9921,8 @@ MonoBehaviour:
   meleeHitboxSize: 5
   powerRange: 0
   powerCooldown: 0
+  isPowerOnCooldown: 0
+  isAttackOnCooldown: 0
 --- !u!143 &949595717
 CharacterController:
   m_ObjectHideFlags: 0
@@ -18804,6 +18814,8 @@ MonoBehaviour:
   meleeHitboxSize: 5
   powerRange: 0
   powerCooldown: 0
+  isPowerOnCooldown: 0
+  isAttackOnCooldown: 0
 --- !u!143 &1291462145
 CharacterController:
   m_ObjectHideFlags: 0
@@ -29959,6 +29971,14 @@ PrefabInstance:
     - target: {fileID: 839425786960260319, guid: db2ab821124dfaa428eb41235a2e4794, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2105299005440825275, guid: db2ab821124dfaa428eb41235a2e4794, type: 3}
+      propertyPath: powerRange
+      value: 20
+      objectReference: {fileID: 0}
+    - target: {fileID: 2105299005440825275, guid: db2ab821124dfaa428eb41235a2e4794, type: 3}
+      propertyPath: powerCooldown
+      value: 10
       objectReference: {fileID: 0}
     - target: {fileID: 2105299005440825275, guid: db2ab821124dfaa428eb41235a2e4794, type: 3}
       propertyPath: healthPanelRect

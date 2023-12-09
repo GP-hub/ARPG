@@ -7,6 +7,7 @@ class FollowState : IState
     public void Enter(Enemy enemy)
     {
         this.enemy = enemy;
+        enemy.SetTriggerSingle("TriggerWalk");
     }
 
     public void Exit()
@@ -20,5 +21,10 @@ class FollowState : IState
         {
             AIManager.Instance.MakeAgentCircleTarget(enemy.Target.transform);
         }
+    }
+
+    public string GetStateName()
+    {
+        return "FollowState";
     }
 }

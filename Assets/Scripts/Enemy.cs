@@ -1,8 +1,8 @@
 using System;
 using System.Collections;
-using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.AI;
+using UnityEngine.EventSystems;
 
 [RequireComponent(typeof(NavMeshAgent))]
 [RequireComponent(typeof(CharacterController))]
@@ -25,7 +25,9 @@ public class Enemy : MonoBehaviour
     [SerializeField] private float attackRange;
     [SerializeField] private GameObject exitPoint;
     [SerializeField] private float attackCooldown;
+    private float currentAttackCooldown;
     [SerializeField] private LayerMask characterLayer;
+    private float lastAttackTime;
 
     [Space(10)]
     [Header("Attack: Ranged")]
@@ -41,6 +43,8 @@ public class Enemy : MonoBehaviour
     [Header("Power")]
     [SerializeField] private float powerRange;
     [SerializeField] private float powerCooldown;
+    private float currentPowerCooldown;
+    private float lastPowerTime;
 
 
     private NavMeshAgent agent;
@@ -65,10 +69,14 @@ public class Enemy : MonoBehaviour
     private bool isMoving;
     private bool isIdle;
 
+    [HideInInspector] public bool isPowerOnCooldown;
+    [HideInInspector] public bool isAttackOnCooldown;
+
     private IState currentState;
 
     public Transform Target { get => target; set => target = value; }
     public NavMeshAgent Agent { get => agent; set => agent = value; }
+    public Animator Animator { get => animator; set => animator = value; }
 
     private void Awake()
     {
@@ -105,9 +113,14 @@ public class Enemy : MonoBehaviour
     {
         currentState.Update();
 
-        HandleStatesAnimator();
+        //HandleStatesAnimator();
 
         HandleStateMachine();
+
+        UpdateSpellCooldowns();
+
+        //PowerCooldownTimer();
+        //AttackCooldownTimer();
 
         //HandleMovementAnimation();
     }
@@ -199,7 +212,9 @@ public class Enemy : MonoBehaviour
 
         if (CanSeeTarget(target))
         {
-            float distanceToTarget = Vector3.Distance(transform.position, target.position);
+            // Previous method of calculating distance that do one more operation: a square root, not sure what is the difference with the one below.
+            //float distanceToTarget = Vector3.Distance(transform.position, target.position);
+            float distanceToTarget = (transform.position - target.position).sqrMagnitude;
 
             if (distanceToTarget <= attackRange)
             {
@@ -347,10 +362,11 @@ public class Enemy : MonoBehaviour
 
     public void ChangeState(IState newState)
     {
-        if (newState == currentState) return;
 
         if (currentState != null)
         {
+            if (newState.GetStateName() == currentState.GetStateName()) return;
+
             currentState.Exit();
         }
 
@@ -358,24 +374,24 @@ public class Enemy : MonoBehaviour
         currentState.Enter(this);
     }
 
-    private void HandleStatesAnimator()
-    {
-        if (currentState is FollowState)
-        {
-            SetTriggerSingle("TriggerWalking");
-            return;
-        }
-        if (currentState is AttackState)
-        {
-            SetTriggerSingle("TriggerAttacking");
-            return;
-        }
-        if (currentState is IdleState)
-        {
-            SetTriggerSingle("TriggerIdle");
-            return;
-        }
-    }
+    //private void HandleStatesAnimator()
+    //{
+    //    if (currentState is FollowState)
+    //    {
+    //        SetTriggerSingle("TriggerWalk");
+    //        return;
+    //    }
+    //    if (currentState is AttackState)
+    //    {
+    //        SetTriggerSingle("TriggerAttack");
+    //        return;
+    //    }
+    //    if (currentState is IdleState)
+    //    {
+    //        SetTriggerSingle("TriggerIdle");
+    //        return;
+    //    }
+    //}
 
     public IEnumerator SphereCastRoutine()
     {
@@ -394,11 +410,11 @@ public class Enemy : MonoBehaviour
                     if (CanSeeTarget(t))
                     {
                         target = t;
-                        Debug.Log("Can see player in aggro range.");
+                        //Debug.Log("Can see player in aggro range.");
                     }
                     if (!CanSeeTarget(t))
                     {
-                        Debug.Log("Player in range but cannot see.");
+                        //Debug.Log("Player in range but cannot see.");
                     }
                 }
             }
@@ -426,5 +442,45 @@ public class Enemy : MonoBehaviour
 
         // Enable the desired trigger
         animator.SetTrigger(triggerName);
+    }
+
+    public void CastAttack()
+    {
+        currentAttackCooldown = attackCooldown;
+        isAttackOnCooldown = true;
+    }
+
+    public void CastPower()
+    {
+        currentPowerCooldown = powerCooldown;
+        isPowerOnCooldown = true;
+    }
+
+    private void UpdateSpellCooldowns()
+    {
+        //Debug.Log("currentPowerCooldown: " + currentPowerCooldown);
+        if (currentAttackCooldown > 0f && isAttackOnCooldown)
+        {
+            currentAttackCooldown -= Time.deltaTime;
+        }
+        if (currentAttackCooldown <= 0 && isAttackOnCooldown)
+        {
+            isAttackOnCooldown = false;
+        }
+
+        if (currentPowerCooldown > 0f && isPowerOnCooldown)
+        {
+            currentPowerCooldown -= Time.deltaTime;
+        }
+        if (currentPowerCooldown <= 0 && isPowerOnCooldown)
+        {
+            isPowerOnCooldown = false;
+        }
+    }
+
+    // Triggered last frame of every enemy attack animations
+    private void DecideNextMove()
+    {
+        EventManager.Instance.EnemyDecideNextMove();
     }
 }
