@@ -6,7 +6,7 @@ AnimationClip:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: Standing 1H Cast Spell 01
+  m_Name: EnemyRanged@Power01
   serializedVersion: 7
   m_Legacy: 0
   m_Compressed: 0
@@ -30527,7 +30527,7 @@ AnimationClip:
     m_AdditiveReferencePoseTime: 0
     m_StartTime: 0
     m_StopTime: 2.266667
-    m_OrientationOffsetY: 0
+    m_OrientationOffsetY: 41.3
     m_Level: 0
     m_CycleOffset: 0
     m_HasAdditiveReferencePose: 0
@@ -59872,14 +59872,21 @@ AnimationClip:
   m_HasMotionFloatCurves: 0
   m_Events:
   - time: 0
-    functionName: MoveSpeedPlayerOnPower
+    functionName: CastPower
     data: 
     objectReferenceParameter: {fileID: 0}
     floatParameter: 0
     intParameter: 0
     messageOptions: 0
   - time: 0.85
-    functionName: CastMeteor
+    functionName: SpawnAOE
+    data: 
+    objectReferenceParameter: {fileID: 0}
+    floatParameter: 0
+    intParameter: 0
+    messageOptions: 0
+  - time: 2.2666667
+    functionName: DecideNextMove
     data: 
     objectReferenceParameter: {fileID: 0}
     floatParameter: 0

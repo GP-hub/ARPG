@@ -1,6 +1,8 @@
+using System;
 using System.Collections;
 using UnityEngine;
 using UnityEngine.AI;
+
 
 [RequireComponent(typeof(NavMeshAgent))]
 [RequireComponent(typeof(CharacterController))]
@@ -23,7 +25,9 @@ public class Enemy : MonoBehaviour
     [SerializeField] private float attackRange;
     [SerializeField] private GameObject exitPoint;
     [SerializeField] private float attackCooldown;
+    private float currentAttackCooldown;
     [SerializeField] private LayerMask characterLayer;
+    private float lastAttackTime;
 
     [Space(10)]
     [Header("Attack: Ranged")]
@@ -39,9 +43,10 @@ public class Enemy : MonoBehaviour
     [Header("Power")]
     [SerializeField] private float powerRange;
     [SerializeField] private float powerCooldown;
+    private float currentPowerCooldown;
+    private float lastPowerTime;
 
 
-    private bool isAttacking;
     private NavMeshAgent agent;
 
     private Animator animator;
@@ -51,6 +56,7 @@ public class Enemy : MonoBehaviour
     private Healthbar healthBar;
 
     private Transform target;
+
     private GameObject player;
 
     private Vector3 lastPosition;
@@ -58,9 +64,22 @@ public class Enemy : MonoBehaviour
     private float calculatedSpeed;
 
     private bool isGrounded = true;
-    private bool isCharging = false;
+    private bool isAttacking;
+    private bool isPowering = false;
+    private bool isMoving;
+    private bool isIdle;    
 
+    [HideInInspector] public bool isCharging;
+    [HideInInspector] public bool isPowerOnCooldown;
+    [HideInInspector] public bool isAttackOnCooldown;
 
+    public IState currentState;
+
+    public Transform Target { get => target; set => target = value; }
+    public NavMeshAgent Agent { get => agent;}
+    public Animator Animator { get => animator;}
+    public bool IsPowering { get => isPowering;}
+    public bool IsAttacking { get => isAttacking;}
 
     private void Awake()
     {
@@ -87,14 +106,19 @@ public class Enemy : MonoBehaviour
 
         lastPosition = transform.position;
 
+        ChangeState(new IdleState());
+
         StartCoroutine(CheckGroundedStatus());
     }
 
 
     private void Update()
     {
-        HandleMovmentAnimation();
-        HandleBehaviorAnimation();
+        currentState.Update();
+
+        HandleStateMachine();
+
+        UpdateSpellCooldowns();
     }
 
     private void ChargingCoroutineStart()
@@ -105,14 +129,13 @@ public class Enemy : MonoBehaviour
     IEnumerator MoveForwardCoroutine()
     {
         float timer = .5f;
-
+        isCharging = true;
         while (timer > 0f)
         {
-            isCharging = true;
+            //this.transform.LookAt(this.transform.forward);
             // Move the CharacterController forward
+            controller.Move(transform.forward * speed * 5f * Time.deltaTime);
 
-            controller.Move(transform.forward * speed * 2 * Time.deltaTime);
-            
             agent.avoidancePriority = 10;
             agent.obstacleAvoidanceType = ObstacleAvoidanceType.NoObstacleAvoidance;
 
@@ -135,10 +158,11 @@ public class Enemy : MonoBehaviour
             // Wait for the next frame
             yield return null;
         }
-
         isCharging = false;
+        ResetAttackingAndPowering();
 
         agent.obstacleAvoidanceType = ObstacleAvoidanceType.LowQualityObstacleAvoidance;
+
         agent.avoidancePriority = 50;
 
         // Stop the CharacterController when the time is up
@@ -161,11 +185,6 @@ public class Enemy : MonoBehaviour
         }
     }
 
-    private void FixedUpdate()
-    {
-        CurrentSpeed();
-    }
-
     public void TakeDamage(float damageAmount)
     {
         health -= damageAmount;
@@ -179,68 +198,55 @@ public class Enemy : MonoBehaviour
         //Debug.Log("Enemy hp: " + health);
     }
 
-    void HandleBehaviorAnimation()
+    void HandleStateMachine()
     {
-        if (target == null) return;
-
-        float distanceToTarget = Vector3.Distance(transform.position, target.position);
-
-        if (!CanSeePlayer())
+        if (target == null)
         {
-            if (agent.enabled)
-            {
-                AIManager.Instance.MakeAgentCircleTarget(target.transform);
-                HandleAttackAnimation(false);
-                return;
-            }
+            StartCoroutine(SphereCastRoutine());
+            return;
         }
 
-
-        if (CanSeePlayer())
+        if (CanSeeTarget(target))
         {
-            if (agent.enabled)
+            // Previous method of calculating distance that do one more operation: a square root, not sure what is the difference with the one below.
+            //float distanceToTarget1 = Vector3.Distance(transform.position, target.position);
+            float distanceToTarget = (transform.position - target.position).sqrMagnitude;
+
+            if (isPowering || IsAttacking) return;
+
+            if (!isPowerOnCooldown)
             {
-                if (!agent.pathPending && agent.remainingDistance < AIManager.Instance.Radius || attackRange > agent.remainingDistance/* || !agent.pathPending && agent.remainingDistance < attackRange*/) 
+                if (distanceToTarget <= powerRange)
                 {
-
-                    if (distanceToTarget <= attackRange)
-                    {
-                        Stop();
-                        HandleAttackAnimation(true);
-                        return;
-                    }
-                    if (distanceToTarget > attackRange)
-                    {
-                        if (isCharging) return;
-
-                        // HERE THE OTHER UNIT WILL THE ONE ALREADY ATTCKING TO MOVE !!!
-                        AIManager.Instance.MakeAgentCircleTarget(target.transform);
-                        HandleAttackAnimation(false);
-                        return;
-                    }
+                    ChangeState(new PowerState());
+                    return;
+                }
+                else if (distanceToTarget > powerRange)
+                {
+                    ChangeState(new FollowState());
+                    return;
+                }
+            }
+            else if (isPowerOnCooldown)
+            {
+                if (distanceToTarget <= attackRange)
+                {
+                    ChangeState(new AttackState());
+                    return;
+                }
+                else if (distanceToTarget > attackRange)
+                {
+                    ChangeState(new FollowState());
+                    return;
                 }
             }
         }
-    }
-
-    void HandleAttackAnimation(bool onRange)
-    {
-        if (onRange)
+        if (!CanSeeTarget(target))
         {
-            animator.SetBool("IsAttacking", true);
-            isAttacking = true;
-            LookTowards();
-
-            animator.SetBool("IsWalking", false);
-            animator.SetBool("IsIdle", false);
-
+            ChangeState(new FollowState());
+            return;
         }
-        if (!onRange)
-        {
-            animator.SetBool("IsAttacking", false);
-            isAttacking = false;
-        }
-    }
+    }    
 
     void LookTowards()
     {
@@ -274,12 +280,14 @@ public class Enemy : MonoBehaviour
                 Debug.Log("Damaging player here");
             }
         }
+        ResetAttackingAndPowering();
     }
 
     // Triggered via SpawnAoe Attack Animation
     public void SpawnAOE()
     {
         PoolingManagerSingleton.Instance.GetObjectFromPool(AoePrefabName, target.transform.position + new Vector3(0, 0.2f, 0));
+        ResetAttackingAndPowering();
     }
 
 
@@ -296,46 +304,8 @@ public class Enemy : MonoBehaviour
             Quaternion rotationToTarget = Quaternion.LookRotation(direction);
             newObject.transform.rotation = rotationToTarget;
         }
+        ResetAttackingAndPowering();
     }
-
-    void HandleMovmentAnimation()
-    {
-        if (calculatedSpeed > 1f)
-        {
-            animator.SetBool("IsWalking", true);
-            animator.SetBool("IsIdle", false);
-            animator.SetBool("IsAttacking", false);
-            isAttacking = false;
-        }
-        else
-        {
-            animator.SetBool("IsIdle", true);
-            animator.SetBool("IsWalking", false);
-        }
-    }
-
-    // Directly moving towards the player
-    //public void Move(Vector3 targetPos)
-    //{
-    //    agent.avoidancePriority = 50;
-
-    //    agent.isStopped = false;
-    //    agent.autoRepath = true;
-
-    //    if (agent.speed == 0)
-    //    {
-    //        agent.speed = speed;
-    //    }
-    //    agent.SetDestination(targetPos);
-
-    //    // Calculate the new position using SmoothDamp logic
-    //    Vector3 smoothDampedPosition = Vector3.SmoothDamp(transform.position, agent.nextPosition, ref velocity, 0.1f);
-
-    //    // Calculate the direction and distance to move
-    //    Vector3 moveDelta = smoothDampedPosition - transform.position;
-
-    //    controller.Move(transform.position + moveDelta);
-    //}
 
     // Moving around the target via AIManager, circling the target
     public void MoveAIUnit(Vector3 targetPos)
@@ -347,13 +317,12 @@ public class Enemy : MonoBehaviour
             agent.avoidancePriority = 50;
 
             agent.isStopped = false;
-            agent.autoRepath = true;
 
             agent.SetDestination(targetPos);
         }
     }
 
-    void Stop()
+    public void Stop()
     {
         agent.ResetPath();
         agent.isStopped = true;
@@ -368,7 +337,7 @@ public class Enemy : MonoBehaviour
         healthBar.transform.SetParent(healthPanelRect, false);
     }
 
-    private bool CanSeePlayer()
+    private bool CanSeeTarget(Transform target)
     {
         // Direction from the enemy to the player
         Vector3 directionToPlayer = (target.position + new Vector3(0f, 1f, 0f)) - (transform.position + new Vector3(0f, 1f, 0f));
@@ -389,20 +358,132 @@ public class Enemy : MonoBehaviour
         return false;
     }
 
-    private float CurrentSpeed()
+    public void ChangeState(IState newState)
     {
-        // Calculate the displacement vector since the last frame
-        Vector3 displacement = transform.position - lastPosition;
 
-        // Calculate the magnitude of the displacement vector
-        float distanceMoved = displacement.magnitude;
+        if (currentState != null)
+        {
+            if (newState.GetStateName() == currentState.GetStateName()) return;
 
-        // Calculate the speed based on the distance and time
-        calculatedSpeed = distanceMoved / Time.deltaTime;
+            currentState.Exit();
+        }
 
-        // Update the last position
-        lastPosition = transform.position;
+        currentState = newState;
+        currentState.Enter(this);
+    }
 
-        return calculatedSpeed;
+    public IEnumerator SphereCastRoutine()
+    {
+        while (target == null) 
+        {
+            // Max number of entities in the OverlapSphere
+            int maxColliders = 10;
+            Collider[] hitColliders = new Collider[maxColliders];
+            int numColliders = Physics.OverlapSphereNonAlloc(transform.position, 50f, hitColliders, characterLayer);
+
+            for (int i = 0; i < numColliders; i++)
+            {
+                if (hitColliders[i].CompareTag("Player"))
+                {
+                    Transform t = hitColliders[i].transform;
+                    if (CanSeeTarget(t))
+                    {
+                        target = t;
+                        //Debug.Log("Can see player in aggro range.");
+                    }
+                    if (!CanSeeTarget(t))
+                    {
+                        //Debug.Log("Player in range but cannot see.");
+                    }
+                }
+            }
+            if (hitColliders.Length <= 0)
+            {
+                // No character hit
+                Debug.Log("No character hit.");
+            }
+
+            // Wait for 2 seconds before performing the next SphereCast
+            yield return new WaitForSeconds(2f);
+        }
+    }
+
+    public void SetTriggerSingle(string triggerName)
+    {
+        // Disable all triggers
+        foreach (AnimatorControllerParameter param in animator.parameters)
+        {
+            if (param.type == AnimatorControllerParameterType.Trigger)
+            {
+                animator.ResetTrigger(param.name);
+            }
+        }
+
+        // Enable the desired trigger
+        animator.SetTrigger(triggerName);
+    }
+
+    public void ResetAllAnimatorTriggers()
+    {
+        // Disable all triggers
+        foreach (AnimatorControllerParameter param in animator.parameters)
+        {
+            if (param.type == AnimatorControllerParameterType.Trigger)
+            {
+                animator.ResetTrigger(param.name);
+            }
+        }
+    }
+    public void ResetTriggerSingle(string triggerName)
+    {
+        animator.ResetTrigger(triggerName);
+    }
+
+    public void CastAttack()
+    {
+        currentAttackCooldown = attackCooldown;
+        isAttackOnCooldown = true;
+        isAttacking = true;
+    }
+
+    public void CastPower()
+    {
+        currentPowerCooldown = powerCooldown;
+        isPowerOnCooldown = true;
+        isPowering = true;
+    }
+
+    private void UpdateSpellCooldowns()
+    {
+
+        if (currentAttackCooldown > 0f && isAttackOnCooldown)
+        {
+            currentAttackCooldown -= Time.deltaTime;
+        }
+        if (currentAttackCooldown <= 0 && isAttackOnCooldown)
+        {
+            isAttackOnCooldown = false;
+        }
+
+        if (currentPowerCooldown > 0f && isPowerOnCooldown)
+        {
+            currentPowerCooldown -= Time.deltaTime;
+        }
+        if (currentPowerCooldown <= 0 && isPowerOnCooldown)
+        {
+            isPowerOnCooldown = false;
+        }
+    }
+
+    // Triggered last frame of every enemy skill animations
+    private void DecideNextMove()
+    {
+
+    }
+
+    public void ResetAttackingAndPowering()
+    {
+        if (IsAttacking) isAttacking = false;
+        if (isPowering) isPowering = false;
     }
 }

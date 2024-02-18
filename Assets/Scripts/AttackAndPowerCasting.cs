@@ -1,7 +1,4 @@
 using System.Collections;
-using System.Collections.Generic;
-using System.Net;
-using System.Security.Cryptography;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.UI;
@@ -33,8 +30,8 @@ public class AttackAndPowerCasting : MonoBehaviour
 
     private PlayerInput playerInput;
 
-    private bool isAttacking = false;
-    private bool isPowering = false;
+    private bool isAttackingHeldDown = false;
+    private bool isPoweringHeldDown = false;
     private bool isCasting = false;
     private bool isDashing = false;
 
@@ -47,6 +44,8 @@ public class AttackAndPowerCasting : MonoBehaviour
     private PlayerMovement playerMovement;
 
     private Animator animator;
+
+    public bool IsCasting { get => isCasting;}
 
     private void Awake()
     {
@@ -78,13 +77,13 @@ public class AttackAndPowerCasting : MonoBehaviour
         // If we want to be able to cast while dashing
         //if (isDashing) return;
 
-        if (isAttacking && !isAttackCooldown)
+        if (isAttackingHeldDown && !isAttackCooldown)
         {
             CastAttack();
             return;
         }
 
-        if (isPowering)
+        if (isPoweringHeldDown)
         {
             if (!isPowerCooldown)
             {
@@ -99,14 +98,14 @@ public class AttackAndPowerCasting : MonoBehaviour
 
     private void OnAttackChanged(InputAction.CallbackContext context)
     {
-        if (context.performed) isAttacking = true;
-        else if (context.canceled) isAttacking = false;
+        if (context.performed) isAttackingHeldDown = true;
+        else if (context.canceled) isAttackingHeldDown = false;
     }
 
     private void OnPowerChanged(InputAction.CallbackContext context)
     {
-        if (context.performed) isPowering = true;
-        else if (context.canceled) isPowering = false;
+        if (context.performed) isPoweringHeldDown = true;
+        else if (context.canceled) isPoweringHeldDown = false;
     }
 
     private void CastAttack()
@@ -114,7 +113,7 @@ public class AttackAndPowerCasting : MonoBehaviour
         EventManager.Instance.Casting(true);
         isCasting = true;
 
-        isAttacking = true;
+        isAttackingHeldDown = true;
         animator.SetTrigger("Attack");
         StartCoroutine(CooldownAttackCoroutine(attackCooldownTime));
     }
@@ -134,7 +133,7 @@ public class AttackAndPowerCasting : MonoBehaviour
         EventManager.Instance.Casting(true);
         isCasting = true;
 
-        isPowering = true;
+        isPoweringHeldDown = true;
         animator.SetTrigger("Power");
         StartCoroutine(CooldownPowerCoroutine(powerCooldownTime));
     }
