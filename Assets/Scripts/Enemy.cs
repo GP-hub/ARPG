@@ -1,5 +1,6 @@
 using System;
 using System.Collections;
+using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.AI;
 using UnityEngine.EventSystems;
@@ -67,8 +68,9 @@ public class Enemy : MonoBehaviour
     private bool isAttacking;
     private bool isPowering = false;
     private bool isMoving;
-    private bool isIdle;
+    private bool isIdle;    
 
+    [HideInInspector] public bool isCharging;
     [HideInInspector] public bool isPowerOnCooldown;
     [HideInInspector] public bool isAttackOnCooldown;
 
@@ -133,13 +135,12 @@ public class Enemy : MonoBehaviour
     IEnumerator MoveForwardCoroutine()
     {
         float timer = .5f;
-
+        isCharging = true;
         while (timer > 0f)
         {
-            isPowering = true;
+            //this.transform.LookAt(this.transform.forward);
             // Move the CharacterController forward
-
-            controller.Move(transform.forward * speed * 2 * Time.deltaTime);
+            controller.Move(transform.forward * speed * 5f * Time.deltaTime);
 
             agent.avoidancePriority = 10;
             agent.obstacleAvoidanceType = ObstacleAvoidanceType.NoObstacleAvoidance;
@@ -163,10 +164,10 @@ public class Enemy : MonoBehaviour
             // Wait for the next frame
             yield return null;
         }
-
-        isPowering = false;
-
+        isCharging = false;
+        //isPowering = false;
         agent.obstacleAvoidanceType = ObstacleAvoidanceType.LowQualityObstacleAvoidance;
+
         agent.avoidancePriority = 50;
 
         // Stop the CharacterController when the time is up
@@ -213,16 +214,18 @@ public class Enemy : MonoBehaviour
         if (CanSeeTarget(target))
         {
             // Previous method of calculating distance that do one more operation: a square root, not sure what is the difference with the one below.
-            //float distanceToTarget = Vector3.Distance(transform.position, target.position);
+            //float distanceToTarget1 = Vector3.Distance(transform.position, target.position);
             float distanceToTarget = (transform.position - target.position).sqrMagnitude;
 
-            if (distanceToTarget <= attackRange)
+            if (distanceToTarget <= attackRange || (!isPowerOnCooldown && distanceToTarget <= powerRange))
             {
                 ChangeState(new AttackState());
                 return;
             }
-            if (distanceToTarget > attackRange)
+            if (distanceToTarget > attackRange) 
             {
+                if (isPowering || isAttacking) return;
+
                 ChangeState(new FollowState());
                 return;
             }
@@ -313,12 +316,11 @@ public class Enemy : MonoBehaviour
     {
         if (agent.enabled)
         {
-            if (isAttacking) return;
+            //if (isAttacking) return;
 
-            agent.avoidancePriority = 50;
-
-            agent.isStopped = false;
-            agent.autoRepath = true;
+            //agent.avoidancePriority = 50;
+            //agent.isStopped = false;
+            //agent.autoRepath = true;
 
             agent.SetDestination(targetPos);
         }
@@ -444,16 +446,34 @@ public class Enemy : MonoBehaviour
         animator.SetTrigger(triggerName);
     }
 
+    public void ResetAllAnimatorTriggers()
+    {
+        // Disable all triggers
+        foreach (AnimatorControllerParameter param in animator.parameters)
+        {
+            if (param.type == AnimatorControllerParameterType.Trigger)
+            {
+                animator.ResetTrigger(param.name);
+            }
+        }
+    }
+    public void ResetTriggerSingle(string triggerName)
+    {
+        animator.ResetTrigger(triggerName);
+    }
+
     public void CastAttack()
     {
         currentAttackCooldown = attackCooldown;
         isAttackOnCooldown = true;
+        isAttacking = true;
     }
 
     public void CastPower()
     {
         currentPowerCooldown = powerCooldown;
         isPowerOnCooldown = true;
+        isPowering = true;
     }
 
     private void UpdateSpellCooldowns()
@@ -478,9 +498,19 @@ public class Enemy : MonoBehaviour
         }
     }
 
-    // Triggered last frame of every enemy attack animations
+    // Triggered last frame of every enemy skill animations
     private void DecideNextMove()
     {
+        currentState.Exit();
+        //ResetAttackingAndPowering();
+        //ChangeState(new FollowState());
+        //ResetAllAnimatorTriggers();
         EventManager.Instance.EnemyDecideNextMove();
+    }
+
+    public void ResetAttackingAndPowering()
+    {
+        isAttacking = false;
+        isPowering = false;
     }
 }

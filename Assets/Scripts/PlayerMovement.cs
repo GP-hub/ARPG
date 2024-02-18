@@ -1,5 +1,4 @@
 using UnityEngine;
-using UnityEngine.AI;
 
 [RequireComponent(typeof(CharacterController))]
 public class PlayerMovement : MonoBehaviour
@@ -24,12 +23,15 @@ public class PlayerMovement : MonoBehaviour
 
     private CharacterController controller;
 
+    private AttackAndPowerCasting attackAndPowerCasting;
+
     public Vector3 WorldAim { get => worldAim;}
     public float PlayerSpeed { get => playerSpeed; set => playerSpeed = value; }
 
     //
     private void Awake()
     {
+        attackAndPowerCasting = GetComponent<AttackAndPowerCasting>();
         controller = GetComponent<CharacterController>();
         animator = GetComponent<Animator>();
         playerControls = new PlayerControls();
@@ -79,12 +81,35 @@ public class PlayerMovement : MonoBehaviour
 
             animator.SetFloat("InputX", Mathf.Lerp(animator.GetFloat("InputX"), targetInputX, Time.fixedDeltaTime * smoothnessInputTransition));
             animator.SetFloat("InputY", Mathf.Lerp(animator.GetFloat("InputY"), targetInputY, Time.fixedDeltaTime * smoothnessInputTransition));
+
         }
         else
         {
             animator.SetFloat("InputX", 0);
             animator.SetFloat("InputY", 0);
+
         }
+
+        if (attackAndPowerCasting.IsCasting)
+        {
+            HandleAnimationWeight(1, "Aiming");
+        }
+        else
+        {
+            HandleAnimationWeight(0, "Aiming");
+        }
+    }
+
+    private void HandleAnimationWeight(float targetWeight, string layerName)
+    {
+        // Get the current weight
+        float currentWeight = animator.GetLayerWeight(animator.GetLayerIndex(layerName));
+
+        // Smoothly interpolate between current and target weight over 0.3 seconds
+        float newWeight = Mathf.Lerp(currentWeight, targetWeight, Time.deltaTime / .2f);
+
+        // Set the new weight value
+        animator.SetLayerWeight(animator.GetLayerIndex(layerName), newWeight);
     }
 
     private void HandleInput()

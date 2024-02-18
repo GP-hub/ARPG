@@ -9,11 +9,13 @@ class IdleState : IState
         this.enemy = enemy;
         this.enemy.Target = null;
         enemy.SetTriggerSingle("TriggerIdle");
+        enemy.ResetAttackingAndPowering();
+
     }
 
     public void Exit()
     {
-        
+        enemy.ResetTriggerSingle("TriggerIdle");
     }
 
     public void Update()

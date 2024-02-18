@@ -8,11 +8,13 @@ class FollowState : IState
     {
         this.enemy = enemy;
         enemy.SetTriggerSingle("TriggerWalk");
+        enemy.ResetAttackingAndPowering();
+        //enemy.Agent.ResetPath();
     }
 
     public void Exit()
     {
-
+        enemy.ResetTriggerSingle("TriggerWalk");
     }
 
     public void Update()
