@@ -1,9 +1,8 @@
 using System;
 using System.Collections;
-using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.AI;
-using UnityEngine.EventSystems;
+
 
 [RequireComponent(typeof(NavMeshAgent))]
 [RequireComponent(typeof(CharacterController))]
@@ -74,11 +73,13 @@ public class Enemy : MonoBehaviour
     [HideInInspector] public bool isPowerOnCooldown;
     [HideInInspector] public bool isAttackOnCooldown;
 
-    private IState currentState;
+    public IState currentState;
 
     public Transform Target { get => target; set => target = value; }
-    public NavMeshAgent Agent { get => agent; set => agent = value; }
-    public Animator Animator { get => animator; set => animator = value; }
+    public NavMeshAgent Agent { get => agent;}
+    public Animator Animator { get => animator;}
+    public bool IsPowering { get => isPowering;}
+    public bool IsAttacking { get => isAttacking;}
 
     private void Awake()
     {
@@ -115,16 +116,9 @@ public class Enemy : MonoBehaviour
     {
         currentState.Update();
 
-        //HandleStatesAnimator();
-
         HandleStateMachine();
 
         UpdateSpellCooldowns();
-
-        //PowerCooldownTimer();
-        //AttackCooldownTimer();
-
-        //HandleMovementAnimation();
     }
 
     private void ChargingCoroutineStart()
@@ -165,7 +159,8 @@ public class Enemy : MonoBehaviour
             yield return null;
         }
         isCharging = false;
-        //isPowering = false;
+        ResetAttackingAndPowering();
+
         agent.obstacleAvoidanceType = ObstacleAvoidanceType.LowQualityObstacleAvoidance;
 
         agent.avoidancePriority = 50;
@@ -217,17 +212,33 @@ public class Enemy : MonoBehaviour
             //float distanceToTarget1 = Vector3.Distance(transform.position, target.position);
             float distanceToTarget = (transform.position - target.position).sqrMagnitude;
 
-            if (distanceToTarget <= attackRange || (!isPowerOnCooldown && distanceToTarget <= powerRange))
-            {
-                ChangeState(new AttackState());
-                return;
-            }
-            if (distanceToTarget > attackRange) 
-            {
-                if (isPowering || isAttacking) return;
+            if (isPowering || IsAttacking) return;
 
-                ChangeState(new FollowState());
-                return;
+            if (!isPowerOnCooldown)
+            {
+                if (distanceToTarget <= powerRange)
+                {
+                    ChangeState(new PowerState());
+                    return;
+                }
+                else if (distanceToTarget > powerRange)
+                {
+                    ChangeState(new FollowState());
+                    return;
+                }
+            }
+            else if (isPowerOnCooldown)
+            {
+                if (distanceToTarget <= attackRange)
+                {
+                    ChangeState(new AttackState());
+                    return;
+                }
+                else if (distanceToTarget > attackRange)
+                {
+                    ChangeState(new FollowState());
+                    return;
+                }
             }
         }
         if (!CanSeeTarget(target))
@@ -269,12 +280,14 @@ public class Enemy : MonoBehaviour
                 Debug.Log("Damaging player here");
             }
         }
+        ResetAttackingAndPowering();
     }
 
     // Triggered via SpawnAoe Attack Animation
     public void SpawnAOE()
     {
         PoolingManagerSingleton.Instance.GetObjectFromPool(AoePrefabName, target.transform.position + new Vector3(0, 0.2f, 0));
+        ResetAttackingAndPowering();
     }
 
 
@@ -291,36 +304,19 @@ public class Enemy : MonoBehaviour
             Quaternion rotationToTarget = Quaternion.LookRotation(direction);
             newObject.transform.rotation = rotationToTarget;
         }
+        ResetAttackingAndPowering();
     }
-
-    //void HandleMovementAnimation()
-    //{
-    //    if (calculatedSpeed > 1f)
-    //    {
-    //        isMoving = true;
-    //        //animator.SetBool("IsWalking", true);
-    //        //animator.SetBool("IsIdle", false);
-    //        //animator.SetBool("IsAttacking", false);
-    //        //isAttacking = false;
-    //    }
-    //    else
-    //    {
-    //        isMoving = false;
-    //        //animator.SetBool("IsIdle", true);
-    //        //animator.SetBool("IsWalking", false);
-    //    }
-    //}
 
     // Moving around the target via AIManager, circling the target
     public void MoveAIUnit(Vector3 targetPos)
     {
         if (agent.enabled)
         {
-            //if (isAttacking) return;
-            //Debug.Log(this.transform.name + " is in state: " + currentState);
+            if (isAttacking) return;
+
             agent.avoidancePriority = 50;
+
             agent.isStopped = false;
-            agent.autoRepath = true;
 
             agent.SetDestination(targetPos);
         }
@@ -375,25 +371,6 @@ public class Enemy : MonoBehaviour
         currentState = newState;
         currentState.Enter(this);
     }
-
-    //private void HandleStatesAnimator()
-    //{
-    //    if (currentState is FollowState)
-    //    {
-    //        SetTriggerSingle("TriggerWalk");
-    //        return;
-    //    }
-    //    if (currentState is AttackState)
-    //    {
-    //        SetTriggerSingle("TriggerAttack");
-    //        return;
-    //    }
-    //    if (currentState is IdleState)
-    //    {
-    //        SetTriggerSingle("TriggerIdle");
-    //        return;
-    //    }
-    //}
 
     public IEnumerator SphereCastRoutine()
     {
@@ -478,7 +455,7 @@ public class Enemy : MonoBehaviour
 
     private void UpdateSpellCooldowns()
     {
-        //Debug.Log("currentPowerCooldown: " + currentPowerCooldown);
+
         if (currentAttackCooldown > 0f && isAttackOnCooldown)
         {
             currentAttackCooldown -= Time.deltaTime;
@@ -501,16 +478,12 @@ public class Enemy : MonoBehaviour
     // Triggered last frame of every enemy skill animations
     private void DecideNextMove()
     {
-        currentState.Exit();
-        //ResetAttackingAndPowering();
-        //ChangeState(new FollowState());
-        //ResetAllAnimatorTriggers();
-        EventManager.Instance.EnemyDecideNextMove();
+
     }
 
     public void ResetAttackingAndPowering()
     {
-        isAttacking = false;
-        isPowering = false;
+        if (IsAttacking) isAttacking = false;
+        if (isPowering) isPowering = false;
     }
 }

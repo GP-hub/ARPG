@@ -1,8 +1,7 @@
-using System.Collections;
+
 using UnityEngine;
 
-
-class AttackState : IState
+class PowerState : IState
 {
     private Enemy enemy;
 
@@ -12,7 +11,8 @@ class AttackState : IState
 
         if (enemy.Agent.isOnNavMesh && enemy.Agent.enabled) enemy.Stop();
 
-        enemy.SetTriggerSingle("TriggerAttack");
+        enemy.SetTriggerSingle("TriggerPower");
+
     }
 
     void IState.Exit()
@@ -21,7 +21,7 @@ class AttackState : IState
 
         enemy.Animator.SetFloat("AttackAndPower", 0f);
 
-        enemy.ResetTriggerSingle("TriggerAttack");
+        enemy.ResetTriggerSingle("TriggerPower");
 
         enemy.ResetAttackingAndPowering();
     }
@@ -34,7 +34,7 @@ class AttackState : IState
 
     string IState.GetStateName()
     {
-        return "AttackState";
+        return "PowerState";
     }
 
 }

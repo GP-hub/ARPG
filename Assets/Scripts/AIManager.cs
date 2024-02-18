@@ -13,12 +13,14 @@ public class AIManager : Singleton<AIManager>
     {
         for (int i = 0; i < Units.Count; i++)
         {
+            if (Units[i].currentState.GetStateName() == "FollowState")
             Units[i].MoveAIUnit(new Vector3(
                 target.position.x + radius * Mathf.Cos(2 * Mathf.PI * i / Units.Count),
                 target.position.y,
                 target.position.z + radius * Mathf.Sin(2 * Mathf.PI * i / Units.Count)
                 ));
-
+            {
+            }
         }
     }
 

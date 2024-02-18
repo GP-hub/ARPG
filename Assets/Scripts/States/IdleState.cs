@@ -4,7 +4,7 @@ class IdleState : IState
 {
     private Enemy enemy;
 
-    public void Enter(Enemy enemy)
+    void IState.Enter(Enemy enemy)
     {
         this.enemy = enemy;
         this.enemy.Target = null;
@@ -13,20 +13,21 @@ class IdleState : IState
 
     }
 
-    public void Exit()
+    void IState.Exit()
     {
         enemy.ResetTriggerSingle("TriggerIdle");
     }
 
-    public void Update()
+    void IState.Update()
     {
+        enemy.ResetAttackingAndPowering();
         if (enemy.Target != null)
         {
             enemy.ChangeState(new FollowState());
         }
     }
 
-    public string GetStateName()
+    string IState.GetStateName()
     {
         return "IdleState";
     }
