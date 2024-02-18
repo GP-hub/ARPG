@@ -18,6 +18,7 @@ public class AIManager : Singleton<AIManager>
                 target.position.y,
                 target.position.z + radius * Mathf.Sin(2 * Mathf.PI * i / Units.Count)
                 ));
+
         }
     }
 

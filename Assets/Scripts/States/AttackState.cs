@@ -19,6 +19,7 @@ class AttackState : IState
 
     public void Exit()
     {
+        EventManager.Instance.onEnemyDecideNextMove -= EnemyAttackBehavior;
         if (enemy.Agent.isOnNavMesh && enemy.Agent.enabled) enemy.Agent.isStopped = false;
         enemy.Animator.SetFloat("AttackAndPower", 0f);
         enemy.ResetTriggerSingle("TriggerAttack");

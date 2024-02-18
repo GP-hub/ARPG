@@ -317,10 +317,10 @@ public class Enemy : MonoBehaviour
         if (agent.enabled)
         {
             //if (isAttacking) return;
-
-            //agent.avoidancePriority = 50;
-            //agent.isStopped = false;
-            //agent.autoRepath = true;
+            //Debug.Log(this.transform.name + " is in state: " + currentState);
+            agent.avoidancePriority = 50;
+            agent.isStopped = false;
+            agent.autoRepath = true;
 
             agent.SetDestination(targetPos);
         }
