@@ -69,4 +69,22 @@ public class EventManager : Singleton<EventManager>
         }
     }
 
+    public event Action<int> onPlayerTakeDamage;
+    public void PlayerTakeDamage(int damage)
+    {
+        if (onPlayerTakeDamage != null)
+        {
+            onPlayerTakeDamage(damage);
+        }
+    }
+
+    public event Action<int> onPlayerTakeHeal;
+    public void PlayerTakeHeal(int heal)
+    {
+        if (onPlayerTakeHeal != null)
+        {
+            onPlayerTakeHeal(heal);
+        }
+    }
+
 }

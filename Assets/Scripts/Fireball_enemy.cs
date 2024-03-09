@@ -50,7 +50,7 @@ public class Fireball_enemy : MonoBehaviour
             if (hitColliders[i].CompareTag("Player"))
             {
 
-                Debug.Log("DAMAGE PLAYER");
+                EventManager.Instance.PlayerTakeDamage(20);
                 //Enemy healthComponent = hitColliders[i].GetComponent<Enemy>();
                 //if (healthComponent != null)
                 //{

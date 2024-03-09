@@ -24,4 +24,9 @@ public class PlayerNameplate : MonoBehaviour
         healthBar.SetHealthBarData(hpBarProxy, healthPanelRect);
         healthBar.transform.SetParent(healthPanelRect, false);
     }
+
+    public void UpdateHealthUI(float health, float maxHealth)
+    {
+        healthBar.OnHealthChanged(health / maxHealth);
+    }
 }

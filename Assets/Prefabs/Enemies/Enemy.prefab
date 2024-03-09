@@ -1573,7 +1573,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &8237003867044120221
 Transform:
   m_ObjectHideFlags: 0
@@ -1657,19 +1657,26 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   health: 0
   maxHealth: 30
-  attackRange: 1.5
-  speed: 4
+  speed: 2
   healthBarPrefab: {fileID: 2505273644731239485, guid: f032af557d41213499ccbdd815c15a7b, type: 3}
   healthPanelRect: {fileID: 0}
   hpBarProxyFollow: {fileID: 5564094242101072855}
+  attackRange: 1.5
   exitPoint: {fileID: 0}
-  fireballPrefab: {fileID: 2029881061899082543, guid: d505addd5a9d5374f9e1091533707515, type: 3}
-  fireballExplosionPrefab: {fileID: 7704456569469174909, guid: e10887af2a462724e84175079dbcf1a9, type: 3}
-  attackProjectileSpeed: 10
+  attackCooldown: 0
   characterLayer:
     serializedVersion: 2
     m_Bits: 64
-  meleeHitboxSize: 5
+  fireballPrefabName: 
+  AoePrefabName: 
+  attackProjectileSpeed: 10
+  meleeHitboxSize: 2
+  hasPowerAbility: 1
+  powerRange: 40
+  powerCooldown: 5
+  isCharging: 0
+  isPowerOnCooldown: 0
+  isAttackOnCooldown: 0
 --- !u!195 &705077206615586051
 NavMeshAgent:
   m_ObjectHideFlags: 0

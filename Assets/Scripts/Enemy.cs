@@ -32,7 +32,6 @@ public class Enemy : MonoBehaviour
     [Space(10)]
     [Header("Attack: Ranged")]
     [SerializeField] private string fireballPrefabName;
-    [SerializeField] private string AoePrefabName;
     [SerializeField] private float attackProjectileSpeed;
 
     [Space(10)]
@@ -41,6 +40,8 @@ public class Enemy : MonoBehaviour
 
     [Space(10)]
     [Header("Power")]
+    [SerializeField] private bool hasPowerAbility;
+    [SerializeField] private string AoePrefabName;
     [SerializeField] private float powerRange;
     [SerializeField] private float powerCooldown;
     private float currentPowerCooldown;
@@ -214,7 +215,7 @@ public class Enemy : MonoBehaviour
 
             if (isPowering || IsAttacking) return;
 
-            if (!isPowerOnCooldown)
+            if (!isPowerOnCooldown && hasPowerAbility)
             {
                 if (distanceToTarget <= powerRange)
                 {
@@ -227,7 +228,7 @@ public class Enemy : MonoBehaviour
                     return;
                 }
             }
-            else if (isPowerOnCooldown)
+            else if (isPowerOnCooldown || !hasPowerAbility)
             {
                 if (distanceToTarget <= attackRange)
                 {

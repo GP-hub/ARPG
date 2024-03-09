@@ -277,9 +277,10 @@ MonoBehaviour:
     serializedVersion: 2
     m_Bits: 64
   fireballPrefabName: 
-  AoePrefabName: 
   attackProjectileSpeed: 10
   meleeHitboxSize: 5
+  hasPowerAbility: 0
+  AoePrefabName: 
   powerRange: 0
   powerCooldown: 0
   isCharging: 0
@@ -3256,9 +3257,10 @@ MonoBehaviour:
     serializedVersion: 2
     m_Bits: 64
   fireballPrefabName: 
-  AoePrefabName: 
   attackProjectileSpeed: 10
   meleeHitboxSize: 5
+  hasPowerAbility: 0
+  AoePrefabName: 
   powerRange: 0
   powerCooldown: 0
   isCharging: 0
@@ -7640,9 +7642,10 @@ MonoBehaviour:
     serializedVersion: 2
     m_Bits: 64
   fireballPrefabName: 
-  AoePrefabName: 
   attackProjectileSpeed: 10
   meleeHitboxSize: 5
+  hasPowerAbility: 0
+  AoePrefabName: 
   powerRange: 0
   powerCooldown: 0
   isCharging: 0
@@ -8701,9 +8704,10 @@ MonoBehaviour:
     serializedVersion: 2
     m_Bits: 64
   fireballPrefabName: 
-  AoePrefabName: 
   attackProjectileSpeed: 10
   meleeHitboxSize: 5
+  hasPowerAbility: 0
+  AoePrefabName: 
   powerRange: 0
   powerCooldown: 0
   isCharging: 0
@@ -9925,9 +9929,10 @@ MonoBehaviour:
     serializedVersion: 2
     m_Bits: 64
   fireballPrefabName: 
-  AoePrefabName: 
   attackProjectileSpeed: 10
   meleeHitboxSize: 5
+  hasPowerAbility: 0
+  AoePrefabName: 
   powerRange: 0
   powerCooldown: 0
   isCharging: 0
@@ -18819,9 +18824,10 @@ MonoBehaviour:
     serializedVersion: 2
     m_Bits: 64
   fireballPrefabName: 
-  AoePrefabName: 
   attackProjectileSpeed: 10
   meleeHitboxSize: 5
+  hasPowerAbility: 0
+  AoePrefabName: 
   powerRange: 0
   powerCooldown: 0
   isCharging: 0
@@ -20141,7 +20147,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 6894551819877516500, guid: c030b677f1aa4a043837074f45635c7a, type: 3}
       propertyPath: m_IsActive
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 8237003867044120221, guid: c030b677f1aa4a043837074f45635c7a, type: 3}
       propertyPath: m_LocalPosition.x
@@ -29435,6 +29441,7 @@ GameObject:
   - component: {fileID: 2580364717049616962}
   - component: {fileID: 5444040362796816503}
   - component: {fileID: 5444040362796816507}
+  - component: {fileID: 5444040362796816508}
   - component: {fileID: 2580364717049616963}
   - component: {fileID: 5444040362796816497}
   - component: {fileID: 5444040362796816496}
@@ -29882,36 +29889,12 @@ PrefabInstance:
     m_TransformParent: {fileID: 1881322215}
     m_Modifications:
     - target: {fileID: 6631623146585664489, guid: c030b677f1aa4a043837074f45635c7a, type: 3}
-      propertyPath: speed
-      value: 2
-      objectReference: {fileID: 0}
-    - target: {fileID: 6631623146585664489, guid: c030b677f1aa4a043837074f45635c7a, type: 3}
-      propertyPath: m_Enabled
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 6631623146585664489, guid: c030b677f1aa4a043837074f45635c7a, type: 3}
-      propertyPath: powerRange
-      value: 40
-      objectReference: {fileID: 0}
-    - target: {fileID: 6631623146585664489, guid: c030b677f1aa4a043837074f45635c7a, type: 3}
-      propertyPath: powerCooldown
-      value: 5
-      objectReference: {fileID: 0}
-    - target: {fileID: 6631623146585664489, guid: c030b677f1aa4a043837074f45635c7a, type: 3}
       propertyPath: healthPanelRect
       value: 
       objectReference: {fileID: 1913881814}
-    - target: {fileID: 6631623146585664489, guid: c030b677f1aa4a043837074f45635c7a, type: 3}
-      propertyPath: meleeHitboxSize
-      value: 2
-      objectReference: {fileID: 0}
     - target: {fileID: 6894551819877516500, guid: c030b677f1aa4a043837074f45635c7a, type: 3}
       propertyPath: m_Name
       value: Enemy
-      objectReference: {fileID: 0}
-    - target: {fileID: 6894551819877516500, guid: c030b677f1aa4a043837074f45635c7a, type: 3}
-      propertyPath: m_IsActive
-      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 8237003867044120221, guid: c030b677f1aa4a043837074f45635c7a, type: 3}
       propertyPath: m_LocalPosition.x
@@ -30012,6 +29995,22 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5170162297565060425, guid: c7e2f6a1b195de74f850e180d6abb20c, type: 3}
       propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6062745987181479218, guid: c7e2f6a1b195de74f850e180d6abb20c, type: 3}
+      propertyPath: powerRange
+      value: 1.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 6062745987181479218, guid: c7e2f6a1b195de74f850e180d6abb20c, type: 3}
+      propertyPath: AoePrefabName
+      value: AoE_Enemy
+      objectReference: {fileID: 0}
+    - target: {fileID: 6062745987181479218, guid: c7e2f6a1b195de74f850e180d6abb20c, type: 3}
+      propertyPath: powerCooldown
+      value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 6062745987181479218, guid: c7e2f6a1b195de74f850e180d6abb20c, type: 3}
+      propertyPath: hasPowerAbility
       value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 6062745987181479218, guid: c7e2f6a1b195de74f850e180d6abb20c, type: 3}
@@ -30043,7 +30042,7 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 839425786960260319, guid: db2ab821124dfaa428eb41235a2e4794, type: 3}
       propertyPath: m_LocalPosition.x
-      value: 1.06
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 839425786960260319, guid: db2ab821124dfaa428eb41235a2e4794, type: 3}
       propertyPath: m_LocalPosition.y
@@ -30051,7 +30050,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 839425786960260319, guid: db2ab821124dfaa428eb41235a2e4794, type: 3}
       propertyPath: m_LocalPosition.z
-      value: -1.35
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 839425786960260319, guid: db2ab821124dfaa428eb41235a2e4794, type: 3}
       propertyPath: m_LocalRotation.w
@@ -30082,21 +30081,9 @@ PrefabInstance:
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 2105299005440825275, guid: db2ab821124dfaa428eb41235a2e4794, type: 3}
-      propertyPath: powerRange
-      value: 20
-      objectReference: {fileID: 0}
-    - target: {fileID: 2105299005440825275, guid: db2ab821124dfaa428eb41235a2e4794, type: 3}
-      propertyPath: powerCooldown
-      value: 5
-      objectReference: {fileID: 0}
-    - target: {fileID: 2105299005440825275, guid: db2ab821124dfaa428eb41235a2e4794, type: 3}
       propertyPath: healthPanelRect
       value: 
       objectReference: {fileID: 1913881814}
-    - target: {fileID: 2105299005440825275, guid: db2ab821124dfaa428eb41235a2e4794, type: 3}
-      propertyPath: characterLayer.m_Bits
-      value: 64
-      objectReference: {fileID: 0}
     - target: {fileID: 6695187827382280720, guid: db2ab821124dfaa428eb41235a2e4794, type: 3}
       propertyPath: m_Name
       value: Enemy Ranged
@@ -30257,6 +30244,20 @@ MonoBehaviour:
   healthBarPrefab: {fileID: 2505273644731239485, guid: fbd7cf4266c1de942bb07ab2a7ac07c5, type: 3}
   healthPanelRect: {fileID: 1913881814}
   hpBarProxyFollow: {fileID: 269122766}
+--- !u!114 &5444040362796816508
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2494901959581414798}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 836dde02b10e1e04f84547a8c7a7615e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  health: 0
+  maxHealth: 100
 --- !u!1 &6314962405623691228
 GameObject:
   m_ObjectHideFlags: 0
