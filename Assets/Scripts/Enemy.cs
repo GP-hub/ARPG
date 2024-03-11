@@ -23,6 +23,7 @@ public class Enemy : MonoBehaviour
     [Space(10)]
     [Header("Attack")]
     [SerializeField] private float attackRange;
+    [SerializeField] private int attackDamage;
     [SerializeField] private GameObject exitPoint;
     [SerializeField] private float attackCooldown;
     private float currentAttackCooldown;
@@ -42,6 +43,7 @@ public class Enemy : MonoBehaviour
     [Header("Power")]
     [SerializeField] private bool hasPowerAbility;
     [SerializeField] private string AoePrefabName;
+    [SerializeField] private int powerDamage;
     [SerializeField] private float powerRange;
     [SerializeField] private float powerCooldown;
     private float currentPowerCooldown;
@@ -278,7 +280,7 @@ public class Enemy : MonoBehaviour
         {
             if (hitColliders[i].CompareTag("Player"))
             {
-                Debug.Log("Damaging player here");
+                EventManager.Instance.PlayerTakeDamage(attackDamage);
             }
         }
         ResetAttackingAndPowering();
@@ -287,14 +289,24 @@ public class Enemy : MonoBehaviour
     // Triggered via SpawnAoe Attack Animation
     public void SpawnAOE()
     {
-        PoolingManagerSingleton.Instance.GetObjectFromPool(AoePrefabName, target.transform.position + new Vector3(0, 0.2f, 0));
+        if (!target) return;
+        GameObject newObject = PoolingManagerSingleton.Instance.GetObjectFromPool(AoePrefabName, target.transform.position + new Vector3(0, 0.2f, 0));
+
+        if (newObject.TryGetComponent<AbilityValues>(out AbilityValues aoeSpell))
+        {
+            aoeSpell.Damage = powerDamage;
+            aoeSpell.DoDamage(powerDamage);
+        }
         ResetAttackingAndPowering();
     }
+
 
 
     // Triggered via Ranged Attack animation
     public void RangedHit()
     {
+        if (!target) return;
+
         Vector3 targetCorrectedPosition = target.transform.position;
         Vector3 direction = (targetCorrectedPosition - this.transform.position).normalized;
 
@@ -302,6 +314,10 @@ public class Enemy : MonoBehaviour
 
         if (newObject != null)
         {
+            if (newObject.TryGetComponent<AbilityValues>(out AbilityValues fireball))
+            {
+                fireball.Damage = attackDamage;
+            }
             Quaternion rotationToTarget = Quaternion.LookRotation(direction);
             newObject.transform.rotation = rotationToTarget;
         }

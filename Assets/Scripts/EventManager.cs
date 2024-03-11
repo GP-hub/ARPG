@@ -87,4 +87,13 @@ public class EventManager : Singleton<EventManager>
         }
     }
 
+    public event Action<Enemy, string> onEnemyTakeDamage;
+    public void EnemyTakeDamage(Enemy enemy, string skill)
+    {
+        if (onEnemyTakeDamage != null)
+        {
+            onEnemyTakeDamage(enemy, skill);
+        }
+    }
+
 }

@@ -1,5 +1,6 @@
 using System.Collections;
 using UnityEngine;
+using UnityEngine.EventSystems;
 
 public class Fireball : MonoBehaviour
 {
@@ -57,7 +58,8 @@ public class Fireball : MonoBehaviour
                 Enemy healthComponent = hitColliders[i].GetComponent<Enemy>();
                 if (healthComponent != null)
                 {
-                    healthComponent.TakeDamage(damageAmount);
+                    EventManager.Instance.EnemyTakeDamage(healthComponent, this.name);
+                    //healthComponent.TakeDamage(damageAmount);
                 }
             }
         }

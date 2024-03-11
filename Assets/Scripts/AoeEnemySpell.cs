@@ -1,26 +1,34 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.InputSystem.HID;
 
 public class AoeEnemySpell : MonoBehaviour
 {
     [SerializeField] private float radius = 3f; // Adjust this value according to your needs
     [SerializeField] private LayerMask characterLayer;
+    [SerializeField] private AbilityValues abilityValues;
+
 
     void OnEnable()
     {
-        // Perform the sphere cast
-        RaycastHit[] hits = Physics.SphereCastAll(transform.position, radius, Vector3.forward, 0f, characterLayer);
+        // Max number of entities in the OverlapSphere
+        int maxColliders = 10;
+        Collider[] hitColliders = new Collider[maxColliders];
+        int numColliders = Physics.OverlapSphereNonAlloc(transform.position, radius, hitColliders, characterLayer);
 
-        // Iterate through the hits
-        foreach (RaycastHit hit in hits)
+        for (int i = 0; i < numColliders; i++)
         {
-            if (hit.collider.gameObject.tag == "Player")
+            if (hitColliders[i].CompareTag("Player"))
             {
-                EventManager.Instance.PlayerTakeHeal(100);
-                // Do whatever you want with the player GameObject here
-                Debug.Log("Player found in POWER aoe: do damage");
+                abilityValues.playersToDamage.Add(hitColliders[i].gameObject);
+                //EventManager.Instance.PlayerTakeDamage(20);
             }
         }
     }
+    public void DoDamage(int damage)
+    {
+          abilityValues.DoDamage(damage);
+    }
+
 }

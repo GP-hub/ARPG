@@ -13,6 +13,7 @@ public class AttackAndPowerCasting : MonoBehaviour
     [Space(10)]
     [Header("Attack")]
     [SerializeField] private string fireballPrefabName;
+    [SerializeField] private float attackDamage = 10f;
     [SerializeField] private float attackProjectileSpeed = 10f;
     [SerializeField] private float attackCooldownTime = 1f;
     [SerializeField] private float attackPlayerMovementSpeedPercent = 2;
@@ -22,6 +23,7 @@ public class AttackAndPowerCasting : MonoBehaviour
     [Space(10)]
     [Header("Power")]
     [SerializeField] private string meteorPrefabName;
+    [SerializeField] private float powerDamage = 5f;
     [SerializeField] private float powerCooldownTime = 5f;
     [SerializeField] private float powerPlayerMovementSpeedPercent = 5;
     [SerializeField] private float powerSpeedMultiplier = 1;
@@ -58,6 +60,11 @@ public class AttackAndPowerCasting : MonoBehaviour
 
         playerInput.actions.FindAction("Power").performed += OnPowerChanged;
         playerInput.actions.FindAction("Power").canceled += OnPowerChanged;
+    }
+
+    private void Start()
+    {
+        EventManager.Instance.onEnemyTakeDamage += DoDamage;
     }
 
     private void OnEnable()
@@ -245,7 +252,6 @@ public class AttackAndPowerCasting : MonoBehaviour
 
             if (newObject != null)
             {
-
                 Quaternion rotationToTarget = Quaternion.LookRotation(direction);
                 newObject.transform.rotation = rotationToTarget;
             }
@@ -280,6 +286,19 @@ public class AttackAndPowerCasting : MonoBehaviour
 
         EventManager.Instance.Casting(false);
         isCasting = false;
+    }
+
+
+    private void DoDamage(Enemy enemy, string skill)
+    {
+        if (skill.ToLower().Contains(fireballPrefabName.ToLower()))
+        {
+            enemy.TakeDamage(attackDamage);
+        }
+        else if (skill.ToLower().Contains(meteorPrefabName.ToLower()))
+        {
+            enemy.TakeDamage(powerDamage);
+        }
     }
 
 

@@ -12,6 +12,7 @@ GameObject:
   - component: {fileID: 5813631923429098167}
   - component: {fileID: 4029075942579205044}
   - component: {fileID: 3158673508159486566}
+  - component: {fileID: -2409382538254542834}
   - component: {fileID: 4310669518149984246}
   - component: {fileID: 1995974467270907851}
   m_Layer: 2
@@ -107,6 +108,20 @@ SphereCollider:
   serializedVersion: 3
   m_Radius: 1
   m_Center: {x: 0, y: 0, z: 0}
+--- !u!114 &-2409382538254542834
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2029881061899082543}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 85299114c41834e45a60cab6116b7b7e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  damage: 0
+  playersToDamage: []
 --- !u!114 &4310669518149984246
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -120,13 +135,13 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   explosionRadius: 5
-  damageAmount: 0
   timeProjectileLifeTime: 2
   timeExplosionFadeOut: 1
   characterLayer:
     serializedVersion: 2
     m_Bits: 64
   projectileSpeed: 10
+  abilityValues: {fileID: -2409382538254542834}
 --- !u!54 &1995974467270907851
 Rigidbody:
   m_ObjectHideFlags: 0

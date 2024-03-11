@@ -30,5 +30,18 @@ public class Blackhole : MonoBehaviour
                 }
             }
         }
+
+        for (int i = 0; i < numColliders; i++)
+        {
+            if (hitColliders[i].CompareTag("Enemy"))
+            {
+                Enemy healthComponent = hitColliders[i].GetComponent<Enemy>();
+                if (healthComponent != null)
+                {
+                    EventManager.Instance.EnemyTakeDamage(healthComponent, this.gameObject.name);
+                    //healthComponent.TakeDamage(damageAmount);
+                }
+            }
+        }
     }
 }

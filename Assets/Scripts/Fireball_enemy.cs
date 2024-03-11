@@ -6,12 +6,16 @@ public class Fireball_enemy : MonoBehaviour
 {
 
     [SerializeField] private float explosionRadius = 5f;
-    [SerializeField] private int damageAmount = 5;
+    //[SerializeField] private int damageAmount = 5;
     [SerializeField] private float timeProjectileLifeTime = 5f;
     [SerializeField] private float timeExplosionFadeOut = 2f;
     [SerializeField] private LayerMask characterLayer;
     [SerializeField] private float projectileSpeed;
+    [SerializeField] private AbilityValues abilityValues;
 
+    private List<GameObject> playersToDamage = new List<GameObject>();
+
+    //public int DamageAmount { get => damageAmount; set => damageAmount = value; }
 
     private void Update()
     {
@@ -49,13 +53,9 @@ public class Fireball_enemy : MonoBehaviour
         {
             if (hitColliders[i].CompareTag("Player"))
             {
-
-                EventManager.Instance.PlayerTakeDamage(20);
-                //Enemy healthComponent = hitColliders[i].GetComponent<Enemy>();
-                //if (healthComponent != null)
-                //{
-                //    healthComponent.TakeDamage(damageAmount);
-                //}
+                //EventManager.Instance.PlayerTakeDamage(damageAmount);
+                abilityValues.playersToDamage.Add(hitColliders[i].gameObject);
+                abilityValues.DoDamage(abilityValues.Damage);
             }
         }
 

@@ -21,25 +21,21 @@ public class PlayerHealth : MonoBehaviour
     {
         health -= damageAmount;
 
-        if (health <= 0)
-        {
-            // Do the correct logic to get rid of dead enemies here
-            Destroy(gameObject);
-        }
+        if (health > maxHealth) health = maxHealth;
+
+        if (health <= 0) Destroy(gameObject);
+
         playerNameplate.UpdateHealthUI(health, maxHealth);
-        Debug.Log("Player hp: " + health);
     }
 
     public void PlayerTakeHeal(int healAmount)
     {
         health += healAmount;
 
-        if (health > maxHealth)
-        {
-            health = maxHealth;
-        }
+        if (health > maxHealth) health = maxHealth;
+
+        if (health <= 0) Destroy(gameObject);
 
         playerNameplate.UpdateHealthUI(health, maxHealth);
-        Debug.Log("Player hp: " + health);
     }
 }
