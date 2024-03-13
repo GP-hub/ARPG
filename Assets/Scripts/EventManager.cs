@@ -96,4 +96,15 @@ public class EventManager : Singleton<EventManager>
         }
     }
 
+    public event Action<int> onEnemyDeath;
+    public void EnemyDeath(int xp)
+    {
+        if (onEnemyDeath != null)
+        {
+            onEnemyDeath(xp);
+        }
+    }
+
+
+
 }

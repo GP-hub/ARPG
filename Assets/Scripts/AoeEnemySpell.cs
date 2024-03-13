@@ -1,8 +1,8 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.InputSystem.HID;
 
+[RequireComponent(typeof(AbilityValues))]
 public class AoeEnemySpell : MonoBehaviour
 {
     [SerializeField] private float radius = 3f; // Adjust this value according to your needs

@@ -7,11 +7,16 @@ public class PlayerHealth : MonoBehaviour
     [SerializeField] private float health, maxHealth = 100;
 
     private PlayerNameplate playerNameplate;
+    private Animator animator;
+    private bool isAlive = true;
+
+    public bool IsAlive { get => isAlive; }
 
     //
     void Start()
     {
-        playerNameplate = this.GetComponent<PlayerNameplate>();
+        playerNameplate = GetComponent<PlayerNameplate>();
+        animator = GetComponent<Animator>();
         health = maxHealth;
         EventManager.Instance.onPlayerTakeDamage += PlayerTakeDamage;
         EventManager.Instance.onPlayerTakeHeal += PlayerTakeHeal;
@@ -23,7 +28,7 @@ public class PlayerHealth : MonoBehaviour
 
         if (health > maxHealth) health = maxHealth;
 
-        if (health <= 0) Destroy(gameObject);
+        if (health <= 0) Death();
 
         playerNameplate.UpdateHealthUI(health, maxHealth);
     }
@@ -34,8 +39,15 @@ public class PlayerHealth : MonoBehaviour
 
         if (health > maxHealth) health = maxHealth;
 
-        if (health <= 0) Destroy(gameObject);
+        if (health <= 0) Death();
 
         playerNameplate.UpdateHealthUI(health, maxHealth);
+    }
+
+    private void Death()
+    {
+        this.gameObject.tag = "Dead";
+        isAlive = false;
+        animator.SetTrigger("Death");
     }
 }

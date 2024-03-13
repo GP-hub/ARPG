@@ -11,6 +11,7 @@ public class Enemy : MonoBehaviour
     [SerializeField] private float health, maxHealth = 30;
     [Tooltip("Animator issue when speed is below 2")]
     [SerializeField] private float speed;
+    [SerializeField] private int xp;
     // Idk 
     //[SerializeField] public LayerMask mask;
 
@@ -70,7 +71,10 @@ public class Enemy : MonoBehaviour
     private bool isAttacking;
     private bool isPowering = false;
     private bool isMoving;
-    private bool isIdle;    
+    private bool isIdle;
+    private bool isAlive = true;
+
+    private bool isLookingForTarget;
 
     [HideInInspector] public bool isCharging;
     [HideInInspector] public bool isPowerOnCooldown;
@@ -195,21 +199,47 @@ public class Enemy : MonoBehaviour
         if (health <= 0)
         {
             // Do the correct logic to get rid of dead enemies here
-            Destroy(gameObject);
+            Death();
+            //Destroy(gameObject);
         }
         healthBar.OnHealthChanged(health / maxHealth);
         //Debug.Log("Enemy hp: " + health);
     }
 
+    private void Death()
+    {
+        this.gameObject.tag = "Dead";
+        isAlive = false;
+
+        animator.SetTrigger("TriggerDeath");
+        EventManager.Instance.EnemyDeath(xp);
+    }
+
+    private void TriggerAnimationOnDeath()
+    {
+        controller.enabled = false;
+        agent.enabled = false;
+    }
+
     void HandleStateMachine()
     {
-        if (target == null)
+        if (!isAlive)
         {
-            StartCoroutine(SphereCastRoutine());
+            ChangeState(new DeathState());
             return;
         }
 
-        if (CanSeeTarget(target))
+        if (target == null || target.tag == "Dead")
+        {
+            ChangeState(new IdleState());
+            if (!isLookingForTarget)
+            {
+                StartCoroutine(SphereCastRoutine());
+            }
+            return;
+        }
+
+        if (CanSeeTarget(target) && target.tag != "Dead")
         {
             // Previous method of calculating distance that do one more operation: a square root, not sure what is the difference with the one below.
             //float distanceToTarget1 = Vector3.Distance(transform.position, target.position);
@@ -244,7 +274,7 @@ public class Enemy : MonoBehaviour
                 }
             }
         }
-        if (!CanSeeTarget(target))
+        if (!CanSeeTarget(target) && target.tag != "Dead")
         {
             ChangeState(new FollowState());
             return;
@@ -391,6 +421,8 @@ public class Enemy : MonoBehaviour
 
     public IEnumerator SphereCastRoutine()
     {
+        isLookingForTarget = true;
+
         while (target == null) 
         {
             // Max number of entities in the OverlapSphere
@@ -406,10 +438,13 @@ public class Enemy : MonoBehaviour
                     if (CanSeeTarget(t))
                     {
                         target = t;
+                        isLookingForTarget = false;
+                        yield return null;
                         //Debug.Log("Can see player in aggro range.");
                     }
                     if (!CanSeeTarget(t))
                     {
+                        Debug.Log("Target in range but not in sight");
                         //Debug.Log("Player in range but cannot see.");
                     }
                 }

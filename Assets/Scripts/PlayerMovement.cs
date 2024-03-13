@@ -1,4 +1,5 @@
 using UnityEngine;
+using UnityEngine.AI;
 
 [RequireComponent(typeof(CharacterController))]
 public class PlayerMovement : MonoBehaviour
@@ -20,8 +21,10 @@ public class PlayerMovement : MonoBehaviour
     private Canvas aimCanvas;
 
     private PlayerControls playerControls;
+    private PlayerHealth playerHealth;
 
     private CharacterController controller;
+    private NavMeshAgent navMeshAgent;
 
     private AttackAndPowerCasting attackAndPowerCasting;
 
@@ -31,6 +34,8 @@ public class PlayerMovement : MonoBehaviour
     //
     private void Awake()
     {
+        navMeshAgent = GetComponent<NavMeshAgent>();
+        playerHealth = GetComponent<PlayerHealth>();
         attackAndPowerCasting = GetComponent<AttackAndPowerCasting>();
         controller = GetComponent<CharacterController>();
         animator = GetComponent<Animator>();
@@ -52,6 +57,8 @@ public class PlayerMovement : MonoBehaviour
     // 
     void Update()
     {
+        if (!playerHealth.IsAlive) return;
+
         HandleInput();
         HandleRotation();
         HandleAimCanvasRotation();
@@ -177,9 +184,9 @@ public class PlayerMovement : MonoBehaviour
         }
     }
 
-    // If we want to do something at the end of the attack animation /// Empty
-    public void EndOfAttack()
+    private void TriggerAnimationOnDeath()
     {
-
+        controller.enabled = false;
+        navMeshAgent.enabled = false;
     }
 }

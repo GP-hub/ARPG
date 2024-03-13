@@ -22813,6 +22813,10 @@ PrefabInstance:
       value: 
       objectReference: {fileID: 1733174547}
     - target: {fileID: 3142904809075892329, guid: 056cd2ef5c48bd543a8b8a967be299d2, type: 3}
+      propertyPath: attackDamage
+      value: 100
+      objectReference: {fileID: 0}
+    - target: {fileID: 3142904809075892329, guid: 056cd2ef5c48bd543a8b8a967be299d2, type: 3}
       propertyPath: powerCooldownImage
       value: 
       objectReference: {fileID: 2077138345}
@@ -23128,12 +23132,16 @@ PrefabInstance:
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 2105299005440825275, guid: db2ab821124dfaa428eb41235a2e4794, type: 3}
+      propertyPath: maxHealth
+      value: 300
+      objectReference: {fileID: 0}
+    - target: {fileID: 2105299005440825275, guid: db2ab821124dfaa428eb41235a2e4794, type: 3}
       propertyPath: powerDamage
-      value: 30
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 2105299005440825275, guid: db2ab821124dfaa428eb41235a2e4794, type: 3}
       propertyPath: attackDamage
-      value: 5
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 2105299005440825275, guid: db2ab821124dfaa428eb41235a2e4794, type: 3}
       propertyPath: healthPanelRect
@@ -23145,7 +23153,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 6695187827382280720, guid: db2ab821124dfaa428eb41235a2e4794, type: 3}
       propertyPath: m_IsActive
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []

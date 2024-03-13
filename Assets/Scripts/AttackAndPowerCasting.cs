@@ -32,6 +32,8 @@ public class AttackAndPowerCasting : MonoBehaviour
 
     private PlayerInput playerInput;
 
+    private bool isAlive;
+
     private bool isAttackingHeldDown = false;
     private bool isPoweringHeldDown = false;
     private bool isCasting = false;
@@ -44,6 +46,7 @@ public class AttackAndPowerCasting : MonoBehaviour
     private float powerCooldownTimeElapsed;
 
     private PlayerMovement playerMovement;
+    private PlayerHealth playerHealth;
 
     private Animator animator;
 
@@ -51,6 +54,7 @@ public class AttackAndPowerCasting : MonoBehaviour
 
     private void Awake()
     {
+        playerHealth = GetComponent<PlayerHealth>();
         playerMovement = GetComponent<PlayerMovement>();
         playerInput = GetComponent<PlayerInput>();
         animator = GetComponent<Animator>();
@@ -79,6 +83,8 @@ public class AttackAndPowerCasting : MonoBehaviour
 
     private void HandlingCasting()
     {
+        if (!playerHealth.IsAlive) return;
+
         if (isCasting) return;
 
         // If we want to be able to cast while dashing
@@ -300,7 +306,5 @@ public class AttackAndPowerCasting : MonoBehaviour
             enemy.TakeDamage(powerDamage);
         }
     }
-
-
 }
 
