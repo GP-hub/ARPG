@@ -100,7 +100,7 @@ MonoBehaviour:
   characterLayer:
     serializedVersion: 2
     m_Bits: 64
-  radius: 10
+  radius: 1
 --- !u!114 &4186963884149671242
 MonoBehaviour:
   m_ObjectHideFlags: 0

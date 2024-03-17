@@ -12,8 +12,8 @@ public class Enemy : MonoBehaviour
     [Tooltip("Animator issue when speed is below 2")]
     [SerializeField] private float speed;
     [SerializeField] private int xp;
-    // Idk 
-    //[SerializeField] public LayerMask mask;
+
+    private float cCDuration;
 
     [Space(10)]
     [Header("Healthbar")]
@@ -73,6 +73,7 @@ public class Enemy : MonoBehaviour
     private bool isMoving;
     private bool isIdle;
     private bool isAlive = true;
+    private bool isCC;
 
     private bool isLookingForTarget;
 
@@ -87,6 +88,8 @@ public class Enemy : MonoBehaviour
     public Animator Animator { get => animator;}
     public bool IsPowering { get => isPowering;}
     public bool IsAttacking { get => isAttacking;}
+    public float CCDuration { get => cCDuration;}
+    public bool IsCC { get => isCC; set => isCC = value; }
 
     private void Awake()
     {
@@ -228,6 +231,15 @@ public class Enemy : MonoBehaviour
             ChangeState(new DeathState());
             return;
         }
+
+        // Update CC duration
+        if (cCDuration > 0)
+        {
+            cCDuration -= Time.deltaTime;
+        }
+
+        if (IsCC) return;
+
 
         if (target == null || target.tag == "Dead")
         {
@@ -527,10 +539,13 @@ public class Enemy : MonoBehaviour
         }
     }
 
-    // Triggered last frame of every enemy skill animations
-    private void DecideNextMove()
+    public void UpdateCCDuration(float newCCDuration)
     {
-
+        Debug.Log("cCDuration:" + cCDuration + ", newCCDuration:" + newCCDuration);
+        if (newCCDuration >= cCDuration)
+        {
+            cCDuration = newCCDuration;
+        } 
     }
 
     public void ResetAttackingAndPowering()
@@ -538,4 +553,8 @@ public class Enemy : MonoBehaviour
         if (IsAttacking) isAttacking = false;
         if (isPowering) isPowering = false;
     }
+
+    // Useless but present in some animation so keep it to avoid null refs
+    public void DecideNextMove() { }
+
 }

@@ -1,7 +1,3 @@
-using System.Collections;
-using UnityEngine;
-
-
 class AttackState : IState
 {
     private Enemy enemy;

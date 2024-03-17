@@ -119,8 +119,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 11a67cc1a9de2e94c8c2cf951e11a662, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  explosionRadius: 10
-  damageAmount: 1
+  explosionRadius: 2
   timeProjectileLifeTime: 2
   timeExplosionFadeOut: 1
   characterLayer:

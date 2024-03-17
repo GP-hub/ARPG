@@ -5,8 +5,8 @@ using UnityEngine.EventSystems;
 public class Fireball : MonoBehaviour
 {
 
-    [SerializeField] private float explosionRadius = 5f;
-    [SerializeField] private int damageAmount = 5;
+    [SerializeField] private float explosionRadius;
+    //[SerializeField] private int damageAmount = 5;
     [SerializeField] private float timeProjectileLifeTime = 5f;
     [SerializeField] private float timeExplosionFadeOut = 2f;
     [SerializeField] private LayerMask characterLayer;
@@ -55,10 +55,11 @@ public class Fireball : MonoBehaviour
         {
             if (hitColliders[i].CompareTag("Enemy"))
             {
-                Enemy healthComponent = hitColliders[i].GetComponent<Enemy>();
-                if (healthComponent != null)
+                Enemy enemy = hitColliders[i].GetComponent<Enemy>();
+                if (enemy != null)
                 {
-                    EventManager.Instance.EnemyTakeDamage(healthComponent, this.name);
+                    EventManager.Instance.EnemyTakeDamage(enemy, this.name);
+                    EventManager.Instance.EnemyGetCC(enemy, this.gameObject.name);
                     //healthComponent.TakeDamage(damageAmount);
                 }
             }

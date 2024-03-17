@@ -51,7 +51,7 @@ public class Healthbar : MonoBehaviour
 
         if (healthbarImage.fillAmount <= 0)
         {
-            this.transform.parent.gameObject.SetActive(false);
+            this.transform.gameObject.SetActive(false);
         }
     }
 

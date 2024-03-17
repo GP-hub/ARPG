@@ -6,7 +6,7 @@ public class Blackhole : MonoBehaviour
 {
 
     [SerializeField] private LayerMask characterLayer;
-    [SerializeField] private float radius = 10f;
+    [SerializeField] private float radius;
 
     public void Explode()
     {
@@ -35,10 +35,11 @@ public class Blackhole : MonoBehaviour
         {
             if (hitColliders[i].CompareTag("Enemy"))
             {
-                Enemy healthComponent = hitColliders[i].GetComponent<Enemy>();
-                if (healthComponent != null)
+                Enemy enemy = hitColliders[i].GetComponent<Enemy>();
+                if (enemy != null)
                 {
-                    EventManager.Instance.EnemyTakeDamage(healthComponent, this.gameObject.name);
+                    EventManager.Instance.EnemyTakeDamage(enemy, this.gameObject.name);
+                    EventManager.Instance.EnemyGetCC(enemy, this.gameObject.name);
                     //healthComponent.TakeDamage(damageAmount);
                 }
             }

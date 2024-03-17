@@ -96,6 +96,15 @@ public class EventManager : Singleton<EventManager>
         }
     }
 
+    public event Action<Enemy, string> onEnemyGetCC;
+    public void EnemyGetCC(Enemy enemy, string skill)
+    {
+        if (onEnemyGetCC != null)
+        {
+            onEnemyGetCC(enemy, skill);
+        }
+    }
+
     public event Action<int> onEnemyDeath;
     public void EnemyDeath(int xp)
     {

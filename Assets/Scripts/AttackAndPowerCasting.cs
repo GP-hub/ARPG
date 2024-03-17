@@ -14,6 +14,7 @@ public class AttackAndPowerCasting : MonoBehaviour
     [Header("Attack")]
     [SerializeField] private string fireballPrefabName;
     [SerializeField] private float attackDamage = 10f;
+    [SerializeField] private float attackCCDuration = 3f;
     [SerializeField] private float attackProjectileSpeed = 10f;
     [SerializeField] private float attackCooldownTime = 1f;
     [SerializeField] private float attackPlayerMovementSpeedPercent = 2;
@@ -24,6 +25,7 @@ public class AttackAndPowerCasting : MonoBehaviour
     [Header("Power")]
     [SerializeField] private string meteorPrefabName;
     [SerializeField] private float powerDamage = 5f;
+    [SerializeField] private float powerCCDuration = 5f;
     [SerializeField] private float powerCooldownTime = 5f;
     [SerializeField] private float powerPlayerMovementSpeedPercent = 5;
     [SerializeField] private float powerSpeedMultiplier = 1;
@@ -50,7 +52,7 @@ public class AttackAndPowerCasting : MonoBehaviour
 
     private Animator animator;
 
-    public bool IsCasting { get => isCasting;}
+    public bool IsCasting { get => isCasting; }
 
     private void Awake()
     {
@@ -69,6 +71,7 @@ public class AttackAndPowerCasting : MonoBehaviour
     private void Start()
     {
         EventManager.Instance.onEnemyTakeDamage += DoDamage;
+        EventManager.Instance.onEnemyGetCC += ApplyCCDuration;
     }
 
     private void OnEnable()
@@ -250,7 +253,7 @@ public class AttackAndPowerCasting : MonoBehaviour
         if (Physics.Raycast(cursorRay, out RaycastHit hit, 100f, groundLayer))
         {
             Vector3 targetPosition = hit.point;
-            
+
             Vector3 targetCorrectedPosition = new Vector3(CorrectingAimPosition(targetPosition).x, targetPosition.y, CorrectingAimPosition(targetPosition).z);
             Vector3 direction = (targetCorrectedPosition - this.transform.position).normalized;
 
@@ -304,6 +307,18 @@ public class AttackAndPowerCasting : MonoBehaviour
         else if (skill.ToLower().Contains(meteorPrefabName.ToLower()))
         {
             enemy.TakeDamage(powerDamage);
+        }
+    }
+
+    private void ApplyCCDuration(Enemy enemy, string skill)
+    {
+        if (skill.ToLower().Contains(fireballPrefabName.ToLower()))
+        {
+            enemy.UpdateCCDuration(attackCCDuration);
+        }
+        else if (skill.ToLower().Contains(meteorPrefabName.ToLower()))
+        {
+            enemy.UpdateCCDuration(powerCCDuration);
         }
     }
 }
