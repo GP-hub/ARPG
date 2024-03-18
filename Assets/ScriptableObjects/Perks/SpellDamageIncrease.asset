@@ -15,4 +15,4 @@ MonoBehaviour:
   perkName: increase damage
   description: increase player spell damage
   effects:
-  - {fileID: 0}
+  - {fileID: 11400000, guid: 41f17f632bfcdd4488ab4af25cd5e141, type: 2}
