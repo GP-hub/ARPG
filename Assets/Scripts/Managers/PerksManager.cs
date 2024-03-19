@@ -6,11 +6,11 @@ public class PerksManager : Singleton<PerksManager>
     public List<Perk> availablePerks = new List<Perk>();
     private List<Perk> selectedPerks = new List<Perk>(); 
 
-    private AttackAndPowerCasting spell;
+    [HideInInspector]public GameObject player;
 
     private void Start()
     {
-        spell = GameObject.FindWithTag("Player").GetComponent<AttackAndPowerCasting>();
+        player = GameObject.FindWithTag("Player");
     }
 
     // Method to select a perk
@@ -26,12 +26,9 @@ public class PerksManager : Singleton<PerksManager>
     // Method to apply perks to spells
     public void ApplyPerks(Perk perk)
     {
-        if (spell != null)
+        if (player != null)
         {
-            perk.ApplyEffects(spell);
-            //foreach (Perk perk in selectedPerks)
-            //{
-            //}
+            perk.ApplyEffects();
         }
     }
 }

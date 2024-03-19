@@ -9,11 +9,11 @@ public class Perk : ScriptableObject
     public List<PerkEffect> effects = new List<PerkEffect>();
 
     // Method to apply the effects of the perk to a spell
-    public void ApplyEffects(AttackAndPowerCasting spell)
+    public void ApplyEffects()
     {
         foreach (PerkEffect effect in effects)
         {
-            effect.ApplyEffect(spell);
+            effect.ApplyEffect();
         }
     }
 }
