@@ -1865,7 +1865,7 @@ GameObject:
   - component: {fileID: 824125144}
   - component: {fileID: 824125143}
   - component: {fileID: 824125142}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Bonus
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1884,8 +1884,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a0475f9f14cb55745970b795a797da02, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  interactKey: 101
-  perk: {fileID: 11400000, guid: e316e3fcb2f3d714dbb78946733bc4b1, type: 2}
+  perk: {fileID: 11400000, guid: 76a014225857b5543924cec90cdd59ad, type: 2}
 --- !u!135 &824125143
 SphereCollider:
   m_ObjectHideFlags: 0
@@ -3723,6 +3722,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   availablePerks: []
+  player: {fileID: 0}
 --- !u!1 &1269989251
 GameObject:
   m_ObjectHideFlags: 0
@@ -4464,6 +4464,11 @@ PrefabInstance:
 Transform:
   m_CorrespondingSourceObject: {fileID: 4855193289971172, guid: 2e23bb932cf4ec7498eb4b727d9113fa, type: 3}
   m_PrefabInstance: {fileID: 1388760273}
+  m_PrefabAsset: {fileID: 0}
+--- !u!1 &1435582403 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 552659461661742573, guid: 056cd2ef5c48bd543a8b8a967be299d2, type: 3}
+  m_PrefabInstance: {fileID: 573478108610039295}
   m_PrefabAsset: {fileID: 0}
 --- !u!1001 &1455928585
 PrefabInstance:
@@ -7579,6 +7584,18 @@ PrefabInstance:
       propertyPath: attackCooldownImage
       value: 
       objectReference: {fileID: 1312029674}
+    - target: {fileID: 4217614663739450791, guid: 056cd2ef5c48bd543a8b8a967be299d2, type: 3}
+      propertyPath: m_ActionEvents.Array.size
+      value: 7
+      objectReference: {fileID: 0}
+    - target: {fileID: 4217614663739450791, guid: 056cd2ef5c48bd543a8b8a967be299d2, type: 3}
+      propertyPath: m_ActionEvents.Array.data[6].m_ActionId
+      value: 1bc3e331-653c-44fe-98fa-660c8a951ec9
+      objectReference: {fileID: 0}
+    - target: {fileID: 4217614663739450791, guid: 056cd2ef5c48bd543a8b8a967be299d2, type: 3}
+      propertyPath: m_ActionEvents.Array.data[6].m_ActionName
+      value: Controls/Interact[/Keyboard/e]
+      objectReference: {fileID: 0}
     - target: {fileID: 4490511338154228046, guid: 056cd2ef5c48bd543a8b8a967be299d2, type: 3}
       propertyPath: ultimateCooldownImage
       value: 
@@ -7587,6 +7604,10 @@ PrefabInstance:
       propertyPath: healthPanelRect
       value: 
       objectReference: {fileID: 1913881814}
+    - target: {fileID: 5984747309346691757, guid: 056cd2ef5c48bd543a8b8a967be299d2, type: 3}
+      propertyPath: playerSpeed
+      value: 5
+      objectReference: {fileID: 0}
     - target: {fileID: 8825288649079597302, guid: 056cd2ef5c48bd543a8b8a967be299d2, type: 3}
       propertyPath: m_Camera
       value: 
@@ -7594,13 +7615,32 @@ PrefabInstance:
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
-    m_AddedComponents: []
+    m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 552659461661742573, guid: 056cd2ef5c48bd543a8b8a967be299d2, type: 3}
+      insertIndex: 10
+      addedObject: {fileID: 2489162359881497447}
   m_SourcePrefab: {fileID: 100100000, guid: 056cd2ef5c48bd543a8b8a967be299d2, type: 3}
 --- !u!4 &2489162359881497434 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 178050982910570537, guid: 056cd2ef5c48bd543a8b8a967be299d2, type: 3}
   m_PrefabInstance: {fileID: 573478108610039295}
   m_PrefabAsset: {fileID: 0}
+--- !u!114 &2489162359881497447
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1435582403}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f68003383c9db9f44b6a19cf615b58e4, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  interactibleLayer:
+    serializedVersion: 2
+    m_Bits: 256
+  interactionRange: 2
 --- !u!1001 &2690789254254042443
 PrefabInstance:
   m_ObjectHideFlags: 0

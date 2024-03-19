@@ -12,6 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6dffd540195914e4a91d7067a93c1d2e, type: 3}
   m_Name: Player Speed Perk
   m_EditorClassIdentifier: 
-  perkName: 
-  description: 
-  effects: []
+  perkName: Increase player speed
+  description: Increase player speed by 10.
+  effects:
+  - {fileID: 11400000, guid: 0d5da403d79c07a448314b0a9e9ba8fa, type: 2}
