@@ -456,8 +456,7 @@ public class Enemy : MonoBehaviour
                     }
                     if (!CanSeeTarget(t))
                     {
-                        Debug.Log("Target in range but not in sight");
-                        //Debug.Log("Player in range but cannot see.");
+                        //Debug.Log("Target in range but not in sight");
                     }
                 }
             }
@@ -541,7 +540,7 @@ public class Enemy : MonoBehaviour
 
     public void UpdateCCDuration(float newCCDuration)
     {
-        Debug.Log("cCDuration:" + cCDuration + ", newCCDuration:" + newCCDuration);
+        //Debug.Log("cCDuration:" + cCDuration + ", newCCDuration:" + newCCDuration);
         if (newCCDuration >= cCDuration)
         {
             cCDuration = newCCDuration;

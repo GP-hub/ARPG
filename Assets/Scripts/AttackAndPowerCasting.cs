@@ -53,6 +53,8 @@ public class AttackAndPowerCasting : MonoBehaviour
     private Animator animator;
 
     public bool IsCasting { get => isCasting; }
+    public float AttackDamage { get => attackDamage; set => attackDamage = value; }
+    public float PowerDamage { get => powerDamage; set => powerDamage = value; }
 
     private void Awake()
     {

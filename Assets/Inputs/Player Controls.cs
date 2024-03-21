@@ -80,6 +80,15 @@ public partial class @PlayerControls: IInputActionCollection2, IDisposable
                     ""processors"": """",
                     ""interactions"": """",
                     ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""Interact"",
+                    ""type"": ""Button"",
+                    ""id"": ""1bc3e331-653c-44fe-98fa-660c8a951ec9"",
+                    ""expectedControlType"": ""Button"",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
                 }
             ],
             ""bindings"": [
@@ -192,6 +201,17 @@ public partial class @PlayerControls: IInputActionCollection2, IDisposable
                     ""action"": ""Ultimate"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""c793d989-bd3f-4f7e-93bc-94d1d10c8aa1"",
+                    ""path"": ""<Keyboard>/e"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": ""KBM"",
+                    ""action"": ""Interact"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
                 }
             ]
         }
@@ -223,6 +243,7 @@ public partial class @PlayerControls: IInputActionCollection2, IDisposable
         m_Controls_Power = m_Controls.FindAction("Power", throwIfNotFound: true);
         m_Controls_Dash = m_Controls.FindAction("Dash", throwIfNotFound: true);
         m_Controls_Ultimate = m_Controls.FindAction("Ultimate", throwIfNotFound: true);
+        m_Controls_Interact = m_Controls.FindAction("Interact", throwIfNotFound: true);
     }
 
     public void Dispose()
@@ -290,6 +311,7 @@ public partial class @PlayerControls: IInputActionCollection2, IDisposable
     private readonly InputAction m_Controls_Power;
     private readonly InputAction m_Controls_Dash;
     private readonly InputAction m_Controls_Ultimate;
+    private readonly InputAction m_Controls_Interact;
     public struct ControlsActions
     {
         private @PlayerControls m_Wrapper;
@@ -300,6 +322,7 @@ public partial class @PlayerControls: IInputActionCollection2, IDisposable
         public InputAction @Power => m_Wrapper.m_Controls_Power;
         public InputAction @Dash => m_Wrapper.m_Controls_Dash;
         public InputAction @Ultimate => m_Wrapper.m_Controls_Ultimate;
+        public InputAction @Interact => m_Wrapper.m_Controls_Interact;
         public InputActionMap Get() { return m_Wrapper.m_Controls; }
         public void Enable() { Get().Enable(); }
         public void Disable() { Get().Disable(); }
@@ -327,6 +350,9 @@ public partial class @PlayerControls: IInputActionCollection2, IDisposable
             @Ultimate.started += instance.OnUltimate;
             @Ultimate.performed += instance.OnUltimate;
             @Ultimate.canceled += instance.OnUltimate;
+            @Interact.started += instance.OnInteract;
+            @Interact.performed += instance.OnInteract;
+            @Interact.canceled += instance.OnInteract;
         }
 
         private void UnregisterCallbacks(IControlsActions instance)
@@ -349,6 +375,9 @@ public partial class @PlayerControls: IInputActionCollection2, IDisposable
             @Ultimate.started -= instance.OnUltimate;
             @Ultimate.performed -= instance.OnUltimate;
             @Ultimate.canceled -= instance.OnUltimate;
+            @Interact.started -= instance.OnInteract;
+            @Interact.performed -= instance.OnInteract;
+            @Interact.canceled -= instance.OnInteract;
         }
 
         public void RemoveCallbacks(IControlsActions instance)
@@ -383,5 +412,6 @@ public partial class @PlayerControls: IInputActionCollection2, IDisposable
         void OnPower(InputAction.CallbackContext context);
         void OnDash(InputAction.CallbackContext context);
         void OnUltimate(InputAction.CallbackContext context);
+        void OnInteract(InputAction.CallbackContext context);
     }
 }
