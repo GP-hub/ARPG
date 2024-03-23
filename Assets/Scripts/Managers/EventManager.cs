@@ -1,11 +1,11 @@
 using UnityEngine;
 using System;
 
-public class EventManager : Singleton<EventManager>
+public static class EventManager/* : Singleton<EventManager>*/
 {
 
-    public event Action onEventEnded; 
-    public void EventEnded()
+    public static event Action onEventEnded; 
+    public static void EventEnded()
     {
         if (onEventEnded != null)
         {
@@ -14,8 +14,8 @@ public class EventManager : Singleton<EventManager>
     }
 
 
-    public event Action<bool> onDashing;
-    public void Dashing(bool dashing)
+    public static event Action<bool> onDashing;
+    public static void Dashing(bool dashing)
     {
         if (onDashing != null)
         {
@@ -23,8 +23,8 @@ public class EventManager : Singleton<EventManager>
         }
     }
 
-    public event Action<bool> onUltimate;
-    public void Ultimate(bool ultimate)
+    public static event Action<bool> onUltimate;
+    public static void Ultimate(bool ultimate)
     {
         if (onUltimate != null)
         {
@@ -32,8 +32,8 @@ public class EventManager : Singleton<EventManager>
         }
     }
 
-    public event Action<bool> onCasting;
-    public void Casting(bool dashing)
+    public static event Action<bool> onCasting;
+    public static void Casting(bool dashing)
     {
         if (onCasting != null)
         {
@@ -41,8 +41,8 @@ public class EventManager : Singleton<EventManager>
         }
     }
 
-    public event Action<int> onFireChargeCountChange;
-    public void FireChargeCountChange(int chargeNbr)
+    public static event Action<int> onFireChargeCountChange;
+    public static void FireChargeCountChange(int chargeNbr)
     {
         if (onFireChargeCountChange != null)
         {
@@ -50,8 +50,8 @@ public class EventManager : Singleton<EventManager>
         }
     }
 
-    public event Action onEnemyDecideNextMove;
-    public void EnemyDecideNextMove()
+    public static event Action onEnemyDecideNextMove;
+    public static void EnemyDecideNextMove()
     {
         if (onEnemyDecideNextMove !=null)
         {
@@ -59,8 +59,8 @@ public class EventManager : Singleton<EventManager>
         }
     }
 
-    public event Action<int> onPlayerTakeDamage;
-    public void PlayerTakeDamage(int damage)
+    public static event Action<int> onPlayerTakeDamage;
+    public static void PlayerTakeDamage(int damage)
     {
         if (onPlayerTakeDamage != null)
         {
@@ -68,8 +68,8 @@ public class EventManager : Singleton<EventManager>
         }
     }
 
-    public event Action<int> onPlayerTakeHeal;
-    public void PlayerTakeHeal(int heal)
+    public static event Action<int> onPlayerTakeHeal;
+    public static void PlayerTakeHeal(int heal)
     {
         if (onPlayerTakeHeal != null)
         {
@@ -77,8 +77,8 @@ public class EventManager : Singleton<EventManager>
         }
     }
 
-    public event Action<Enemy, string> onEnemyTakeDamage;
-    public void EnemyTakeDamage(Enemy enemy, string skill)
+    public static event Action<Enemy, string> onEnemyTakeDamage;
+    public static void EnemyTakeDamage(Enemy enemy, string skill)
     {
         if (onEnemyTakeDamage != null)
         {
@@ -86,8 +86,8 @@ public class EventManager : Singleton<EventManager>
         }
     }
 
-    public event Action<Enemy, string> onEnemyGetCC;
-    public void EnemyGetCC(Enemy enemy, string skill)
+    public static event Action<Enemy, string> onEnemyGetCC;
+    public static void EnemyGetCC(Enemy enemy, string skill)
     {
         if (onEnemyGetCC != null)
         {
@@ -95,8 +95,8 @@ public class EventManager : Singleton<EventManager>
         }
     }
 
-    public event Action<int> onEnemyDeath;
-    public void EnemyDeath(int xp)
+    public static event Action<int> onEnemyDeath;
+    public static void EnemyDeath(int xp)
     {
         if (onEnemyDeath != null)
         {
@@ -104,8 +104,8 @@ public class EventManager : Singleton<EventManager>
         }
     }
 
-    public event Action<string> onSceneLoad;
-    public void SceneLoad(string sceneName)
+    public static event Action<string> onSceneLoad;
+    public static void SceneLoad(string sceneName)
     {
         if (onSceneLoad != null)
         {

@@ -22,7 +22,7 @@ public class AoeEnemySpell : MonoBehaviour
             if (hitColliders[i].CompareTag("Player"))
             {
                 abilityValues.playersToDamage.Add(hitColliders[i].gameObject);
-                //EventManager.Instance.PlayerTakeDamage(20);
+                //EventManager.PlayerTakeDamage(20);
             }
         }
     }

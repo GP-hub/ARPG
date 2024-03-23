@@ -16,7 +16,7 @@ public class PoolingManagerSingleton : Singleton<PoolingManagerSingleton>
 
     void Start()
     {
-        EventManager.Instance.onSceneLoad += CheckForGameSceneLoad;
+        EventManager.onSceneLoad += CheckForGameSceneLoad;
         InitializeObjectPools();
     }
 

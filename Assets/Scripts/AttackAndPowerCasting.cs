@@ -72,13 +72,13 @@ public class AttackAndPowerCasting : MonoBehaviour
 
     private void Start()
     {
-        EventManager.Instance.onEnemyTakeDamage += DoDamage;
-        EventManager.Instance.onEnemyGetCC += ApplyCCDuration;
+        EventManager.onEnemyTakeDamage += DoDamage;
+        EventManager.onEnemyGetCC += ApplyCCDuration;
     }
 
     private void OnEnable()
     {
-        EventManager.Instance.onDashing += Dashing;
+        EventManager.onDashing += Dashing;
     }
 
     private void Update()
@@ -128,7 +128,7 @@ public class AttackAndPowerCasting : MonoBehaviour
 
     private void CastAttack()
     {
-        EventManager.Instance.Casting(true);
+        EventManager.Casting(true);
         isCasting = true;
 
         isAttackingHeldDown = true;
@@ -148,7 +148,7 @@ public class AttackAndPowerCasting : MonoBehaviour
 
     private void CastPower()
     {
-        EventManager.Instance.Casting(true);
+        EventManager.Casting(true);
         isCasting = true;
 
         isPoweringHeldDown = true;
@@ -268,7 +268,7 @@ public class AttackAndPowerCasting : MonoBehaviour
             }
         }
 
-        EventManager.Instance.Casting(false);
+        EventManager.Casting(false);
         isCasting = false;
     }
 
@@ -295,7 +295,7 @@ public class AttackAndPowerCasting : MonoBehaviour
             }
         }
 
-        EventManager.Instance.Casting(false);
+        EventManager.Casting(false);
         isCasting = false;
     }
 

@@ -54,7 +54,7 @@ public class Fireball_enemy : MonoBehaviour
         {
             if (hitColliders[i].CompareTag("Player"))
             {
-                //EventManager.Instance.PlayerTakeDamage(damageAmount);
+                //EventManager.PlayerTakeDamage(damageAmount);
                 abilityValues.playersToDamage.Add(hitColliders[i].gameObject);
                 abilityValues.DoDamage(abilityValues.Damage);
             }

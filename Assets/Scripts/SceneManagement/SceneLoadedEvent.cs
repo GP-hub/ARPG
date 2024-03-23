@@ -4,6 +4,6 @@ public class SceneLoadedEvent : MonoBehaviour
 {
     private void Awake()
     {
-        EventManager.Instance?.SceneLoad(LoaderManager.ReturnCurrentLoadedScene());
+        EventManager.SceneLoad(LoaderManager.ReturnCurrentLoadedScene());
     }
 }

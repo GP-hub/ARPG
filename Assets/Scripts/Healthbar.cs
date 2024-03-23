@@ -20,9 +20,9 @@ public class Healthbar : MonoBehaviour
             isPlayerBar = true;
         }
 
-        if (isPlayerBar) EventManager.Instance.onFireChargeCountChange += UpdateFireChargeBarUI;
+        if (isPlayerBar) EventManager.onFireChargeCountChange += UpdateFireChargeBarUI;
 
-        EventManager.Instance.FireChargeCountChange(SpellCharge.SpellCount);
+        EventManager.FireChargeCountChange(SpellCharge.SpellCount);
     }
 
     void Update()

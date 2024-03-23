@@ -18,8 +18,8 @@ public class PlayerHealth : MonoBehaviour
         playerNameplate = GetComponent<PlayerNameplate>();
         animator = GetComponent<Animator>();
         health = maxHealth;
-        EventManager.Instance.onPlayerTakeDamage += PlayerTakeDamage;
-        EventManager.Instance.onPlayerTakeHeal += PlayerTakeHeal;
+        EventManager.onPlayerTakeDamage += PlayerTakeDamage;
+        EventManager.onPlayerTakeHeal += PlayerTakeHeal;
     }
 
     public void PlayerTakeDamage(int damageAmount)

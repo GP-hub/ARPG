@@ -40,6 +40,6 @@ public static class SpellCharge
 
     private static void UpdateUIFireCharge()
     {
-        EventManager.Instance.FireChargeCountChange(SpellCount);
+        EventManager.FireChargeCountChange(SpellCount);
     }
 }

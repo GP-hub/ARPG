@@ -16,7 +16,7 @@ public class Firewall : MonoBehaviour
 
     private void Start()
     {
-        EventManager.Instance.onDashing += StartCoroutineFirewall;
+        EventManager.onDashing += StartCoroutineFirewall;
     }
 
 

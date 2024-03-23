@@ -14,7 +14,7 @@ public class AbilityValues : MonoBehaviour
     {
         foreach (GameObject players in playersToDamage)
         {
-            EventManager.Instance.PlayerTakeDamage(damage);
+            EventManager.PlayerTakeDamage(damage);
         }
     }
 

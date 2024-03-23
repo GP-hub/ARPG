@@ -215,7 +215,7 @@ public class Enemy : MonoBehaviour
         isAlive = false;
 
         animator.SetTrigger("TriggerDeath");
-        EventManager.Instance.EnemyDeath(xp);
+        EventManager.EnemyDeath(xp);
     }
 
     private void TriggerAnimationOnDeath()
@@ -322,7 +322,7 @@ public class Enemy : MonoBehaviour
         {
             if (hitColliders[i].CompareTag("Player"))
             {
-                EventManager.Instance.PlayerTakeDamage(attackDamage);
+                EventManager.PlayerTakeDamage(attackDamage);
             }
         }
         ResetAttackingAndPowering();

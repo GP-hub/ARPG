@@ -29,7 +29,7 @@ public class Dash : MonoBehaviour
 
     private void OnEnable()
     {
-        EventManager.Instance.onCasting += Casting;
+        EventManager.onCasting += Casting;
     }
 
     private void Casting(bool dashing)
@@ -53,7 +53,7 @@ public class Dash : MonoBehaviour
 
     private IEnumerator ModifyPlayerMovementSpeed()
     {
-        EventManager.Instance.Dashing(true);
+        EventManager.Dashing(true);
 
         twinStickMovement.PlayerSpeed += dashSpeed;
 
@@ -61,7 +61,7 @@ public class Dash : MonoBehaviour
 
         twinStickMovement.PlayerSpeed -= dashSpeed;
 
-        EventManager.Instance.Dashing(false);
+        EventManager.Dashing(false);
     }
 
     private IEnumerator CooldownDashCoroutine(float cd)

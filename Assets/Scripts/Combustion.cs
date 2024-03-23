@@ -35,7 +35,7 @@ public class Combustion : MonoBehaviour
 
     private void OnEnable()
     {
-        EventManager.Instance.onCasting += Casting;
+        EventManager.onCasting += Casting;
     }
 
     private void Casting(bool ultimate)
@@ -59,7 +59,7 @@ public class Combustion : MonoBehaviour
 
     private IEnumerator ModifyPlayerStatistics()
     {
-        EventManager.Instance.Ultimate(true);
+        EventManager.Ultimate(true);
 
         PlayerStats.AddBonusProbability(100);
 
@@ -68,7 +68,7 @@ public class Combustion : MonoBehaviour
 
         PlayerStats.RemoveBonusProbability(100);
 
-        EventManager.Instance.Ultimate(false);
+        EventManager.Ultimate(false);
     }
 
     private IEnumerator CooldownUltimateCoroutine(float cd)

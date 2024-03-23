@@ -58,8 +58,8 @@ public class Fireball : MonoBehaviour
                 Enemy enemy = hitColliders[i].GetComponent<Enemy>();
                 if (enemy != null)
                 {
-                    EventManager.Instance.EnemyTakeDamage(enemy, this.name);
-                    EventManager.Instance.EnemyGetCC(enemy, this.gameObject.name);
+                    EventManager.EnemyTakeDamage(enemy, this.name);
+                    EventManager.EnemyGetCC(enemy, this.gameObject.name);
                     //healthComponent.TakeDamage(damageAmount);
                 }
             }
