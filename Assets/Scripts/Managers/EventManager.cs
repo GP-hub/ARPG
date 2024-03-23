@@ -1,12 +1,10 @@
 using UnityEngine;
 using System;
-using UnityEngine.EventSystems;
-using UnityEngine.UI;
 
 public class EventManager : Singleton<EventManager>
 {
-    // GENERAL CONSOLE //
-    public event Action onEventEnded; // trigger console display plate back to passive/neutral image when event have ended
+
+    public event Action onEventEnded; 
     public void EventEnded()
     {
         if (onEventEnded != null)
@@ -15,14 +13,6 @@ public class EventManager : Singleton<EventManager>
         }
     }
 
-    public event Action onTriggerPressTriggerButton;
-    public void TriggerPressTriggerButton()
-    {
-        if (onTriggerPressTriggerButton != null)
-        {
-            onTriggerPressTriggerButton();
-        }
-    }
 
     public event Action<bool> onDashing;
     public void Dashing(bool dashing)
@@ -111,6 +101,15 @@ public class EventManager : Singleton<EventManager>
         if (onEnemyDeath != null)
         {
             onEnemyDeath(xp);
+        }
+    }
+
+    public event Action<string> onSceneLoad;
+    public void SceneLoad(string sceneName)
+    {
+        if (onSceneLoad != null)
+        {
+            onSceneLoad(sceneName);
         }
     }
 

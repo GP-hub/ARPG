@@ -1,5 +1,6 @@
 using UnityEngine;
 using UnityEngine.InputSystem;
+using UnityEngine.SceneManagement;
 
 
 public class Bonus : MonoBehaviour
@@ -11,5 +12,4 @@ public class Bonus : MonoBehaviour
         // Call the SelectPerk method from PerksManager
         PerksManager.Instance.SelectPerk(perk);
     }
-
 }

@@ -9,14 +9,34 @@ public class PoolingManagerSingleton : Singleton<PoolingManagerSingleton>
     {
         public GameObject prefab;
         public int poolSize;
-        [HideInInspector] public List<GameObject> objects;
+        public List<GameObject> objects;
     }
 
     public List<ObjectPool> objectPools;
 
     void Start()
     {
+        EventManager.Instance.onSceneLoad += CheckForGameSceneLoad;
         InitializeObjectPools();
+    }
+
+    void CheckForGameSceneLoad(string sceneName)
+    {
+        if (sceneName == LoaderManager.Scene.LevelScene.ToString())
+        {
+            InitializeObjectPools();
+        }
+        //else
+        //{
+        //    foreach (ObjectPool pool in objectPools)
+        //    {
+        //        pool.objects = new List<GameObject>();
+        //        for (int i = 0; i < pool.poolSize; i++)
+        //        {
+        //            pool.objects = null;
+        //        }
+        //    }
+        //}
     }
 
     void InitializeObjectPools()
@@ -54,7 +74,7 @@ public class PoolingManagerSingleton : Singleton<PoolingManagerSingleton>
             pool.objects.Add(newObj);
             return newObj;
         }
-
+        Debug.Log("test");
         return null;
     }
 
