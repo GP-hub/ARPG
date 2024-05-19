@@ -553,6 +553,23 @@ public class Enemy : MonoBehaviour
         if (isPowering) isPowering = false;
     }
 
+
+    /// ///////////////////////////////////////////////////////////////////////////////
+
+    public float NextAttackAnimatorThreshold()
+    {
+        return GetRandomValue();
+    }
+
+    private float[] possibleValues = { 0f, 0.2f, 0.5f, 1f };
+    private float GetRandomValue()
+    {
+        // Get a random index based on the length of the array
+        int randomIndex = UnityEngine.Random.Range(0, possibleValues.Length);
+        Debug.Log("Attack: " + possibleValues[randomIndex]);
+        // Return the value at the random index
+        return possibleValues[randomIndex];
+    }
     // Useless but present in some animation so keep it to avoid null refs
     public void DecideNextMove() { }
 
