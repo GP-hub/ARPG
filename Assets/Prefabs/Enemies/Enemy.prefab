@@ -254,6 +254,7 @@ Transform:
   - {fileID: 5202899124285160574}
   - {fileID: 6027426059203826333}
   - {fileID: 1687579024350817348}
+  - {fileID: 6956009129704464932}
   m_Father: {fileID: 882051256032341537}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1456511412121504277
@@ -477,6 +478,37 @@ Transform:
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 7270234150016406041}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &2520992503807935118
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 6956009129704464932}
+  m_Layer: 0
+  m_Name: ExitPoint
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &6956009129704464932
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2520992503807935118}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 6937392412659622955}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &2815850737299540587
 GameObject:
@@ -1573,7 +1605,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!4 &8237003867044120221
 Transform:
   m_ObjectHideFlags: 0
@@ -1655,23 +1687,26 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5e24f3c77ae37aa4bb36160e81b3ce15, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  health: 0
+  currentHealth: 0
   maxHealth: 30
   speed: 2
+  xp: 0
   healthBarPrefab: {fileID: 2505273644731239485, guid: f032af557d41213499ccbdd815c15a7b, type: 3}
   healthPanelRect: {fileID: 0}
   hpBarProxyFollow: {fileID: 5564094242101072855}
   attackRange: 1.5
-  exitPoint: {fileID: 0}
+  attackDamage: 15
+  exitPoint: {fileID: 2520992503807935118}
   attackCooldown: 0
   characterLayer:
     serializedVersion: 2
     m_Bits: 64
-  fireballPrefabName: 
-  AoePrefabName: 
+  fireballPrefabName: Fireball_enemy
   attackProjectileSpeed: 10
   meleeHitboxSize: 2
   hasPowerAbility: 1
+  AoePrefabName: AoE_Enemy
+  powerDamage: 0
   powerRange: 40
   powerCooldown: 5
   isCharging: 0

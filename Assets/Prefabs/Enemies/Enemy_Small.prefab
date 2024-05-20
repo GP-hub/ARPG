@@ -466,21 +466,31 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5e24f3c77ae37aa4bb36160e81b3ce15, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  health: 0
+  currentHealth: 0
   maxHealth: 30
-  attackRange: 1.5
-  speed: 6
+  speed: 3
+  xp: 0
   healthBarPrefab: {fileID: 2505273644731239485, guid: f032af557d41213499ccbdd815c15a7b, type: 3}
   healthPanelRect: {fileID: 0}
   hpBarProxyFollow: {fileID: 3768553231471005176}
-  exitPoint: {fileID: 0}
-  fireballPrefabName: 
-  AoePrefabName: 
-  attackProjectileSpeed: 10
+  attackRange: 1.5
+  attackDamage: 0
+  exitPoint: {fileID: 3888545987670693374}
+  attackCooldown: 0
   characterLayer:
     serializedVersion: 2
     m_Bits: 64
+  fireballPrefabName: Fireball_enemy
+  attackProjectileSpeed: 10
   meleeHitboxSize: 4
+  hasPowerAbility: 0
+  AoePrefabName: AoE_Enemy
+  powerDamage: 0
+  powerRange: 0
+  powerCooldown: 0
+  isCharging: 0
+  isPowerOnCooldown: 0
+  isAttackOnCooldown: 0
 --- !u!195 &103444962662246040
 NavMeshAgent:
   m_ObjectHideFlags: 0
@@ -1227,6 +1237,37 @@ Transform:
   m_Children:
   - {fileID: 1326345893776383330}
   m_Father: {fileID: 5083220636810317391}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &3888545987670693374
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 520519757922657561}
+  m_Layer: 0
+  m_Name: ExitPoint
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &520519757922657561
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3888545987670693374}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 2025016676272085819}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &3992386288847319577
 GameObject:
@@ -2130,6 +2171,7 @@ Transform:
   - {fileID: 3047808685779911403}
   - {fileID: 2617564035273407551}
   - {fileID: 3178828029521440164}
+  - {fileID: 520519757922657561}
   m_Father: {fileID: 4898929402888713934}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &8094633819833764336

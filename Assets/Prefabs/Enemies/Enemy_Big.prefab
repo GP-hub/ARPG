@@ -811,6 +811,37 @@ Transform:
   - {fileID: 657846607214507569}
   m_Father: {fileID: 1917779020196949114}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &2805190627335643000
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1070937250043582555}
+  m_Layer: 0
+  m_Name: ExitPoint
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1070937250043582555
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2805190627335643000}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 2406814989594892474}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &2983555448473653391
 GameObject:
   m_ObjectHideFlags: 0
@@ -1295,21 +1326,31 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5e24f3c77ae37aa4bb36160e81b3ce15, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  health: 0
+  currentHealth: 0
   maxHealth: 30
-  attackRange: 1.5
   speed: 2
+  xp: 0
   healthBarPrefab: {fileID: 2505273644731239485, guid: f032af557d41213499ccbdd815c15a7b, type: 3}
   healthPanelRect: {fileID: 0}
   hpBarProxyFollow: {fileID: 5895380377536570112}
-  exitPoint: {fileID: 0}
-  fireballPrefab: {fileID: 2029881061899082543, guid: d505addd5a9d5374f9e1091533707515, type: 3}
-  fireballExplosionPrefab: {fileID: 7704456569469174909, guid: e10887af2a462724e84175079dbcf1a9, type: 3}
-  attackProjectileSpeed: 10
+  attackRange: 1.5
+  attackDamage: 0
+  exitPoint: {fileID: 2805190627335643000}
+  attackCooldown: 0
   characterLayer:
     serializedVersion: 2
     m_Bits: 64
+  fireballPrefabName: Fireball_enemy
+  attackProjectileSpeed: 10
   meleeHitboxSize: 5
+  hasPowerAbility: 1
+  AoePrefabName: AoE_Enemy
+  powerDamage: 0
+  powerRange: 1.5
+  powerCooldown: 3
+  isCharging: 0
+  isPowerOnCooldown: 0
+  isAttackOnCooldown: 0
 --- !u!195 &255869630690205890
 NavMeshAgent:
   m_ObjectHideFlags: 0
@@ -1869,6 +1910,7 @@ Transform:
   - {fileID: 1917779020196949114}
   - {fileID: 5359957335911091146}
   - {fileID: 6924212707096606392}
+  - {fileID: 1070937250043582555}
   m_Father: {fileID: 7412667426765320146}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &6859367930766247000
