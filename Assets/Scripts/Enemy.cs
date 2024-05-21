@@ -558,11 +558,11 @@ public class Enemy : MonoBehaviour
 
     public float NextAttackAnimatorThreshold()
     {
-        return GetRandomValue();
+        return DecideNextMoveID();
     }
 
     private float[] possibleValues = { 0f, 0.2f, 0.5f, 1f };
-    private float GetRandomValue()
+    private float DecideNextMoveID()
     {
         // Get a random index based on the length of the array
         //int randomIndex = UnityEngine.Random.Range(0, possibleValues.Length);

@@ -8675,22 +8675,6 @@ PrefabInstance:
     m_TransformParent: {fileID: 1881322215}
     m_Modifications:
     - target: {fileID: 627681713311991238, guid: 448b5d9eb02995b4b9d26f340a2e76bf, type: 3}
-      propertyPath: speed
-      value: 3
-      objectReference: {fileID: 0}
-    - target: {fileID: 627681713311991238, guid: 448b5d9eb02995b4b9d26f340a2e76bf, type: 3}
-      propertyPath: health
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 627681713311991238, guid: 448b5d9eb02995b4b9d26f340a2e76bf, type: 3}
-      propertyPath: m_Enabled
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 627681713311991238, guid: 448b5d9eb02995b4b9d26f340a2e76bf, type: 3}
-      propertyPath: attackRange
-      value: 1.5
-      objectReference: {fileID: 0}
-    - target: {fileID: 627681713311991238, guid: 448b5d9eb02995b4b9d26f340a2e76bf, type: 3}
       propertyPath: healthPanelRect
       value: 
       objectReference: {fileID: 1913881814}
@@ -8778,6 +8762,10 @@ PrefabInstance:
     - target: {fileID: 6894551819877516500, guid: c030b677f1aa4a043837074f45635c7a, type: 3}
       propertyPath: m_Name
       value: Enemy
+      objectReference: {fileID: 0}
+    - target: {fileID: 6894551819877516500, guid: c030b677f1aa4a043837074f45635c7a, type: 3}
+      propertyPath: m_IsActive
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 8237003867044120221, guid: c030b677f1aa4a043837074f45635c7a, type: 3}
       propertyPath: m_LocalPosition.x
@@ -9499,22 +9487,6 @@ PrefabInstance:
     - target: {fileID: 5170162297565060425, guid: c7e2f6a1b195de74f850e180d6abb20c, type: 3}
       propertyPath: m_IsActive
       value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 6062745987181479218, guid: c7e2f6a1b195de74f850e180d6abb20c, type: 3}
-      propertyPath: powerRange
-      value: 1.5
-      objectReference: {fileID: 0}
-    - target: {fileID: 6062745987181479218, guid: c7e2f6a1b195de74f850e180d6abb20c, type: 3}
-      propertyPath: AoePrefabName
-      value: AoE_Enemy
-      objectReference: {fileID: 0}
-    - target: {fileID: 6062745987181479218, guid: c7e2f6a1b195de74f850e180d6abb20c, type: 3}
-      propertyPath: powerCooldown
-      value: 3
-      objectReference: {fileID: 0}
-    - target: {fileID: 6062745987181479218, guid: c7e2f6a1b195de74f850e180d6abb20c, type: 3}
-      propertyPath: hasPowerAbility
-      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 6062745987181479218, guid: c7e2f6a1b195de74f850e180d6abb20c, type: 3}
       propertyPath: healthPanelRect

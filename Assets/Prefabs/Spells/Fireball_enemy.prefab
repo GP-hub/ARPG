@@ -134,6 +134,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f5bfa315954400743807a1f659064695, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  allowedLayersToCollideWith:
+    serializedVersion: 2
+    m_Bits: 192
   explosionRadius: 5
   timeProjectileLifeTime: 2
   timeExplosionFadeOut: 1
