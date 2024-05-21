@@ -19,7 +19,7 @@ class PowerState : IState
     {
         if (enemy.Agent.isOnNavMesh && enemy.Agent.enabled) enemy.Agent.isStopped = false;
 
-        enemy.Animator.SetFloat("AttackAndPower", 0f);
+        //enemy.Animator.SetFloat("AttackAndPower", 0f);
 
         enemy.ResetTriggerSingle("TriggerPower");
 

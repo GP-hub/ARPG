@@ -5,7 +5,7 @@ using UnityEngine;
 [RequireComponent(typeof(AbilityValues))]
 public class Fireball_enemy : MonoBehaviour
 {
-
+    [SerializeField] private LayerMask allowedLayersToCollideWith;
     [SerializeField] private float explosionRadius = 5f;
     //[SerializeField] private int damageAmount = 5;
     [SerializeField] private float timeProjectileLifeTime = 5f;
@@ -29,7 +29,10 @@ public class Fireball_enemy : MonoBehaviour
         // Instantiate the explosion prefab at the bullet's position
         //Instantiate(explosionPrefab, transform.position, Quaternion.identity);
         if (other.tag == "Enemy") return;
-        Explosion();
+        if (allowedLayersToCollideWith == (allowedLayersToCollideWith | (1 << other.gameObject.layer)))
+        {
+            Explosion();
+        }
     }
     private void OnEnable()
     {

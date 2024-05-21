@@ -8,7 +8,7 @@ using UnityEngine.AI;
 [RequireComponent(typeof(CharacterController))]
 public class Enemy : MonoBehaviour
 {
-    [SerializeField] private float health, maxHealth = 30;
+    [SerializeField] private float currentHealth, maxHealth = 30;
     [Tooltip("Animator issue when speed is below 2")]
     [SerializeField] private float speed;
     [SerializeField] private int xp;
@@ -103,7 +103,7 @@ public class Enemy : MonoBehaviour
     {
         agent.speed = speed;
         AIManager.Instance.Units.Add(this);
-        health = maxHealth;
+        currentHealth = maxHealth;
         GeneratePlayerHealthBar(hpBarProxyFollow);
 
         player = GameObject.Find("Player");
@@ -197,15 +197,15 @@ public class Enemy : MonoBehaviour
 
     public void TakeDamage(float damageAmount)
     {
-        health -= damageAmount;
+        currentHealth -= damageAmount;
 
-        if (health <= 0)
+        if (currentHealth <= 0)
         {
             // Do the correct logic to get rid of dead enemies here
             Death();
             //Destroy(gameObject);
         }
-        healthBar.OnHealthChanged(health / maxHealth);
+        healthBar.OnHealthChanged(currentHealth / maxHealth);
         //Debug.Log("Enemy hp: " + health);
     }
 
@@ -553,6 +553,35 @@ public class Enemy : MonoBehaviour
         if (isPowering) isPowering = false;
     }
 
+
+    /// ///////////////////////////////////////////////////////////////////////////////
+
+    public float NextAttackAnimatorThreshold()
+    {
+        return DecideNextMoveID();
+    }
+
+    private float[] possibleValues = { 0f, 0.2f, 0.5f, 1f };
+    private float DecideNextMoveID()
+    {
+        // Get a random index based on the length of the array
+        //int randomIndex = UnityEngine.Random.Range(0, possibleValues.Length);
+        //Debug.Log("Attack: " + possibleValues[randomIndex]);
+
+        if (currentHealth <= 0.5f * maxHealth)
+        {
+            Debug.Log("below 50% hp");
+            return possibleValues[1];
+        }
+        else
+        {
+            Debug.Log("higher than 50% hp");
+            return possibleValues[0];
+        }
+
+        // Return the value at the random index
+        //return possibleValues[randomIndex];
+    }
     // Useless but present in some animation so keep it to avoid null refs
     public void DecideNextMove() { }
 
