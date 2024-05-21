@@ -263,6 +263,7 @@ GameObject:
   - component: {fileID: 3142904809075892329}
   - component: {fileID: 1065860335601403785}
   - component: {fileID: 4490511338154228046}
+  - component: {fileID: 1542463247616801883}
   - component: {fileID: 7604483440182165713}
   - component: {fileID: 4217614663739450791}
   - component: {fileID: 8819562689572214428}
@@ -281,7 +282,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 552659461661742573}
   serializedVersion: 2
-  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: -3.75, y: 0, z: -8.28}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
@@ -416,12 +417,16 @@ MonoBehaviour:
     serializedVersion: 2
     m_Bits: 136
   fireballPrefabName: Fireball
+  attackDamage: 5
+  attackCCDuration: 3
   attackProjectileSpeed: 10
   attackCooldownTime: 1
   attackPlayerMovementSpeedPercent: 2
   attackSpeedMultiplier: 1
   attackCooldownImage: {fileID: 0}
   meteorPrefabName: Meteor
+  powerDamage: 50
+  powerCCDuration: 5
   powerCooldownTime: 5
   powerPlayerMovementSpeedPercent: 5
   powerSpeedMultiplier: 1
@@ -455,6 +460,22 @@ MonoBehaviour:
   ultimateDuration: 5
   ultimateCooldown: 6
   ultimateCooldownImage: {fileID: 0}
+--- !u!114 &1542463247616801883
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 552659461661742573}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f68003383c9db9f44b6a19cf615b58e4, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  interactibleLayer:
+    serializedVersion: 2
+    m_Bits: 256
+  interactionRange: 2
 --- !u!114 &7604483440182165713
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -528,6 +549,10 @@ MonoBehaviour:
       m_Calls: []
     m_ActionId: e662423a-19ec-4204-bcc5-104fcc015067
     m_ActionName: Controls/Ultimate[/Keyboard/f]
+  - m_PersistentCalls:
+      m_Calls: []
+    m_ActionId: 1bc3e331-653c-44fe-98fa-660c8a951ec9
+    m_ActionName: Controls/Interact[/Keyboard/e]
   m_NeverAutoSwitchControlSchemes: 0
   m_DefaultControlScheme: 
   m_DefaultActionMap: Controls

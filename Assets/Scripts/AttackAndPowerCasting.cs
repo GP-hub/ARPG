@@ -56,6 +56,7 @@ public class AttackAndPowerCasting : MonoBehaviour
     public bool IsCasting { get => isCasting; }
     public float AttackDamage { get => attackDamage; set => attackDamage = value; }
     public float PowerDamage { get => powerDamage; set => powerDamage = value; }
+    public string FireballPrefabName { get => fireballPrefabName; set => fireballPrefabName = value; }
 
     private void Awake()
     {

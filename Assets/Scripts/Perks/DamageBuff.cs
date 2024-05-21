@@ -1,8 +1,7 @@
-using UnityEditor.Experimental.GraphView;
 using UnityEngine;
 
-[CreateAssetMenu(fileName = "New Frostball Effect", menuName = "Perks/Effects/Frostball")]
-public class Frostball : PerkEffect
+[CreateAssetMenu(fileName = "New Damage buff Effect", menuName = "Perks/Effects/Damage buff")]
+public class DamageBuff : PerkEffect
 {
 
     public override void ApplyEffect()
