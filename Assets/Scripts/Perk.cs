@@ -5,7 +5,8 @@ using UnityEngine;
 public class Perk : ScriptableObject
 {
     public string perkName;
-    [TextArea] public string description;
+    public Sprite perkImage;
+    [TextArea] public string perkDescription;
     public List<PerkEffect> effects = new List<PerkEffect>();
 
     // Method to apply the effects of the perk to a spell
@@ -14,6 +15,7 @@ public class Perk : ScriptableObject
         foreach (PerkEffect effect in effects)
         {
             effect.ApplyEffect();
+            Debug.Log("Apply effect: " + effect);
         }
     }
 }

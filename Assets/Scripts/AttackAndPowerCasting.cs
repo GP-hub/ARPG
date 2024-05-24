@@ -12,7 +12,7 @@ public class AttackAndPowerCasting : MonoBehaviour
 
     [Space(10)]
     [Header("Attack")]
-    [SerializeField] private string fireballPrefabName;
+    [SerializeField] private string attackPrefabName;
     [SerializeField] private float attackDamage = 10f;
     [SerializeField] private float attackCCDuration = 3f;
     // the player attack projectile which is the fireball, has its speed dictated by the fireball prefab itself
@@ -56,7 +56,7 @@ public class AttackAndPowerCasting : MonoBehaviour
     public bool IsCasting { get => isCasting; }
     public float AttackDamage { get => attackDamage; set => attackDamage = value; }
     public float PowerDamage { get => powerDamage; set => powerDamage = value; }
-    public string FireballPrefabName { get => fireballPrefabName; set => fireballPrefabName = value; }
+    public string FireballPrefabName { get => attackPrefabName; set => attackPrefabName = value; }
 
     private void Awake()
     {
@@ -261,7 +261,7 @@ public class AttackAndPowerCasting : MonoBehaviour
             Vector3 targetCorrectedPosition = new Vector3(CorrectingAimPosition(targetPosition).x, targetPosition.y, CorrectingAimPosition(targetPosition).z);
             Vector3 direction = (targetCorrectedPosition - this.transform.position).normalized;
 
-            GameObject newObject = PoolingManagerSingleton.Instance.GetObjectFromPool(fireballPrefabName, exitPoint.transform.position);
+            GameObject newObject = PoolingManagerSingleton.Instance.GetObjectFromPool(attackPrefabName, exitPoint.transform.position);
 
             if (newObject != null)
             {
@@ -304,7 +304,7 @@ public class AttackAndPowerCasting : MonoBehaviour
 
     private void DoDamage(Enemy enemy, string skill)
     {
-        if (skill.ToLower().Contains(fireballPrefabName.ToLower()))
+        if (skill.ToLower().Contains(attackPrefabName.ToLower()))
         {
             enemy.TakeDamage(attackDamage);
         }
@@ -316,7 +316,7 @@ public class AttackAndPowerCasting : MonoBehaviour
 
     private void ApplyCCDuration(Enemy enemy, string skill)
     {
-        if (skill.ToLower().Contains(fireballPrefabName.ToLower()))
+        if (skill.ToLower().Contains(attackPrefabName.ToLower()))
         {
             enemy.UpdateCCDuration(attackCCDuration);
         }

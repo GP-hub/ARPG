@@ -13,6 +13,7 @@ MonoBehaviour:
   m_Name: Player Speed Perk
   m_EditorClassIdentifier: 
   perkName: Increase player speed
+  perkImage: {fileID: 2800000, guid: 19ec13b3e19cd2a488337920933c636e, type: 3}
   description: Increase player speed by 10.
   effects:
   - {fileID: 11400000, guid: 0d5da403d79c07a448314b0a9e9ba8fa, type: 2}

@@ -12,6 +12,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6dffd540195914e4a91d7067a93c1d2e, type: 3}
   m_Name: Frostbolt
   m_EditorClassIdentifier: 
-  perkName: 
-  description: 
-  effects: []
+  perkName: Frostbolt
+  perkImage: {fileID: 2800000, guid: 19ec13b3e19cd2a488337920933c636e, type: 3}
+  description: Replace fireball with frostbolt, slowing the enemy.
+  effects:
+  - {fileID: 11400000, guid: d17eb491150b1294287e9209ebb66223, type: 2}

@@ -8,6 +8,7 @@ public class Bonus : MonoBehaviour
     public void GetBonus()
     {
         // Call the SelectPerk method from PerksManager
-        PerksManager.Instance.SelectPerk(perk);
+        //PerksManager.Instance.SelectPerk(perk);
+        PerksManager.Instance.PerksPickerProcess();
     }
 }
