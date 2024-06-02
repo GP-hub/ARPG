@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: SpellDamageIncrease
   m_EditorClassIdentifier: 
   perkName: increase damage
-  perkImage: {fileID: 2800000, guid: 19ec13b3e19cd2a488337920933c636e, type: 3}
-  description: increase player spell damage
+  perkImage: {fileID: 21300000, guid: 19ec13b3e19cd2a488337920933c636e, type: 3}
+  perkDescription: increase the player damage by x%
   effects:
   - {fileID: 11400000, guid: 41f17f632bfcdd4488ab4af25cd5e141, type: 2}
