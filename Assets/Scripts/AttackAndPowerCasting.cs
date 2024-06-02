@@ -261,6 +261,7 @@ public class AttackAndPowerCasting : MonoBehaviour
             Vector3 targetCorrectedPosition = new Vector3(CorrectingAimPosition(targetPosition).x, targetPosition.y, CorrectingAimPosition(targetPosition).z);
             Vector3 direction = (targetCorrectedPosition - this.transform.position).normalized;
 
+            // THE PREFAB NANE IN THE INSPECTOR NEEDS TO START WITH A CAPITAL LETTER
             GameObject newObject = PoolingManagerSingleton.Instance.GetObjectFromPool(attackPrefabName, exitPoint.transform.position);
 
             if (newObject != null)

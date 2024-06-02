@@ -8347,6 +8347,10 @@ PrefabInstance:
       value: 
       objectReference: {fileID: 1733174547}
     - target: {fileID: 3142904809075892329, guid: 056cd2ef5c48bd543a8b8a967be299d2, type: 3}
+      propertyPath: attackPrefabName
+      value: Fireball
+      objectReference: {fileID: 0}
+    - target: {fileID: 3142904809075892329, guid: 056cd2ef5c48bd543a8b8a967be299d2, type: 3}
       propertyPath: powerCooldownImage
       value: 
       objectReference: {fileID: 2077138345}
