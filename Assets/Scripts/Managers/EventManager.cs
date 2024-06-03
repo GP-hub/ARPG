@@ -1,8 +1,10 @@
 using UnityEngine;
 using System;
+using Unity.VisualScripting;
 
 public static class EventManager/* : Singleton<EventManager>*/
 {
+    public static int character;
 
     public static event Action onEventEnded; 
     public static void EventEnded()

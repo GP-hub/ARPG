@@ -14,10 +14,10 @@ public class PoolingManagerSingleton : Singleton<PoolingManagerSingleton>
 
     public List<ObjectPool> objectPools;
 
-    void Start()
+    void Awake()
     {
         EventManager.onSceneLoad += CheckForGameSceneLoad;
-        InitializeObjectPools();
+        //InitializeObjectPools();
     }
 
     void CheckForGameSceneLoad(string sceneName)
