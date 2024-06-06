@@ -40,7 +40,7 @@ public class MainMenu : MonoBehaviour
         try
         {
             characterSelected = availableCharacters[i];
-            ChangeDisplayedCharacter(i);
+            ChangeDisplayedCharacterAndAbilities(i);
             EventManager.character = i;
         }
         catch (Exception)
@@ -51,7 +51,7 @@ public class MainMenu : MonoBehaviour
     }
 
     // The displayed chars are just the model of the playable characters
-    public void ChangeDisplayedCharacter(int index)
+    public void ChangeDisplayedCharacterAndAbilities(int index)
     {
         for (int i = 0; i < displayedCharacters.Length; i++)
         {
