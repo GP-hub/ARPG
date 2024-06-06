@@ -12,6 +12,7 @@ public class MainMenu : MonoBehaviour
 
     [SerializeField] private GameObject[] availableCharacters;
     [SerializeField] private GameObject[] displayedCharacters;
+    [SerializeField] private GameObject[] charactersAbilities;
     private GameObject characterSelected;
 
     public void Load()
@@ -57,6 +58,7 @@ public class MainMenu : MonoBehaviour
             if (displayedCharacters[i] != null)
             {
                 displayedCharacters[i].SetActive(i == index);
+                charactersAbilities[i].SetActive(i == index);
             }
         }
     }
