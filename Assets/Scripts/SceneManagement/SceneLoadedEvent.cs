@@ -2,5 +2,8 @@ using UnityEngine;
 
 public class SceneLoadedEvent : MonoBehaviour
 {
-    private void Awake() { EventManager.SceneLoad(LoaderManager.ReturnCurrentLoadedScene()); }
+    private void Start()
+    {
+        EventManager.SceneLoad(LoaderManager.ReturnCurrentLoadedScene()); 
+    }
 }

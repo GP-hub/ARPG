@@ -16,7 +16,7 @@ public class PlayerMovement : MonoBehaviour
     private Vector2 aim;
     private Vector3 playerVelocity;
     private Vector3 worldAim;
-    private float smoothnessInputTransition = 25f; // 12.5f with old rotation method
+    private float smoothnessInputTransition = 2.5f; // 12.5f with old rotation method // 25f latest value
 
     private Canvas aimCanvas;
 
@@ -92,8 +92,11 @@ public class PlayerMovement : MonoBehaviour
         }
         else
         {
-            animator.SetFloat("InputX", 0);
-            animator.SetFloat("InputY", 0);
+            //animator.SetFloat("InputX", 0);
+            //animator.SetFloat("InputY", 0);
+
+            animator.SetFloat("InputX", Mathf.Lerp(animator.GetFloat("InputX"), 0, Time.fixedDeltaTime * smoothnessInputTransition));
+            animator.SetFloat("InputY", Mathf.Lerp(animator.GetFloat("InputY"), 0, Time.fixedDeltaTime * smoothnessInputTransition));
 
         }
 
