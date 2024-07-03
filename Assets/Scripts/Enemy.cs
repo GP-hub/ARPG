@@ -13,6 +13,12 @@ public class Enemy : MonoBehaviour
     [SerializeField] private float speed;
     [SerializeField] private int xp;
 
+
+
+    [SerializeField] private bool isBoss;
+    private bool isPhaseTwo = false;
+    private bool isPhaseTree = false;
+
     private float cCDuration;
 
     [Space(10)]
@@ -558,7 +564,8 @@ public class Enemy : MonoBehaviour
 
     public float NextAttackAnimatorThreshold()
     {
-        return DecideNextMoveID();
+        if (isBoss) return DecideNextBossMoveID();
+        else return DecideNextMoveID();
     }
 
     private float[] possibleValues = { 0f, 0.2f, 0.5f, 1f };
@@ -579,6 +586,28 @@ public class Enemy : MonoBehaviour
             return possibleValues[0];
         }
 
+        // Return the value at the random index
+        //return possibleValues[randomIndex];
+    }
+
+    private float DecideNextBossMoveID()
+    {
+        Debug.Log("Attack");
+
+        if (currentHealth <= 0.75f * maxHealth && !isPhaseTwo)
+        {
+            isPhaseTwo = true;
+            return possibleValues[1];
+        }
+        if (currentHealth <= 0.50f * maxHealth && !isPhaseTree)
+        {
+            isPhaseTree = true;
+            return possibleValues[1];
+        }
+        else
+        {
+            return possibleValues[2];
+        }
         // Return the value at the random index
         //return possibleValues[randomIndex];
     }
