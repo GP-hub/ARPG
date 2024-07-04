@@ -11,15 +11,21 @@ public class AIManager : Singleton<AIManager>
 
     public void MakeAgentCircleTarget(Transform target)
     {
-        for (int i = 0; i < Units.Count; i++)
+        if (Units.Count==1)
         {
-            if (Units[i].currentState.GetStateName() == "FollowState")
-            Units[i].MoveAIUnit(new Vector3(
-                target.position.x + radius * Mathf.Cos(2 * Mathf.PI * i / Units.Count),
-                target.position.y,
-                target.position.z + radius * Mathf.Sin(2 * Mathf.PI * i / Units.Count)
-                ));
+            if (Units[0].currentState.GetStateName() == "FollowState")
             {
+                Units[0].MoveAIUnit(target.position);
+            }
+        }
+        else
+        {
+            for (int i = 0; i < Units.Count; i++)
+            {
+                if (Units[i].currentState.GetStateName() == "FollowState")
+                {
+                    Units[i].MoveAIUnit(new Vector3(target.position.x + radius * Mathf.Cos(2 * Mathf.PI * i / Units.Count), target.position.y, target.position.z + radius * Mathf.Sin(2 * Mathf.PI * i / Units.Count)));
+                }
             }
         }
     }

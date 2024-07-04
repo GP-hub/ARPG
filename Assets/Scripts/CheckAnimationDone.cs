@@ -1,24 +1,25 @@
 using UnityEngine;
 
-public class CheckAnimationDone : StateMachineBehaviour
+public class LogOnAnimationLoop : StateMachineBehaviour
 {
-    // This variable ensures the message is logged only once per animation cycle
-    private bool hasLoggedCompletion;
-
-    // Called when the animator enters the state
-    override public void OnStateEnter(Animator animator, AnimatorStateInfo stateInfo, int layerIndex)
+    private int previousLoopCount = 0;
+    public override void OnStateEnter(Animator animator, AnimatorStateInfo stateInfo, int layerIndex)
     {
-        hasLoggedCompletion = false;
+        previousLoopCount = 0;
     }
 
-    // Called on each Update frame between OnStateEnter and OnStateExit
+    // This method is called on each Update frame between OnStateEnter and OnStateExit
     override public void OnStateUpdate(Animator animator, AnimatorStateInfo stateInfo, int layerIndex)
     {
-        // Check if the animation has reached the end
-        if (stateInfo.normalizedTime >= 1.0f && !hasLoggedCompletion)
+        // Calculate the current loop count
+        int currentLoopCount = Mathf.FloorToInt(stateInfo.normalizedTime);
+        //Debug.Log("currentLoopCount:" + currentLoopCount);
+        // Check if the loop count has increased
+        if (currentLoopCount > previousLoopCount)
         {
-            hasLoggedCompletion = true;
+            previousLoopCount = currentLoopCount;
             animator.gameObject.GetComponent<Enemy>().ChangeState(new IdleState());
         }
     }
+
 }

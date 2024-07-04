@@ -425,7 +425,6 @@ public class Enemy : MonoBehaviour
 
     public void ChangeState(IState newState)
     {
-
         if (currentState != null)
         {
             if (newState.GetStateName() == currentState.GetStateName()) return;
@@ -592,15 +591,15 @@ public class Enemy : MonoBehaviour
 
     private float DecideNextBossMoveID()
     {
-        Debug.Log("Attack");
-
         if (currentHealth <= 0.75f * maxHealth && !isPhaseTwo)
         {
+            Debug.Log("ENTER PHASE TWO");
             isPhaseTwo = true;
             return possibleValues[1];
         }
         if (currentHealth <= 0.50f * maxHealth && !isPhaseTree)
         {
+            Debug.Log("ENTER PHASE THREE");
             isPhaseTree = true;
             return possibleValues[1];
         }
