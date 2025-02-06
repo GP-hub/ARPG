@@ -1,0 +1,1 @@
+This is my ongoing project. Truely a sandbox where I experiment with the different ways of building and ARPG and the difficulties that comes with it. From character controller, aiming system, animate, move, having different heights levels, enemy behavior etc.
