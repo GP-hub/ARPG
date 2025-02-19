@@ -567,7 +567,9 @@ public class Enemy : MonoBehaviour
         else return DecideNextMoveID();
     }
 
+    // 1 = basic attack, 2 = charge attack, 3 = jump attack, 4 = ranged attack
     private float[] possibleValues = { 0f, 0.2f, 0.5f, 1f };
+
     private float DecideNextMoveID()
     {
         // Get a random index based on the length of the array
@@ -591,20 +593,24 @@ public class Enemy : MonoBehaviour
 
     private float DecideNextBossMoveID()
     {
+        // If we are not already in phase 2 => WE ENTER PHASE 2 and we play ONCE the phase 2 ability 
         if (currentHealth <= 0.75f * maxHealth && !isPhaseTwo)
         {
             Debug.Log("ENTER PHASE TWO");
             isPhaseTwo = true;
-            return possibleValues[1];
+            return possibleValues[2];
         }
+        // If we are not already in phase 3 => WE ENTER PHASE 3 and we play ONCE the phase 3 ability 
         if (currentHealth <= 0.50f * maxHealth && !isPhaseTree)
         {
             Debug.Log("ENTER PHASE THREE");
             isPhaseTree = true;
             return possibleValues[1];
         }
+        // otherwise basic attack
         else
         {
+            Debug.Log("possibleValues: " + possibleValues[2]);
             return possibleValues[2];
         }
         // Return the value at the random index
@@ -612,5 +618,10 @@ public class Enemy : MonoBehaviour
     }
     // Useless but present in some animation so keep it to avoid null refs
     public void DecideNextMove() { }
+
+    public void BossRockFall()
+    {
+        Debug.Log("ROCKS ARE FALLING HERE");
+    }
 
 }
