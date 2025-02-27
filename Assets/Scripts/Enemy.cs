@@ -477,35 +477,33 @@ public class Enemy : MonoBehaviour
         }
     }
 
-    public void SetTriggerSingle(string triggerName)
+    public void SetBoolSingle(string triggerName)
     {
-        // Disable all triggers
         foreach (AnimatorControllerParameter param in animator.parameters)
         {
-            if (param.type == AnimatorControllerParameterType.Trigger)
+            if (param.type == AnimatorControllerParameterType.Bool)
             {
-                animator.ResetTrigger(param.name);
+                animator.SetBool(param.name, false);
             }
         }
 
         // Enable the desired trigger
-        animator.SetTrigger(triggerName);
+        animator.SetBool(triggerName, true);
     }
 
     public void ResetAllAnimatorTriggers()
     {
-        // Disable all triggers
         foreach (AnimatorControllerParameter param in animator.parameters)
         {
-            if (param.type == AnimatorControllerParameterType.Trigger)
+            if (param.type == AnimatorControllerParameterType.Bool)
             {
-                animator.ResetTrigger(param.name);
+                animator.SetBool(param.name, false);
             }
         }
     }
-    public void ResetTriggerSingle(string triggerName)
+    public void ResetSingleBool(string triggerName)
     {
-        animator.ResetTrigger(triggerName);
+        animator.SetBool(triggerName, false);
     }
 
     public void CastAttack()

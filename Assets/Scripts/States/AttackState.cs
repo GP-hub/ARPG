@@ -10,7 +10,7 @@ class AttackState : IState
 
         if (enemy.Agent.isOnNavMesh && enemy.Agent.enabled) enemy.Stop();
 
-        enemy.SetTriggerSingle("TriggerAttack");
+        enemy.SetBoolSingle("TriggerAttack");
         // Only work if enemy Attack state as the AttackTree parameter and a blend tree for attack State animation
         enemy.Animator.SetFloat("AttackTree", enemy.NextAttackAnimatorThreshold());
     }
@@ -21,7 +21,7 @@ class AttackState : IState
 
         //enemy.Animator.SetFloat("AttackAndPower", 0f);
 
-        enemy.ResetTriggerSingle("TriggerAttack");
+        enemy.ResetSingleBool("TriggerAttack");
 
         enemy.ResetAttackingAndPowering();
     }
