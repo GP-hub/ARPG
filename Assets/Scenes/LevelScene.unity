@@ -12267,7 +12267,7 @@ MonoBehaviour:
   healthBarPrefab: {fileID: 2505273644731239485, guid: f032af557d41213499ccbdd815c15a7b, type: 3}
   healthPanelRect: {fileID: 1913881814}
   hpBarProxyFollow: {fileID: 5956537109383397450}
-  attackRange: 50
+  attackRange: 1.2
   attackDamage: 0
   exitPoint: {fileID: 353010217}
   attackCooldown: 0

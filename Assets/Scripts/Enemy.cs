@@ -90,11 +90,11 @@ public class Enemy : MonoBehaviour
     public IState currentState;
 
     public Transform Target { get => target; set => target = value; }
-    public NavMeshAgent Agent { get => agent;}
-    public Animator Animator { get => animator;}
-    public bool IsPowering { get => isPowering;}
-    public bool IsAttacking { get => isAttacking;}
-    public float CCDuration { get => cCDuration;}
+    public NavMeshAgent Agent { get => agent; }
+    public Animator Animator { get => animator; }
+    public bool IsPowering { get => isPowering; }
+    public bool IsAttacking { get => isAttacking; }
+    public float CCDuration { get => cCDuration; }
     public bool IsCC { get => isCC; set => isCC = value; }
 
     private void Awake()
@@ -297,7 +297,7 @@ public class Enemy : MonoBehaviour
             ChangeState(new FollowState());
             return;
         }
-    }    
+    }
 
     void LookTowards()
     {
@@ -329,6 +329,7 @@ public class Enemy : MonoBehaviour
             if (hitColliders[i].CompareTag("Player"))
             {
                 EventManager.PlayerTakeDamage(attackDamage);
+                Debug.Log("dmg: " + attackDamage);
             }
         }
         ResetAttackingAndPowering();
@@ -440,7 +441,7 @@ public class Enemy : MonoBehaviour
     {
         isLookingForTarget = true;
 
-        while (target == null) 
+        while (target == null)
         {
             // Max number of entities in the OverlapSphere
             int maxColliders = 10;
@@ -549,7 +550,7 @@ public class Enemy : MonoBehaviour
         if (newCCDuration >= cCDuration)
         {
             cCDuration = newCCDuration;
-        } 
+        }
     }
 
     public void ResetAttackingAndPowering()
@@ -610,7 +611,6 @@ public class Enemy : MonoBehaviour
         // otherwise basic attack
         else
         {
-            Debug.Log("possibleValues: " + possibleValues[2]);
             return possibleValues[2];
         }
         // Return the value at the random index
@@ -623,5 +623,38 @@ public class Enemy : MonoBehaviour
     {
         Debug.Log("ROCKS ARE FALLING HERE");
     }
+
+    public void JumpAttack()
+    {
+        if (target == null) return;
+
+        // Pick a random location around the target within a certain radius
+        float jumpRadius = 2f; // Adjust the radius as needed
+        Vector3 randomDirection = UnityEngine.Random.insideUnitSphere * jumpRadius;
+        randomDirection += target.position;
+        NavMeshHit hit;
+        NavMesh.SamplePosition(randomDirection, out hit, jumpRadius, 1);
+        Vector3 finalPosition = hit.position;
+
+        // Move the enemy to the picked location
+        StartCoroutine(JumpToLocation(finalPosition));
+    }
+
+    private IEnumerator JumpToLocation(Vector3 destination)
+    {
+        float jumpDuration = 1f; // Adjust the duration as needed
+        float elapsedTime = 0f;
+        Vector3 startPosition = transform.position;
+
+        while (elapsedTime < jumpDuration)
+        {
+            transform.position = Vector3.Lerp(startPosition, destination, (elapsedTime / jumpDuration));
+            elapsedTime += Time.deltaTime;
+            yield return null;
+        }
+
+        transform.position = destination;
+    }
+
 
 }
