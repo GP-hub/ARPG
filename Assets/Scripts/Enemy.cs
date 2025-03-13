@@ -219,7 +219,7 @@ public class Enemy : MonoBehaviour
     {
         this.gameObject.tag = "Dead";
         isAlive = false;
-
+        Debug.Log("Enemy is dead.");
         animator.SetTrigger("TriggerDeath");
         EventManager.EnemyDeath(xp);
     }
@@ -634,6 +634,7 @@ public class Enemy : MonoBehaviour
         NavMesh.SamplePosition(randomDirection, out hit, jumpRadius, 1);
         Vector3 finalPosition = hit.position;
 
+
         // Move the enemy to the picked location
         StartCoroutine(JumpToLocation(finalPosition));
     }
@@ -643,6 +644,7 @@ public class Enemy : MonoBehaviour
         float jumpDuration = 1f; // Adjust the duration as needed
         float elapsedTime = 0f;
         Vector3 startPosition = transform.position;
+        isCharging = true;
 
         while (elapsedTime < jumpDuration)
         {
@@ -652,6 +654,7 @@ public class Enemy : MonoBehaviour
         }
 
         transform.position = destination;
+        isCharging = false;
     }
 
 
