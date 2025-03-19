@@ -1,5 +1,6 @@
 using System;
 using System.Collections;
+using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.AI;
 
@@ -8,12 +9,15 @@ using UnityEngine.AI;
 [RequireComponent(typeof(CharacterController))]
 public class Enemy : MonoBehaviour
 {
+
+    [Space(10)]
+    [Header("miscellaneous")]
+    [SerializeField] private float rotationSpeed = 25f;
+    public float RotationSpeed { get => rotationSpeed; }
     [SerializeField] private float currentHealth, maxHealth = 30;
     [Tooltip("Animator issue when speed is below 2")]
     [SerializeField] private float speed;
     [SerializeField] private int xp;
-
-
 
     [SerializeField] private bool isBoss;
     private bool isPhaseTwo = false;
@@ -96,6 +100,23 @@ public class Enemy : MonoBehaviour
     public bool IsAttacking { get => isAttacking; }
     public float CCDuration { get => cCDuration; }
     public bool IsCC { get => isCC; set => isCC = value; }
+
+    //public enum AttackMove
+    //{
+    //    BasicAttack,
+    //    ChargeAttack,
+    //    JumpAttack,
+    //    RangedAttack
+    //}
+
+    //private Dictionary<AttackMove, float> attackRanges = new Dictionary<AttackMove, float>
+    //{
+    //    { AttackMove.BasicAttack, 5f },
+    //    { AttackMove.ChargeAttack, 10f },
+    //    { AttackMove.JumpAttack, 15f },
+    //    { AttackMove.RangedAttack, 20f }
+    //};
+
 
     private void Awake()
     {
@@ -252,7 +273,7 @@ public class Enemy : MonoBehaviour
             ChangeState(new IdleState());
             if (!isLookingForTarget)
             {
-                StartCoroutine(SphereCastRoutine());
+                StartCoroutine(SearchForTargetRoutine());
             }
             return;
         }
@@ -298,22 +319,17 @@ public class Enemy : MonoBehaviour
             return;
         }
     }
-
-    void LookTowards()
+    public void ChangeState(IState newState)
     {
-        // Check if the target is valid (not null)
-        if (target != null)
+        if (currentState != null)
         {
-            // Calculate the direction from this GameObject to the target
-            Vector3 directionToTarget = target.position - transform.position;
+            if (newState.GetStateName() == currentState.GetStateName()) return;
 
-            // Create a rotation to look in that direction
-            Quaternion targetRotation = Quaternion.LookRotation(directionToTarget);
-
-            // Smoothly interpolate the current rotation towards the target rotation
-            transform.rotation = Quaternion.Lerp(transform.rotation, targetRotation, 5f * Time.deltaTime);
-
+            currentState.Exit();
         }
+
+        currentState = newState;
+        currentState.Enter(this);
     }
 
     // Triggered via Melee Attack animation
@@ -424,20 +440,9 @@ public class Enemy : MonoBehaviour
         return false;
     }
 
-    public void ChangeState(IState newState)
-    {
-        if (currentState != null)
-        {
-            if (newState.GetStateName() == currentState.GetStateName()) return;
 
-            currentState.Exit();
-        }
 
-        currentState = newState;
-        currentState.Enter(this);
-    }
-
-    public IEnumerator SphereCastRoutine()
+    public IEnumerator SearchForTargetRoutine()
     {
         isLookingForTarget = true;
 
@@ -609,7 +614,7 @@ public class Enemy : MonoBehaviour
         // otherwise basic attack
         else
         {
-            return possibleValues[2];
+            return possibleValues[0];
         }
         // Return the value at the random index
         //return possibleValues[randomIndex];
@@ -622,38 +627,39 @@ public class Enemy : MonoBehaviour
         Debug.Log("ROCKS ARE FALLING HERE");
     }
 
+
     public void JumpAttack()
     {
         if (target == null) return;
 
-        // Pick a random location around the target within a certain radius
-        float jumpRadius = 2f; // Adjust the radius as needed
-        Vector3 randomDirection = UnityEngine.Random.insideUnitSphere * jumpRadius;
-        randomDirection += target.position;
-        NavMeshHit hit;
-        NavMesh.SamplePosition(randomDirection, out hit, jumpRadius, 1);
-        Vector3 finalPosition = hit.position;
+        // distance from the target
+        float jumpDistance = 1f;
 
+        Vector3 directionToTarget = (target.position - transform.position).normalized;
+        Vector3 finalPosition = target.position - directionToTarget * jumpDistance;
 
-        // Move the enemy to the picked location
         StartCoroutine(JumpToLocation(finalPosition));
     }
+
 
     private IEnumerator JumpToLocation(Vector3 destination)
     {
         float jumpDuration = 1f; // Adjust the duration as needed
-        float elapsedTime = 0f;
+        float t = 0f;
         Vector3 startPosition = transform.position;
         isCharging = true;
 
-        while (elapsedTime < jumpDuration)
+        while (t < jumpDuration)
         {
-            transform.position = Vector3.Lerp(startPosition, destination, (elapsedTime / jumpDuration));
-            elapsedTime += Time.deltaTime;
+            transform.position = Vector3.Lerp(startPosition, destination, (t / jumpDuration));
+            t += Time.deltaTime;
             yield return null;
         }
 
         transform.position = destination;
+
+        // wait time before the next action, so we dont rotate towards target while ending the animation
+        yield return new WaitForSeconds(1.5f);
         isCharging = false;
     }
 

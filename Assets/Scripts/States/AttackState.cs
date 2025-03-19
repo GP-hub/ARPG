@@ -29,7 +29,8 @@ class AttackState : IState
     {
         if (enemy.isCharging) return;
 
-        enemy.transform.LookAt(enemy.Target);
+        //enemy.transform.LookAt(enemy.Target);
+        Utility.RotateTowardsTarget(enemy.transform, enemy.Target, enemy.RotationSpeed);
     }
 
     string IState.GetStateName()
