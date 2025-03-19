@@ -11,7 +11,7 @@ class PowerState : IState
 
         if (enemy.Agent.isOnNavMesh && enemy.Agent.enabled) enemy.Stop();
 
-        enemy.SetTriggerSingle("TriggerPower");
+        enemy.SetBoolSingle("TriggerPower");
 
     }
 
@@ -21,7 +21,7 @@ class PowerState : IState
 
         //enemy.Animator.SetFloat("AttackAndPower", 0f);
 
-        enemy.ResetTriggerSingle("TriggerPower");
+        enemy.ResetSingleBool("TriggerPower");
 
         enemy.ResetAttackingAndPowering();
     }
@@ -29,7 +29,8 @@ class PowerState : IState
     {
         if (enemy.isCharging) return;
 
-        enemy.transform.LookAt(enemy.Target);
+        //enemy.transform.LookAt(enemy.Target);
+        Utility.RotateTowardsTarget(enemy.transform, enemy.Target, enemy.RotationSpeed);
     }
 
     string IState.GetStateName()

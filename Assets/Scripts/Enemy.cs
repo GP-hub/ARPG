@@ -1,5 +1,6 @@
 using System;
 using System.Collections;
+using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.AI;
 
@@ -8,10 +9,19 @@ using UnityEngine.AI;
 [RequireComponent(typeof(CharacterController))]
 public class Enemy : MonoBehaviour
 {
+
+    [Space(10)]
+    [Header("miscellaneous")]
+    [SerializeField] private float rotationSpeed = 25f;
+    public float RotationSpeed { get => rotationSpeed; }
     [SerializeField] private float currentHealth, maxHealth = 30;
     [Tooltip("Animator issue when speed is below 2")]
     [SerializeField] private float speed;
     [SerializeField] private int xp;
+
+    [SerializeField] private bool isBoss;
+    private bool isPhaseTwo = false;
+    private bool isPhaseTree = false;
 
     private float cCDuration;
 
@@ -84,12 +94,29 @@ public class Enemy : MonoBehaviour
     public IState currentState;
 
     public Transform Target { get => target; set => target = value; }
-    public NavMeshAgent Agent { get => agent;}
-    public Animator Animator { get => animator;}
-    public bool IsPowering { get => isPowering;}
-    public bool IsAttacking { get => isAttacking;}
-    public float CCDuration { get => cCDuration;}
+    public NavMeshAgent Agent { get => agent; }
+    public Animator Animator { get => animator; }
+    public bool IsPowering { get => isPowering; }
+    public bool IsAttacking { get => isAttacking; }
+    public float CCDuration { get => cCDuration; }
     public bool IsCC { get => isCC; set => isCC = value; }
+
+    //public enum AttackMove
+    //{
+    //    BasicAttack,
+    //    ChargeAttack,
+    //    JumpAttack,
+    //    RangedAttack
+    //}
+
+    //private Dictionary<AttackMove, float> attackRanges = new Dictionary<AttackMove, float>
+    //{
+    //    { AttackMove.BasicAttack, 5f },
+    //    { AttackMove.ChargeAttack, 10f },
+    //    { AttackMove.JumpAttack, 15f },
+    //    { AttackMove.RangedAttack, 20f }
+    //};
+
 
     private void Awake()
     {
@@ -213,7 +240,7 @@ public class Enemy : MonoBehaviour
     {
         this.gameObject.tag = "Dead";
         isAlive = false;
-
+        Debug.Log("Enemy is dead.");
         animator.SetTrigger("TriggerDeath");
         EventManager.EnemyDeath(xp);
     }
@@ -246,7 +273,7 @@ public class Enemy : MonoBehaviour
             ChangeState(new IdleState());
             if (!isLookingForTarget)
             {
-                StartCoroutine(SphereCastRoutine());
+                StartCoroutine(SearchForTargetRoutine());
             }
             return;
         }
@@ -291,23 +318,18 @@ public class Enemy : MonoBehaviour
             ChangeState(new FollowState());
             return;
         }
-    }    
-
-    void LookTowards()
+    }
+    public void ChangeState(IState newState)
     {
-        // Check if the target is valid (not null)
-        if (target != null)
+        if (currentState != null)
         {
-            // Calculate the direction from this GameObject to the target
-            Vector3 directionToTarget = target.position - transform.position;
+            if (newState.GetStateName() == currentState.GetStateName()) return;
 
-            // Create a rotation to look in that direction
-            Quaternion targetRotation = Quaternion.LookRotation(directionToTarget);
-
-            // Smoothly interpolate the current rotation towards the target rotation
-            transform.rotation = Quaternion.Lerp(transform.rotation, targetRotation, 5f * Time.deltaTime);
-
+            currentState.Exit();
         }
+
+        currentState = newState;
+        currentState.Enter(this);
     }
 
     // Triggered via Melee Attack animation
@@ -323,6 +345,7 @@ public class Enemy : MonoBehaviour
             if (hitColliders[i].CompareTag("Player"))
             {
                 EventManager.PlayerTakeDamage(attackDamage);
+                Debug.Log("dmg: " + attackDamage);
             }
         }
         ResetAttackingAndPowering();
@@ -417,25 +440,13 @@ public class Enemy : MonoBehaviour
         return false;
     }
 
-    public void ChangeState(IState newState)
-    {
 
-        if (currentState != null)
-        {
-            if (newState.GetStateName() == currentState.GetStateName()) return;
 
-            currentState.Exit();
-        }
-
-        currentState = newState;
-        currentState.Enter(this);
-    }
-
-    public IEnumerator SphereCastRoutine()
+    public IEnumerator SearchForTargetRoutine()
     {
         isLookingForTarget = true;
 
-        while (target == null) 
+        while (target == null)
         {
             // Max number of entities in the OverlapSphere
             int maxColliders = 10;
@@ -471,35 +482,33 @@ public class Enemy : MonoBehaviour
         }
     }
 
-    public void SetTriggerSingle(string triggerName)
+    public void SetBoolSingle(string triggerName)
     {
-        // Disable all triggers
         foreach (AnimatorControllerParameter param in animator.parameters)
         {
-            if (param.type == AnimatorControllerParameterType.Trigger)
+            if (param.type == AnimatorControllerParameterType.Bool)
             {
-                animator.ResetTrigger(param.name);
+                animator.SetBool(param.name, false);
             }
         }
 
         // Enable the desired trigger
-        animator.SetTrigger(triggerName);
+        animator.SetBool(triggerName, true);
     }
 
     public void ResetAllAnimatorTriggers()
     {
-        // Disable all triggers
         foreach (AnimatorControllerParameter param in animator.parameters)
         {
-            if (param.type == AnimatorControllerParameterType.Trigger)
+            if (param.type == AnimatorControllerParameterType.Bool)
             {
-                animator.ResetTrigger(param.name);
+                animator.SetBool(param.name, false);
             }
         }
     }
-    public void ResetTriggerSingle(string triggerName)
+    public void ResetSingleBool(string triggerName)
     {
-        animator.ResetTrigger(triggerName);
+        animator.SetBool(triggerName, false);
     }
 
     public void CastAttack()
@@ -544,7 +553,7 @@ public class Enemy : MonoBehaviour
         if (newCCDuration >= cCDuration)
         {
             cCDuration = newCCDuration;
-        } 
+        }
     }
 
     public void ResetAttackingAndPowering()
@@ -558,10 +567,13 @@ public class Enemy : MonoBehaviour
 
     public float NextAttackAnimatorThreshold()
     {
-        return DecideNextMoveID();
+        if (isBoss) return DecideNextBossMoveID();
+        else return DecideNextMoveID();
     }
 
+    // 1 = basic attack, 2 = charge attack, 3 = jump attack, 4 = ranged attack
     private float[] possibleValues = { 0f, 0.2f, 0.5f, 1f };
+
     private float DecideNextMoveID()
     {
         // Get a random index based on the length of the array
@@ -582,7 +594,74 @@ public class Enemy : MonoBehaviour
         // Return the value at the random index
         //return possibleValues[randomIndex];
     }
+
+    private float DecideNextBossMoveID()
+    {
+        // If we are not already in phase 2 => WE ENTER PHASE 2 and we play ONCE the phase 2 ability 
+        if (currentHealth <= 0.75f * maxHealth && !isPhaseTwo)
+        {
+            Debug.Log("ENTER PHASE TWO");
+            isPhaseTwo = true;
+            return possibleValues[2];
+        }
+        // If we are not already in phase 3 => WE ENTER PHASE 3 and we play ONCE the phase 3 ability 
+        if (currentHealth <= 0.50f * maxHealth && !isPhaseTree)
+        {
+            Debug.Log("ENTER PHASE THREE");
+            isPhaseTree = true;
+            return possibleValues[1];
+        }
+        // otherwise basic attack
+        else
+        {
+            return possibleValues[0];
+        }
+        // Return the value at the random index
+        //return possibleValues[randomIndex];
+    }
     // Useless but present in some animation so keep it to avoid null refs
     public void DecideNextMove() { }
+
+    public void BossRockFall()
+    {
+        Debug.Log("ROCKS ARE FALLING HERE");
+    }
+
+
+    public void JumpAttack()
+    {
+        if (target == null) return;
+
+        // distance from the target
+        float jumpDistance = 1f;
+
+        Vector3 directionToTarget = (target.position - transform.position).normalized;
+        Vector3 finalPosition = target.position - directionToTarget * jumpDistance;
+
+        StartCoroutine(JumpToLocation(finalPosition));
+    }
+
+
+    private IEnumerator JumpToLocation(Vector3 destination)
+    {
+        float jumpDuration = 1f; // Adjust the duration as needed
+        float t = 0f;
+        Vector3 startPosition = transform.position;
+        isCharging = true;
+
+        while (t < jumpDuration)
+        {
+            transform.position = Vector3.Lerp(startPosition, destination, (t / jumpDuration));
+            t += Time.deltaTime;
+            yield return null;
+        }
+
+        transform.position = destination;
+
+        // wait time before the next action, so we dont rotate towards target while ending the animation
+        yield return new WaitForSeconds(1.5f);
+        isCharging = false;
+    }
+
 
 }

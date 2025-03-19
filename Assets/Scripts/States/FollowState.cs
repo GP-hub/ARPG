@@ -7,13 +7,13 @@ class FollowState : IState
     void IState.Enter(Enemy enemy)
     {
         this.enemy = enemy;
-        enemy.SetTriggerSingle("TriggerWalk");
+        enemy.SetBoolSingle("TriggerWalk");
         enemy.ResetAttackingAndPowering();
     }
 
     void IState.Exit()
     {
-        enemy.ResetTriggerSingle("TriggerWalk");
+        enemy.ResetSingleBool("TriggerWalk");
     }
 
     void IState.Update()

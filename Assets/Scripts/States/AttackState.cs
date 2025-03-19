@@ -1,3 +1,5 @@
+using UnityEngine;
+
 class AttackState : IState
 {
     private Enemy enemy;
@@ -8,7 +10,7 @@ class AttackState : IState
 
         if (enemy.Agent.isOnNavMesh && enemy.Agent.enabled) enemy.Stop();
 
-        enemy.SetTriggerSingle("TriggerAttack");
+        enemy.SetBoolSingle("TriggerAttack");
         // Only work if enemy Attack state as the AttackTree parameter and a blend tree for attack State animation
         enemy.Animator.SetFloat("AttackTree", enemy.NextAttackAnimatorThreshold());
     }
@@ -19,7 +21,7 @@ class AttackState : IState
 
         //enemy.Animator.SetFloat("AttackAndPower", 0f);
 
-        enemy.ResetTriggerSingle("TriggerAttack");
+        enemy.ResetSingleBool("TriggerAttack");
 
         enemy.ResetAttackingAndPowering();
     }
@@ -27,7 +29,8 @@ class AttackState : IState
     {
         if (enemy.isCharging) return;
 
-        enemy.transform.LookAt(enemy.Target);
+        //enemy.transform.LookAt(enemy.Target);
+        Utility.RotateTowardsTarget(enemy.transform, enemy.Target, enemy.RotationSpeed);
     }
 
     string IState.GetStateName()

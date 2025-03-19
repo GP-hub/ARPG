@@ -74,7 +74,6 @@ public class PoolingManagerSingleton : Singleton<PoolingManagerSingleton>
             pool.objects.Add(newObj);
             return newObj;
         }
-        Debug.Log("test");
         return null;
     }
 

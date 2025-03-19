@@ -11,13 +11,13 @@ public class StunState : IState
     {
         this.enemy = enemy;
         enemy.IsCC = true;
-        enemy.SetTriggerSingle("TriggerStun");
+        enemy.SetBoolSingle("TriggerStun");
     }
 
     void IState.Exit()
     {
         enemy.IsCC = false;
-        enemy.ResetTriggerSingle("TriggerStun");
+        enemy.ResetSingleBool("TriggerStun");
     }
     void IState.Update()
     {
