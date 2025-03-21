@@ -13,9 +13,10 @@ MonoBehaviour:
   m_Name: RangedAttack
   m_EditorClassIdentifier: 
   moveName: 
-  attackRange: 10
+  maxAttackRange: 80
+  minAttackRange: 4
   damage: 2
-  cooldown: 0
+  cooldown: 5
   projectilePrefab: {fileID: 0}
   animationClip: {fileID: 7400000, guid: 765f267ec951b5c4baf6eec079cda586, type: 2}
   functionName: 

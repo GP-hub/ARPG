@@ -37,9 +37,11 @@ public class Enemy : MonoBehaviour
     [Header("Abilities")]
     [SerializeField] private List<AbilityData> abilities;
     private List<AbilityData> offCooldownAbilities;
-    public List<AbilityData> OffCooldownAbilities { get => offCooldownAbilities; }
     private AbilityData currentAbility;
-    public AbilityData CurrentAbility { get => currentAbility; }
+    private Dictionary<AbilityData, float> abilityCooldowns = new Dictionary<AbilityData, float>();
+    private float abilityCheckInterval = 0.5f; 
+    private float nextAbilityCheckTime = 0f;
+
 
     [Space(10)]
     [Header("Attack")]
@@ -160,15 +162,18 @@ public class Enemy : MonoBehaviour
         if (ability.cooldown <= 0) return;
         isAttacking = true;
         offCooldownAbilities.Remove(ability);
+        abilityCooldowns[ability] = ability.cooldown;
         StartCoroutine(AbilityCooldownCoroutine(ability));
     }
 
     private IEnumerator AbilityCooldownCoroutine(AbilityData ability)
     {
-        // Wait for the cooldown duration
-        yield return new WaitForSeconds(ability.cooldown);
+        while (abilityCooldowns[ability] > 0)
+        {
+            abilityCooldowns[ability] -= Time.deltaTime;
+            yield return null;
+        }
 
-        // Add the ability back to offCooldownAbilities
         offCooldownAbilities.Add(ability);
     }
 
@@ -355,20 +360,7 @@ public class Enemy : MonoBehaviour
             }
             else if (isPowerOnCooldown || !hasPowerAbility)
             {
-                Debug.Log("Abilities list: " + offCooldownAbilities.Count + " distance to target: " + distanceToTarget);
-
-                // Filter out abilities where the distance to the target is not between minAttackRange and maxAttackRange
-                //offCooldownAbilities.RemoveAll(ability => distanceToTarget < ability.minAttackRange || distanceToTarget > ability.maxAttackRange);
-                for (int i = offCooldownAbilities.Count - 1; i >= 0; i--)
-                {
-                    AbilityData obj = offCooldownAbilities[i];
-                    if (distanceToTarget < obj.minAttackRange || distanceToTarget > obj.maxAttackRange)
-                    {
-                        offCooldownAbilities.RemoveAt(i); 
-                    }
-                }
-
-                offCooldownAbilities.Sort((a, b) => b.cooldown.CompareTo(a.cooldown));
+                AbilityFilteringAndSorting(distanceToTarget);
 
                 bool canAttack = offCooldownAbilities.Count > 0;
 
@@ -411,6 +403,37 @@ public class Enemy : MonoBehaviour
         currentState.Enter(this);
     }
 
+    private void AbilityFilteringAndSorting(float distanceToTarget)
+    {
+        if (Time.time < nextAbilityCheckTime) return;
+        nextAbilityCheckTime = Time.time + abilityCheckInterval;
+
+        //Debug.Log("Abilities list: " + offCooldownAbilities.Count + " distance to target: " + distanceToTarget);
+
+        // Filter out abilities where the distance to the target is not between minAttackRange and maxAttackRange
+        for (int i = offCooldownAbilities.Count - 1; i >= 0; i--)
+        {
+            AbilityData obj = offCooldownAbilities[i];
+            if (distanceToTarget < obj.minAttackRange || distanceToTarget > obj.maxAttackRange)
+            {
+                offCooldownAbilities.RemoveAt(i);
+            }
+        }
+        // Add abilities that are now in range and not on cooldown
+        foreach (AbilityData ability in abilities)
+        {
+            if (distanceToTarget >= ability.minAttackRange && distanceToTarget <= ability.maxAttackRange && !offCooldownAbilities.Contains(ability))
+            {
+                if (!abilityCooldowns.ContainsKey(ability) || abilityCooldowns[ability] <= 0)
+                {
+                    offCooldownAbilities.Add(ability);
+                }
+            }
+        }
+
+        offCooldownAbilities.Sort((a, b) => b.cooldown.CompareTo(a.cooldown));
+    }
+
     // Triggered via Melee Attack animation
 
     public void MeleeHit()
@@ -428,7 +451,7 @@ public class Enemy : MonoBehaviour
                 Debug.Log("dmg: " + currentAbility.damage);
             }
         }
-        ResetAttackingAndPowering();
+        //ResetAttackingAndPowering();
     }
 
     // Triggered via SpawnAoe Attack Animation
@@ -466,7 +489,7 @@ public class Enemy : MonoBehaviour
             Quaternion rotationToTarget = Quaternion.LookRotation(direction);
             newObject.transform.rotation = rotationToTarget;
         }
-        ResetAttackingAndPowering();
+        //ResetAttackingAndPowering();
     }
 
     // Moving around the target via AIManager, circling the target
@@ -595,7 +618,7 @@ public class Enemy : MonoBehaviour
     {
         //currentAttackCooldown = attackCooldown;
         //isAttackOnCooldown = true;
-        isAttacking = true;
+        //isAttacking = true;
     }
 
     public void CastPower()

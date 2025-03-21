@@ -19,7 +19,7 @@ class IdleState : IState
 
     void IState.Update()
     {
-        enemy.ResetAttackingAndPowering();
+        //enemy.ResetAttackingAndPowering();
         if (enemy.Target != null)
         {
             enemy.ChangeState(new FollowState());

@@ -18,7 +18,7 @@ class FollowState : IState
 
     void IState.Update()
     {
-        enemy.ResetAttackingAndPowering();
+        //enemy.ResetAttackingAndPowering();
         if (enemy.Target != null)
         {
             AIManager.Instance.MakeAgentCircleTarget(enemy.Target.transform);
