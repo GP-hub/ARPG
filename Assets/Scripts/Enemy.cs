@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using UnityEditor.Animations;
 using UnityEngine;
 using UnityEngine.AI;
 
@@ -11,8 +12,9 @@ public class Enemy : MonoBehaviour
 {
 
     [Space(10)]
-    [Header("miscellaneous")]
+    [Header("Miscellaneous")]
     [SerializeField] private float rotationSpeed = 25f;
+    private BlendTree attackBlendTree;
     public float RotationSpeed { get => rotationSpeed; }
     [SerializeField] private float currentHealth, maxHealth = 30;
     [Tooltip("Animator issue when speed is below 2")]
@@ -32,12 +34,19 @@ public class Enemy : MonoBehaviour
     [SerializeField] private Transform hpBarProxyFollow;
 
     [Space(10)]
+    [Header("Abilities")]
+    [SerializeField] private List<AbilityData> abilities;
+    private List<AbilityData> offCooldownAbilities;
+    public List<AbilityData> OffCooldownAbilities { get => offCooldownAbilities; }
+    private AbilityData currentAbility;
+    public AbilityData CurrentAbility { get => currentAbility; }
+
+    [Space(10)]
     [Header("Attack")]
-    [SerializeField] private float attackRange;
-    [SerializeField] private int attackDamage;
+    //[SerializeField] private float attackRange;
     [SerializeField] private GameObject exitPoint;
-    [SerializeField] private float attackCooldown;
-    private float currentAttackCooldown;
+    //[SerializeField] private float attackCooldown;
+    //private float currentAttackCooldown;
     [SerializeField] private LayerMask characterLayer;
     private float lastAttackTime;
 
@@ -89,7 +98,7 @@ public class Enemy : MonoBehaviour
 
     [HideInInspector] public bool isCharging;
     [HideInInspector] public bool isPowerOnCooldown;
-    [HideInInspector] public bool isAttackOnCooldown;
+    //[HideInInspector] public bool isAttackOnCooldown;
 
     public IState currentState;
 
@@ -100,22 +109,6 @@ public class Enemy : MonoBehaviour
     public bool IsAttacking { get => isAttacking; }
     public float CCDuration { get => cCDuration; }
     public bool IsCC { get => isCC; set => isCC = value; }
-
-    //public enum AttackMove
-    //{
-    //    BasicAttack,
-    //    ChargeAttack,
-    //    JumpAttack,
-    //    RangedAttack
-    //}
-
-    //private Dictionary<AttackMove, float> attackRanges = new Dictionary<AttackMove, float>
-    //{
-    //    { AttackMove.BasicAttack, 5f },
-    //    { AttackMove.ChargeAttack, 10f },
-    //    { AttackMove.JumpAttack, 15f },
-    //    { AttackMove.RangedAttack, 20f }
-    //};
 
 
     private void Awake()
@@ -143,9 +136,13 @@ public class Enemy : MonoBehaviour
 
         lastPosition = transform.position;
 
+        offCooldownAbilities = new List<AbilityData>(abilities);
+
         ChangeState(new IdleState());
 
         StartCoroutine(CheckGroundedStatus());
+
+        GetAnimatorController();
     }
 
 
@@ -156,6 +153,64 @@ public class Enemy : MonoBehaviour
         HandleStateMachine();
 
         UpdateSpellCooldowns();
+    }
+
+    private void UseAbility(AbilityData ability)
+    {
+        if (ability.cooldown <= 0) return;
+        isAttacking = true;
+        offCooldownAbilities.Remove(ability);
+        StartCoroutine(AbilityCooldownCoroutine(ability));
+    }
+
+    private IEnumerator AbilityCooldownCoroutine(AbilityData ability)
+    {
+        // Wait for the cooldown duration
+        yield return new WaitForSeconds(ability.cooldown);
+
+        // Add the ability back to offCooldownAbilities
+        offCooldownAbilities.Add(ability);
+    }
+
+    private void GetAnimatorController()
+    {
+        // Get the AnimatorController
+        AnimatorController controller = animator.runtimeAnimatorController as AnimatorController;
+        if (controller == null) return;
+
+        foreach (AnimatorControllerLayer layer in controller.layers)
+        {
+            foreach (ChildAnimatorState state in layer.stateMachine.states)
+            {
+                if (state.state.motion is BlendTree blendTree)
+                {
+                    attackBlendTree = blendTree;
+                    PopulateBlendTree(attackBlendTree);
+                    return;
+                }
+            }
+        }
+    }
+
+    private void PopulateBlendTree(BlendTree blendTree)
+    {
+        if (abilities == null || abilities.Count == 0) return;
+
+        //blendTree.useAutomaticThresholds = false; // Set manual thresholds if needed
+
+        ChildMotion[] newChildren = new ChildMotion[abilities.Count];
+
+        for (int i = 0; i < abilities.Count; i++)
+        {
+            newChildren[i] = new ChildMotion
+            {
+                motion = abilities[i].animationClip,
+                threshold = i,
+                timeScale = 1f // Set the speed of the animation to 1
+            };
+        }
+
+        blendTree.children = newChildren;
     }
 
     private void ChargingCoroutineStart()
@@ -183,7 +238,7 @@ public class Enemy : MonoBehaviour
             {
                 if (collider.CompareTag("Player"))
                 {
-                    Debug.Log("Collided with a character: " + collider.name);
+                    //Debug.Log("Collided with a character: " + collider.name);
 
                     // Handle collision with 'Player' here
                 }
@@ -267,7 +322,6 @@ public class Enemy : MonoBehaviour
 
         if (IsCC) return;
 
-
         if (target == null || target.tag == "Dead")
         {
             ChangeState(new IdleState());
@@ -280,11 +334,11 @@ public class Enemy : MonoBehaviour
 
         if (CanSeeTarget(target) && target.tag != "Dead")
         {
-            // Previous method of calculating distance that do one more operation: a square root, not sure what is the difference with the one below.
+            // Previous method of calculating distance that do one more operation: a square root
             //float distanceToTarget1 = Vector3.Distance(transform.position, target.position);
             float distanceToTarget = (transform.position - target.position).sqrMagnitude;
 
-            if (isPowering || IsAttacking) return;
+            if (isPowering || isAttacking) return;
 
             if (!isPowerOnCooldown && hasPowerAbility)
             {
@@ -301,15 +355,40 @@ public class Enemy : MonoBehaviour
             }
             else if (isPowerOnCooldown || !hasPowerAbility)
             {
-                if (distanceToTarget <= attackRange)
+                Debug.Log("Abilities list: " + offCooldownAbilities.Count + " distance to target: " + distanceToTarget);
+
+                // Filter out abilities where the distance to the target is not between minAttackRange and maxAttackRange
+                //offCooldownAbilities.RemoveAll(ability => distanceToTarget < ability.minAttackRange || distanceToTarget > ability.maxAttackRange);
+                for (int i = offCooldownAbilities.Count - 1; i >= 0; i--)
+                {
+                    AbilityData obj = offCooldownAbilities[i];
+                    if (distanceToTarget < obj.minAttackRange || distanceToTarget > obj.maxAttackRange)
+                    {
+                        offCooldownAbilities.RemoveAt(i); 
+                    }
+                }
+
+                offCooldownAbilities.Sort((a, b) => b.cooldown.CompareTo(a.cooldown));
+
+                bool canAttack = offCooldownAbilities.Count > 0;
+
+                if (canAttack)
                 {
                     ChangeState(new AttackState());
                     return;
                 }
-                else if (distanceToTarget > attackRange)
+                else
                 {
-                    ChangeState(new FollowState());
-                    return;
+                    if (distanceToTarget <= 1)
+                    {
+                        ChangeState(new IdleState());
+                        return;
+                    }
+                    else
+                    {
+                        ChangeState(new FollowState());
+                        return;
+                    }
                 }
             }
         }
@@ -333,6 +412,7 @@ public class Enemy : MonoBehaviour
     }
 
     // Triggered via Melee Attack animation
+
     public void MeleeHit()
     {
         // Max number of entities in the OverlapSphere
@@ -344,8 +424,8 @@ public class Enemy : MonoBehaviour
         {
             if (hitColliders[i].CompareTag("Player"))
             {
-                EventManager.PlayerTakeDamage(attackDamage);
-                Debug.Log("dmg: " + attackDamage);
+                EventManager.PlayerTakeDamage(currentAbility.damage);
+                Debug.Log("dmg: " + currentAbility.damage);
             }
         }
         ResetAttackingAndPowering();
@@ -381,7 +461,7 @@ public class Enemy : MonoBehaviour
         {
             if (newObject.TryGetComponent<AbilityValues>(out AbilityValues fireball))
             {
-                fireball.Damage = attackDamage;
+                fireball.Damage = currentAbility.damage;
             }
             Quaternion rotationToTarget = Quaternion.LookRotation(direction);
             newObject.transform.rotation = rotationToTarget;
@@ -513,8 +593,8 @@ public class Enemy : MonoBehaviour
 
     public void CastAttack()
     {
-        currentAttackCooldown = attackCooldown;
-        isAttackOnCooldown = true;
+        //currentAttackCooldown = attackCooldown;
+        //isAttackOnCooldown = true;
         isAttacking = true;
     }
 
@@ -528,14 +608,14 @@ public class Enemy : MonoBehaviour
     private void UpdateSpellCooldowns()
     {
 
-        if (currentAttackCooldown > 0f && isAttackOnCooldown)
-        {
-            currentAttackCooldown -= Time.deltaTime;
-        }
-        if (currentAttackCooldown <= 0 && isAttackOnCooldown)
-        {
-            isAttackOnCooldown = false;
-        }
+        //if (currentAttackCooldown > 0f && isAttackOnCooldown)
+        //{
+        //    currentAttackCooldown -= Time.deltaTime;
+        //}
+        //if (currentAttackCooldown <= 0 && isAttackOnCooldown)
+        //{
+        //    isAttackOnCooldown = false;
+        //}
 
         if (currentPowerCooldown > 0f && isPowerOnCooldown)
         {
@@ -558,67 +638,71 @@ public class Enemy : MonoBehaviour
 
     public void ResetAttackingAndPowering()
     {
-        if (IsAttacking) isAttacking = false;
+        if (isAttacking) isAttacking = false;
         if (isPowering) isPowering = false;
     }
 
 
     /// ///////////////////////////////////////////////////////////////////////////////
 
-    public float NextAttackAnimatorThreshold()
+    public void DecideNextAbility()
     {
-        if (isBoss) return DecideNextBossMoveID();
-        else return DecideNextMoveID();
+        if (isBoss) DecideNextBossMoveID();
+        else DecideNextMoveID();
     }
 
     // 1 = basic attack, 2 = charge attack, 3 = jump attack, 4 = ranged attack
     private float[] possibleValues = { 0f, 0.2f, 0.5f, 1f };
 
-    private float DecideNextMoveID()
+    private void DecideNextMoveID()
     {
         // Get a random index based on the length of the array
         //int randomIndex = UnityEngine.Random.Range(0, possibleValues.Length);
         //Debug.Log("Attack: " + possibleValues[randomIndex]);
 
-        if (currentHealth <= 0.5f * maxHealth)
-        {
-            Debug.Log("below 50% hp");
-            return possibleValues[1];
-        }
-        else
-        {
-            Debug.Log("higher than 50% hp");
-            return possibleValues[0];
-        }
-
-        // Return the value at the random index
-        //return possibleValues[randomIndex];
+        //if (currentHealth <= 0.5f * maxHealth)
+        //{
+        //    Debug.Log("below 50% hp");
+        //    currentAbility = abilities[0];
+        //}
+        //else
+        //{
+        //    Debug.Log("higher than 50% hp");
+        //    currentAbility = abilities[1];
+        //}
+        currentAbility = offCooldownAbilities[0];
+        UseAbility(currentAbility);
+        Debug.Log("Cast ability:" + currentAbility.name);
     }
 
-    private float DecideNextBossMoveID()
+    private void DecideNextBossMoveID()
     {
         // If we are not already in phase 2 => WE ENTER PHASE 2 and we play ONCE the phase 2 ability 
         if (currentHealth <= 0.75f * maxHealth && !isPhaseTwo)
         {
             Debug.Log("ENTER PHASE TWO");
             isPhaseTwo = true;
-            return possibleValues[2];
         }
         // If we are not already in phase 3 => WE ENTER PHASE 3 and we play ONCE the phase 3 ability 
         if (currentHealth <= 0.50f * maxHealth && !isPhaseTree)
         {
             Debug.Log("ENTER PHASE THREE");
             isPhaseTree = true;
-            return possibleValues[1];
         }
         // otherwise basic attack
         else
         {
-            return possibleValues[0];
+            currentAbility = offCooldownAbilities[0];
         }
-        // Return the value at the random index
-        //return possibleValues[randomIndex];
+
+        UseAbility(currentAbility);
     }
+
+    public float BlendTreeThreshold()
+    {
+        return Utility.GetClipThreshold(attackBlendTree, currentAbility.animationClip);
+    }
+
     // Useless but present in some animation so keep it to avoid null refs
     public void DecideNextMove() { }
 

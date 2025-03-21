@@ -1,3 +1,4 @@
+using Unity.VisualScripting;
 using UnityEngine;
 
 class AttackState : IState
@@ -11,8 +12,10 @@ class AttackState : IState
         if (enemy.Agent.isOnNavMesh && enemy.Agent.enabled) enemy.Stop();
 
         enemy.SetBoolSingle("TriggerAttack");
+        enemy.DecideNextAbility();
         // Only work if enemy Attack state as the AttackTree parameter and a blend tree for attack State animation
-        enemy.Animator.SetFloat("AttackTree", enemy.NextAttackAnimatorThreshold());
+        enemy.Animator.SetFloat("AttackTree", enemy.BlendTreeThreshold());
+
     }
 
     void IState.Exit()
@@ -28,6 +31,11 @@ class AttackState : IState
     void IState.Update()
     {
         if (enemy.isCharging) return;
+        //if (!enemy.OffCooldownAbilities.Contains(enemy.CurrentAbility))
+        //{
+        //    enemy.ChangeState(new IdleState());
+        //    return;
+        //}
 
         //enemy.transform.LookAt(enemy.Target);
         Utility.RotateTowardsTarget(enemy.transform, enemy.Target, enemy.RotationSpeed);
