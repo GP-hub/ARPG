@@ -16,7 +16,7 @@ MonoBehaviour:
   maxAttackRange: 2
   minAttackRange: 0
   damage: 10
-  cooldown: 2
+  cooldown: 5
   projectilePrefab: {fileID: 0}
   animationClip: {fileID: 7400000, guid: 236c9f44da5105442914fe3af7b66ba5, type: 2}
   functionName: 
