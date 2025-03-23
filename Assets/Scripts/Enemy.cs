@@ -39,11 +39,10 @@ public class Enemy : MonoBehaviour
     [SerializeField] private List<AbilityData> abilities;
     private List<AbilityData> offCooldownAbilities;
     private AbilityData currentAbility;
+    private float minMaxAbilityRange;
     private Dictionary<AbilityData, float> abilityCooldowns = new Dictionary<AbilityData, float>();
     private float abilityCheckInterval = 0.5f;
     private float nextAbilityCheckTime = 0f;
-
-    private Dictionary<AbilityData, Coroutine> activeCooldownCoroutines = new Dictionary<AbilityData, Coroutine>();
 
 
 
@@ -149,6 +148,8 @@ public class Enemy : MonoBehaviour
         StartCoroutine(CheckGroundedStatus());
 
         GetAnimatorController();
+
+        minMaxAbilityRange = MinMaxRangeAttackRange();
     }
 
 
@@ -170,31 +171,8 @@ public class Enemy : MonoBehaviour
         isAttacking = true;
         offCooldownAbilities.Remove(ability);
         abilityCooldowns[ability] = ability.cooldown;
-
-        if (activeCooldownCoroutines.ContainsKey(ability))
-        {
-            StopCoroutine(activeCooldownCoroutines[ability]);
-        }
-
-        Coroutine cooldownCoroutine = StartCoroutine(AbilityCooldownCoroutine(ability));
-        activeCooldownCoroutines[ability] = cooldownCoroutine;
     }
 
-    private IEnumerator AbilityCooldownCoroutine(AbilityData ability)
-    {
-        while (abilityCooldowns[ability] > 0)
-        {
-            abilityCooldowns[ability] -= Time.deltaTime;
-            yield return null;
-        }
-        abilityCooldowns[ability] = 0;
-        if (!offCooldownAbilities.Contains(ability))
-        {
-            offCooldownAbilities.Add(ability);
-        }
-
-        activeCooldownCoroutines.Remove(ability);
-    }
 
 
     private void GetAnimatorController()
@@ -392,7 +370,7 @@ public class Enemy : MonoBehaviour
                 }
                 else
                 {
-                    if (distanceToTarget <= 1.1f)
+                    if (distanceToTarget <= minMaxAbilityRange)
                     {
                         ChangeState(new IdleState());
                         return;
@@ -411,6 +389,29 @@ public class Enemy : MonoBehaviour
             ChangeState(new FollowState());
             return;
         }
+    }
+
+    private float MinMaxRangeAttackRange()
+    {
+        if (abilities.Count == 0)
+        {
+            return 1.1f; // Default value if no abilities are available
+        }
+
+        float minMaxAttackRange = float.MaxValue;
+
+        foreach (AbilityData ability in abilities)
+        {
+            if (ability.maxAttackRange < minMaxAttackRange)
+            {
+                minMaxAttackRange = ability.maxAttackRange;
+            }
+        }
+
+        if (minMaxAttackRange <= 0) Debug.LogError($"Issue with setting up ability range on {gameObject.name}. minMaxAttackRange is {minMaxAttackRange}");
+        
+        Debug.Log("Min max attack range: " + minMaxAttackRange);
+        return minMaxAttackRange;
     }
     public void ChangeState(IState newState)
     {
@@ -653,6 +654,28 @@ public class Enemy : MonoBehaviour
 
     private void UpdateSpellCooldowns()
     {
+
+        List<AbilityData> abilitiesToReset = new List<AbilityData>();
+
+        // Collect abilities that need to be reset
+        foreach (var ability in new List<AbilityData>(abilityCooldowns.Keys))
+        {
+            if (abilityCooldowns[ability] > 0)
+            {
+                abilityCooldowns[ability] -= Time.deltaTime;
+            }
+            if (abilityCooldowns[ability] <= 0 && !offCooldownAbilities.Contains(ability))
+            {
+                abilitiesToReset.Add(ability);
+            }
+        }
+
+        // Reset abilities after iteration
+        foreach (var ability in abilitiesToReset)
+        {
+            abilityCooldowns[ability] = 0;
+            offCooldownAbilities.Add(ability);
+        }
 
         //if (currentAttackCooldown > 0f && isAttackOnCooldown)
         //{
