@@ -13,7 +13,8 @@ MonoBehaviour:
   m_Name: BossJumpAttack
   m_EditorClassIdentifier: 
   moveName: bossjumpattack
-  attackRange: 10
+  maxAttackRange: 80
+  minAttackRange: 10
   damage: 2
   cooldown: 10
   projectilePrefab: {fileID: 0}

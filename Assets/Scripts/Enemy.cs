@@ -455,7 +455,7 @@ public class Enemy : MonoBehaviour
         }
 
         offCooldownAbilities.Sort((a, b) => b.cooldown.CompareTo(a.cooldown));
-        Debug.Log("Off cooldown abilities: " + offCooldownAbilities.Count + ", distance to target: " + distanceToTarget);
+        //Debug.Log("Off cooldown abilities: " + offCooldownAbilities.Count + ", distance to target: " + distanceToTarget);
     }
 
     // Triggered via Melee Attack animation
