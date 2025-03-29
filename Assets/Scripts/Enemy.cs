@@ -154,9 +154,6 @@ public class Enemy : MonoBehaviour
     {
         currentState.Update();
 
-        //Debug.Log("current state: " + currentState.GetStateName());
-        //Debug.Log("isAttacking: " + isAttacking);
-
         HandleStateMachine();
 
         UpdateSpellCooldowns();
@@ -525,7 +522,6 @@ public class Enemy : MonoBehaviour
             MethodInfo method = GetType().GetMethod(currentAbility.selectedFunctionName,
                 BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic);
 
-            Debug.Log("method: " + method);
             if (method != null)
             {
                 method.Invoke(this, null);
