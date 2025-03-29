@@ -131,7 +131,7 @@ public class Enemy : MonoBehaviour
         agent.speed = speed;
         AIManager.Instance.Units.Add(this);
         currentHealth = maxHealth;
-        GeneratePlayerHealthBar(hpBarProxyFollow);
+        GenerateEnemyHealthBar(hpBarProxyFollow);
 
         player = GameObject.Find("Player");
 
@@ -564,7 +564,7 @@ public class Enemy : MonoBehaviour
         agent.avoidancePriority = 2;
     }
 
-    private void GeneratePlayerHealthBar(Transform hpProxy)
+    private void GenerateEnemyHealthBar(Transform hpProxy)
     {
         GameObject healthBarGo = Instantiate(healthBarPrefab);
         healthBar = healthBarGo.GetComponent<Healthbar>();
