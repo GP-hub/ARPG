@@ -10,13 +10,13 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: bf59774016b20b6448aa62df6df3e087, type: 3}
-  m_Name: MeleeAttack
+  m_Name: ChargeAttack
   m_EditorClassIdentifier: 
-  moveName: 
-  maxAttackRange: 2
-  minAttackRange: 0
-  damage: 1
+  moveName: Charge
+  maxAttackRange: 50
+  minAttackRange: 10
+  damage: 0
   cooldown: 5
   projectilePrefab: {fileID: 0}
-  animationClip: {fileID: 7400000, guid: 222519241767d4e43a9943228eb7e227, type: 2}
-  selectedFunctionName: MeleeHit
+  animationClip: {fileID: 7400000, guid: f17bd6fdffcd5f94aa018fa583af744a, type: 2}
+  selectedFunctionName: ChargingCoroutineStart

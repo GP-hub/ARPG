@@ -17,6 +17,6 @@ MonoBehaviour:
   minAttackRange: 4
   damage: 2
   cooldown: 2
-  projectilePrefab: {fileID: 0}
+  projectilePrefab: {fileID: 2029881061899082543, guid: 70bdde46f5676434daabb86cc7401809, type: 3}
   animationClip: {fileID: 7400000, guid: 765f267ec951b5c4baf6eec079cda586, type: 2}
-  functionName: 
+  selectedFunctionName: RangedHit

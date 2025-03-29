@@ -43,24 +43,18 @@ public class Enemy : MonoBehaviour
     private AbilityData currentAbility;
     private float minMaxAbilityRange;
     private Dictionary<AbilityData, float> abilityCooldowns = new Dictionary<AbilityData, float>();
-    private float abilityCheckInterval = 0.5f;
-    private float nextAbilityCheckTime = 0f;
+
+    [Space(10)]
+    [Header("Power Abilities")]
+    [SerializeField] private List<AbilityData> powerAbilities;
 
 
 
     [Space(10)]
     [Header("Attack")]
-    //[SerializeField] private float attackRange;
     [SerializeField] private GameObject exitPoint;
-    //[SerializeField] private float attackCooldown;
-    //private float currentAttackCooldown;
     [SerializeField] private LayerMask characterLayer;
     private float lastAttackTime;
-
-    [Space(10)]
-    [Header("Attack: Ranged")]
-    [SerializeField] private string fireballPrefabName;
-    [SerializeField] private float attackProjectileSpeed;
 
     [Space(10)]
     [Header("Attack: Melee")]
@@ -150,6 +144,7 @@ public class Enemy : MonoBehaviour
         StartCoroutine(CheckGroundedStatus());
 
         GetAnimatorController();
+        //OverrideSpecificAnimationByStateName("Power", powerAbilities[0].animationClip);
 
         minMaxAbilityRange = MinMaxRangeAttackRange();
     }
@@ -197,6 +192,47 @@ public class Enemy : MonoBehaviour
         }
     }
 
+    private void OverrideSpecificAnimationByStateName(string targetStateName, AnimationClip newClip)
+    {
+        if (animator == null || newClip == null)
+        {
+            Debug.Log("Animator or Animation Clip is missing.");
+            return;
+        }
+
+        // Create an override controller
+        AnimatorOverrideController overrideController = new AnimatorOverrideController(animator.runtimeAnimatorController);
+
+        // Loop through the layers in the AnimatorController
+        foreach (AnimatorControllerLayer layer in ((AnimatorController)animator.runtimeAnimatorController).layers)
+        {
+            // Loop through the states in each state machine
+            foreach (ChildAnimatorState state in layer.stateMachine.states)
+            {
+                if (state.state.name == targetStateName)
+                {
+                    // Ensure we're replacing the clip, not the BlendTree or other motion types
+                    if (state.state.motion is AnimationClip currentClip)
+                    {
+                        // Replace the animation clip in the target state
+                        Debug.Log($"Replacing animation clip for state '{targetStateName}' with '{newClip.name}'");
+                        overrideController[currentClip] = newClip;
+                        animator.runtimeAnimatorController = overrideController; // Apply the override controller
+                        return; // Exit once we find the state and update it
+                    }
+                    else
+                    {
+                        Debug.Log($"State '{targetStateName}' does not use an AnimationClip, skipping.");
+                    }
+                }
+            }
+        }
+
+        Debug.Log($"State '{targetStateName}' not found.");
+    }
+
+
+
     private void PopulateBlendTree(BlendTree blendTree)
     {
         if (abilities == null || abilities.Count == 0) return;
@@ -217,8 +253,8 @@ public class Enemy : MonoBehaviour
 
         blendTree.children = newChildren;
     }
-
-    private void ChargingCoroutineStart()
+    [AttackMethod]
+    public void ChargingCoroutineStart()
     {
         StartCoroutine(MoveForwardCoroutine());
     }
@@ -462,24 +498,45 @@ public class Enemy : MonoBehaviour
 
     public void PerformAttack()
     {
-        if (currentAbility == null || string.IsNullOrEmpty(currentAbility.selectedFunctionName))
-        {
-            Debug.LogWarning($"{gameObject.name} has no ability or function selected.");
-            return;
-        }
+        //if (isPowering)
+        //{
+        //    // Get the method by name
+        //    MethodInfo powerMethod = GetType().GetMethod(powerAbilities[0].selectedFunctionName,
+        //        BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic);
 
-        // Get the method by name
-        MethodInfo method = GetType().GetMethod(currentAbility.selectedFunctionName,
-            BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic);
+        //    if (powerMethod != null)
+        //    {
+        //        powerMethod.Invoke(this, null);
+        //    }
+        //    else
+        //    {
+        //        Debug.Log($"Method '{currentAbility.selectedFunctionName}' not found on {gameObject.name}");
+        //    }
+        //}
+        //else
+        //{
+            if (currentAbility == null || string.IsNullOrEmpty(currentAbility.selectedFunctionName))
+            {
+                Debug.Log($"{gameObject.name} has no ability or function selected.");
+                return;
+            }
 
-        if (method != null)
-        {
-            method.Invoke(this, null);
-        }
-        else
-        {
-            Debug.LogWarning($"Method '{currentAbility.selectedFunctionName}' not found on {gameObject.name}");
-        }
+            // Get the method by name
+            MethodInfo method = GetType().GetMethod(currentAbility.selectedFunctionName,
+                BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic);
+
+            Debug.Log("method: " + method);
+            if (method != null)
+            {
+                method.Invoke(this, null);
+            }
+            else
+            {
+                Debug.Log($"Method '{currentAbility.selectedFunctionName}' not found on {gameObject.name}");
+            }
+
+        //}
+
     }
 
 
@@ -497,7 +554,6 @@ public class Enemy : MonoBehaviour
             if (hitColliders[i].CompareTag("Player"))
             {
                 EventManager.PlayerTakeDamage(currentAbility.damage);
-                Debug.Log("dmg: " + currentAbility.damage);
             }
         }
         //ResetAttackingAndPowering();
@@ -528,13 +584,13 @@ public class Enemy : MonoBehaviour
         Vector3 targetCorrectedPosition = target.transform.position;
         Vector3 direction = (targetCorrectedPosition - this.transform.position).normalized;
 
-        GameObject newObject = PoolingManagerSingleton.Instance.GetObjectFromPool(fireballPrefabName, exitPoint.transform.position);
+        GameObject newObject = PoolingManagerSingleton.Instance.GetObjectFromPool(currentAbility.projectilePrefab.name, exitPoint.transform.position);
 
         if (newObject != null)
         {
-            if (newObject.TryGetComponent<AbilityValues>(out AbilityValues fireball))
+            if (newObject.TryGetComponent<AbilityValues>(out AbilityValues projectile))
             {
-                fireball.Damage = currentAbility.damage;
+                projectile.Damage = currentAbility.damage;
             }
             Quaternion rotationToTarget = Quaternion.LookRotation(direction);
             newObject.transform.rotation = rotationToTarget;
