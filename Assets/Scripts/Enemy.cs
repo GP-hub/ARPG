@@ -1,8 +1,10 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Reflection;
 using System.Security.Cryptography;
 using UnityEditor.Animations;
+using UnityEditor.Playables;
 using UnityEngine;
 using UnityEngine.AI;
 
@@ -458,8 +460,31 @@ public class Enemy : MonoBehaviour
         //Debug.Log("Off cooldown abilities: " + offCooldownAbilities.Count + ", distance to target: " + distanceToTarget);
     }
 
-    // Triggered via Melee Attack animation
+    public void PerformAttack()
+    {
+        if (currentAbility == null || string.IsNullOrEmpty(currentAbility.selectedFunctionName))
+        {
+            Debug.LogWarning($"{gameObject.name} has no ability or function selected.");
+            return;
+        }
 
+        // Get the method by name
+        MethodInfo method = GetType().GetMethod(currentAbility.selectedFunctionName,
+            BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic);
+
+        if (method != null)
+        {
+            method.Invoke(this, null);
+        }
+        else
+        {
+            Debug.LogWarning($"Method '{currentAbility.selectedFunctionName}' not found on {gameObject.name}");
+        }
+    }
+
+
+    // Triggered via Melee Attack animation
+    [AttackMethod]
     public void MeleeHit()
     {
         // Max number of entities in the OverlapSphere
@@ -479,6 +504,7 @@ public class Enemy : MonoBehaviour
     }
 
     // Triggered via SpawnAoe Attack Animation
+    [AttackMethod]
     public void SpawnAOE()
     {
         if (!target) return;
@@ -493,8 +519,8 @@ public class Enemy : MonoBehaviour
     }
 
 
-
     // Triggered via Ranged Attack animation
+    [AttackMethod]
     public void RangedHit()
     {
         if (!target) return;
@@ -780,7 +806,7 @@ public class Enemy : MonoBehaviour
         Debug.Log("ROCKS ARE FALLING HERE");
     }
 
-
+    [AttackMethod]
     public void JumpAttack()
     {
         if (target == null) return;
