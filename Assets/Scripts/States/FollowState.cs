@@ -23,6 +23,7 @@ class FollowState : IState
         {
             AIManager.Instance.MakeAgentCircleTarget(enemy.Target.transform);
         }
+        //Debug.Log("target: " + enemy.Target);
     }
 
     string IState.GetStateName()

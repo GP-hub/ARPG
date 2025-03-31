@@ -19,6 +19,8 @@ public class LogOnAnimationLoop : StateMachineBehaviour
         {
             previousLoopCount = currentLoopCount;
             animator.gameObject.GetComponent<Enemy>().ChangeState(new IdleState());
+            //animator.gameObject.GetComponent<Enemy>().ChangeState(new FollowState());
+            //Debug.Log(animator.gameObject.GetComponent<Enemy>().name);
         }
     }
 

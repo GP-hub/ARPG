@@ -1,0 +1,22 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bf59774016b20b6448aa62df6df3e087, type: 3}
+  m_Name: BossSwipe
+  m_EditorClassIdentifier: 
+  moveName: 
+  maxAttackRange: 2
+  minAttackRange: 0
+  damage: 10
+  cooldown: 5
+  projectilePrefab: {fileID: 0}
+  animationClip: {fileID: 7400000, guid: 236c9f44da5105442914fe3af7b66ba5, type: 2}
+  selectedFunctionName: MeleeHit
