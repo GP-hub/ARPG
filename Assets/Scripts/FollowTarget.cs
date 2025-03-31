@@ -18,7 +18,7 @@ public class FollowTarget : MonoBehaviour
         {
             Vector3 directionToTarget = target.position - rb.position;
             Vector3 moveDirection = directionToTarget.normalized;
-            rb.velocity = moveDirection * moveSpeed;
+            rb.linearVelocity = moveDirection * moveSpeed;
         }
     }
 }
