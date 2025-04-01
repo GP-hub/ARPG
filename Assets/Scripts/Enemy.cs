@@ -445,7 +445,6 @@ public class Enemy : MonoBehaviour
 
         if (minMaxAttackRange <= 0) Debug.LogError($"Issue with setting up ability range on {gameObject.name}. minMaxAttackRange is {minMaxAttackRange}");
         
-        Debug.Log("Min max attack range: " + minMaxAttackRange);
         return minMaxAttackRange;
     }
     public void ChangeState(IState newState)
@@ -819,7 +818,6 @@ public class Enemy : MonoBehaviour
         //}
         currentAbility = offCooldownAbilities[0];
         UseAbility(currentAbility);
-        Debug.Log("Cast ability:" + currentAbility.name);
     }
 
     private void DecideNextBossMoveID()
