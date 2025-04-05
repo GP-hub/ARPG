@@ -252,24 +252,73 @@ public class AttackAndPowerCasting : MonoBehaviour
         playerMovement.PlayerSpeed += attackPlayerMovementSpeedPercent;
         animator.ResetTrigger("Attack");
 
-        Ray cursorRay = Camera.main.ScreenPointToRay(Input.mousePosition);
+        //Ray cursorRay = Camera.main.ScreenPointToRay(Input.mousePosition);
 
-        if (Physics.Raycast(cursorRay, out RaycastHit hit, 100f, groundLayer))
+        //if (Physics.Raycast(cursorRay, out RaycastHit hit, 100f, groundLayer))
+        //{
+        //    Vector3 targetPosition = hit.point;
+
+        //    Vector3 targetCorrectedPosition = new Vector3(CorrectingAimPosition(targetPosition).x, targetPosition.y, CorrectingAimPosition(targetPosition).z);
+        //    Vector3 direction = (targetCorrectedPosition - this.transform.position).normalized;
+
+        //    // THE PREFAB NANE IN THE INSPECTOR NEEDS TO START WITH A CAPITAL LETTER
+        //    GameObject newObject = PoolingManagerSingleton.Instance.GetObjectFromPool(attackPrefabName, exitPoint.transform.position);
+
+        //    if (newObject != null)
+        //    {
+        //        Quaternion rotationToTarget = Quaternion.LookRotation(direction);
+        //        newObject.transform.rotation = rotationToTarget;
+        //    }
+        //}
+
+        ///////////////////////////////////////////////////////////////////////
+        ///////////////////////////////////////////////////////////////////////
+
+        //// Create a flat plane at your character's height
+        //Plane groundPlane = new Plane(Vector3.up, new Vector3(0, exitPoint.transform.position.y, 0));
+
+        //// Ray from camera to cursor
+        //Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
+
+        //if (groundPlane.Raycast(ray, out float distance))
+        //{
+        //    Vector3 hitPoint = ray.GetPoint(distance);
+        //    Vector3 direction = (hitPoint - exitPoint.transform.position).normalized;
+
+        //    GameObject newObject = PoolingManagerSingleton.Instance.GetObjectFromPool(attackPrefabName, exitPoint.transform.position);
+
+        //    if (newObject != null)
+        //    {
+        //        // Face the direction (flat, parallel to ground)
+        //        newObject.transform.rotation = Quaternion.LookRotation(direction, Vector3.up);
+        //    }
+        //}
+
+        ///////////////////////////////////////////////////////////////////////
+        ///////////////////////////////////////////////////////////////////////
+
+
+        Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
+
+        if (Physics.Raycast(ray, out RaycastHit hit, 1000f, groundLayer))
         {
-            Vector3 targetPosition = hit.point;
+            Vector3 spawnPos = exitPoint.transform.position;
 
-            Vector3 targetCorrectedPosition = new Vector3(CorrectingAimPosition(targetPosition).x, targetPosition.y, CorrectingAimPosition(targetPosition).z);
-            Vector3 direction = (targetCorrectedPosition - this.transform.position).normalized;
+            // Direction now includes vertical component!
+            Vector3 direction = (hit.point - spawnPos).normalized;
 
-            // THE PREFAB NANE IN THE INSPECTOR NEEDS TO START WITH A CAPITAL LETTER
-            GameObject newObject = PoolingManagerSingleton.Instance.GetObjectFromPool(attackPrefabName, exitPoint.transform.position);
+            GameObject newObject = PoolingManagerSingleton.Instance.GetObjectFromPool(attackPrefabName, spawnPos);
 
             if (newObject != null)
             {
-                Quaternion rotationToTarget = Quaternion.LookRotation(direction);
-                newObject.transform.rotation = rotationToTarget;
+                newObject.transform.rotation = Quaternion.LookRotation(direction);
+                // Movement will follow this rotation using transform.forward
             }
+
+            // Debug line
+            Debug.DrawLine(spawnPos, hit.point, Color.magenta, 2f);
         }
+
 
         EventManager.Casting(false);
         isCasting = false;

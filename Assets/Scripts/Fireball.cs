@@ -18,7 +18,8 @@ public class Fireball : MonoBehaviour
 
     private void Update()
     {
-        transform.Translate(Vector3.forward * projectileSpeed * Time.deltaTime);
+        //transform.Translate(Vector3.forward * projectileSpeed * Time.deltaTime);
+        transform.position += transform.forward * projectileSpeed * Time.deltaTime;
     }
 
     void OnTriggerEnter(Collider other)
