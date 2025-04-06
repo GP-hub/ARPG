@@ -61,6 +61,9 @@ MeshRenderer:
   m_ReflectionProbeUsage: 0
   m_RayTracingMode: 2
   m_RayTraceProcedural: 0
+  m_RayTracingAccelStructBuildFlagsOverride: 0
+  m_RayTracingAccelStructBuildFlags: 1
+  m_SmallMeshCulling: 1
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
@@ -130,6 +133,12 @@ MonoBehaviour:
     m_Bits: 192
   projectileSpeed: 10
   procChance: 0
+  groundLayer:
+    serializedVersion: 2
+    m_Bits: 8
+  groundOffset: 0.1
+  raycastDistance: 2
+  rotationSpeed: 10
 --- !u!54 &8776667637653338336
 Rigidbody:
   m_ObjectHideFlags: 0

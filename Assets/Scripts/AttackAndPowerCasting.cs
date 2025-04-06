@@ -204,46 +204,46 @@ public class AttackAndPowerCasting : MonoBehaviour
         isPowerCooldown = false;
     }
 
-    private Vector3 CorrectingAimPosition(Vector3 hit)
-    {
-        Vector3 pointA = hit;
-        Vector3 pointB = Camera.main.transform.position;
-        Vector3 pointC = new Vector3(Camera.main.transform.position.x, hit.y, Camera.main.transform.position.z);
+    //private Vector3 CorrectingAimPosition(Vector3 hit)
+    //{
+    //    Vector3 pointA = hit;
+    //    Vector3 pointB = Camera.main.transform.position;
+    //    Vector3 pointC = new Vector3(Camera.main.transform.position.x, hit.y, Camera.main.transform.position.z);
 
-        float squaredLengthAB = (pointB - pointA).sqrMagnitude;
-        float squaredLengthBC = (pointC - pointB).sqrMagnitude;
-        float squaredLengthCA = (pointA - pointC).sqrMagnitude;
+    //    float squaredLengthAB = (pointB - pointA).sqrMagnitude;
+    //    float squaredLengthBC = (pointC - pointB).sqrMagnitude;
+    //    float squaredLengthCA = (pointA - pointC).sqrMagnitude;
 
-        float lenghtHypotenuse = Mathf.Sqrt(squaredLengthAB);
-        float lengthBC = Mathf.Sqrt(squaredLengthBC);
-        float lengthCA = Mathf.Sqrt(squaredLengthCA);
+    //    float lenghtHypotenuse = Mathf.Sqrt(squaredLengthAB);
+    //    float lengthBC = Mathf.Sqrt(squaredLengthBC);
+    //    float lengthCA = Mathf.Sqrt(squaredLengthCA);
 
-        float angleAtHit = CalculateAngle(lengthCA, lenghtHypotenuse, lengthBC);
+    //    float angleAtHit = CalculateAngle(lengthCA, lenghtHypotenuse, lengthBC);
 
-        float angleNextToHit = 90 - angleAtHit;
+    //    float angleNextToHit = 90 - angleAtHit;
 
-        Vector3 direction = (Camera.main.transform.position - hit).normalized;
-        float distance = CalculateSideLengths(angleNextToHit);
-        Vector3 targetPosition = pointA + direction * distance;
+    //    Vector3 direction = (Camera.main.transform.position - hit).normalized;
+    //    float distance = CalculateSideLengths(angleNextToHit);
+    //    Vector3 targetPosition = pointA + direction * distance;
 
-        return targetPosition;
-    }
+    //    return targetPosition;
+    //}
 
-    private float CalculateAngle(float sideA, float sideB, float sideC)
-    {
-        return Mathf.Acos((sideA * sideA + sideB * sideB - sideC * sideC) / (2 * sideA * sideB)) * Mathf.Rad2Deg;
-    }
+    //private float CalculateAngle(float sideA, float sideB, float sideC)
+    //{
+    //    return Mathf.Acos((sideA * sideA + sideB * sideB - sideC * sideC) / (2 * sideA * sideB)) * Mathf.Rad2Deg;
+    //}
 
-    private float CalculateSideLengths(float angleA)
-    {
-        float sideB = exitPoint.transform.position.y;
+    //private float CalculateSideLengths(float angleA)
+    //{
+    //    float sideB = exitPoint.transform.position.y;
 
-        float radianA = angleA * Mathf.Deg2Rad;
+    //    float radianA = angleA * Mathf.Deg2Rad;
 
-        float sideA = sideB * Mathf.Tan(radianA);
+    //    float sideA = sideB * Mathf.Tan(radianA);
 
-        return sideA;
-    }
+    //    return sideA;
+    //}
 
     // Called by Player Attack Animation Keyframe
     public void CastFireball()
@@ -251,6 +251,12 @@ public class AttackAndPowerCasting : MonoBehaviour
         // We return the player speed to its original value
         playerMovement.PlayerSpeed += attackPlayerMovementSpeedPercent;
         animator.ResetTrigger("Attack");
+
+
+        ///////////////////////////////////////////////////////////////////////
+        ///////////////////////  OLD BASE SOLUTION  ///////////////////////////
+        ///////////////////////////////////////////////////////////////////////
+
 
         //Ray cursorRay = Camera.main.ScreenPointToRay(Input.mousePosition);
 
@@ -272,6 +278,7 @@ public class AttackAndPowerCasting : MonoBehaviour
         //}
 
         ///////////////////////////////////////////////////////////////////////
+        //////////////////////////  OTHER SOLUTION  ///////////////////////////
         ///////////////////////////////////////////////////////////////////////
 
         //// Create a flat plane at your character's height
@@ -294,30 +301,54 @@ public class AttackAndPowerCasting : MonoBehaviour
         //    }
         //}
 
-        ///////////////////////////////////////////////////////////////////////
-        ///////////////////////////////////////////////////////////////////////
+        ///////////////////////////////////////////////////////////////////////////////
+        //////////////////////////  NEW POTENTIAL BEST SOLUTION  //////////////////////
+        ///////////////////////////////////////////////////////////////////////////////
 
+
+        //Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
+
+        //if (Physics.Raycast(ray, out RaycastHit hit, 1000f, groundLayer))
+        //{
+        //    Vector3 spawnPos = exitPoint.transform.position;
+
+        //    // Direction now includes vertical component!
+        //    Vector3 direction = (hit.point - spawnPos).normalized;
+
+        //    GameObject newObject = PoolingManagerSingleton.Instance.GetObjectFromPool(attackPrefabName, spawnPos);
+
+        //    if (newObject != null)
+        //    {
+        //        newObject.transform.rotation = Quaternion.LookRotation(direction);
+        //    }
+
+        //    // Debug line
+        //    Debug.DrawLine(spawnPos, hit.point, Color.magenta, 2f);
+        //}
+
+
+        ///////////////////////////////////////////////////////////////////////////////
+        //////////////////////////  WIP SOLUTION  /////////////////////////////////////
+        ///////////////////////////////////////////////////////////////////////////////
+        ///
+        Plane groundPlane = new Plane(Vector3.up, new Vector3(0, exitPoint.transform.position.y, 0));
 
         Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
 
-        if (Physics.Raycast(ray, out RaycastHit hit, 1000f, groundLayer))
+        if (groundPlane.Raycast(ray, out float distance))
         {
-            Vector3 spawnPos = exitPoint.transform.position;
+            Vector3 hitPoint = ray.GetPoint(distance);
+            Vector3 direction = (hitPoint - exitPoint.transform.position).normalized;
 
-            // Direction now includes vertical component!
-            Vector3 direction = (hit.point - spawnPos).normalized;
-
-            GameObject newObject = PoolingManagerSingleton.Instance.GetObjectFromPool(attackPrefabName, spawnPos);
+            GameObject newObject = PoolingManagerSingleton.Instance.GetObjectFromPool(attackPrefabName, exitPoint.transform.position);
 
             if (newObject != null)
             {
                 newObject.transform.rotation = Quaternion.LookRotation(direction);
+
+                Debug.DrawLine(exitPoint.transform.position, hitPoint, Color.magenta, 2f);
             }
-
-            // Debug line
-            Debug.DrawLine(spawnPos, hit.point, Color.magenta, 2f);
         }
-
 
         EventManager.Casting(false);
         isCasting = false;
