@@ -312,7 +312,6 @@ public class AttackAndPowerCasting : MonoBehaviour
             if (newObject != null)
             {
                 newObject.transform.rotation = Quaternion.LookRotation(direction);
-                // Movement will follow this rotation using transform.forward
             }
 
             // Debug line

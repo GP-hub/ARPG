@@ -43,16 +43,13 @@ public class LineToMouse : MonoBehaviour
     Vector3 GetMouseWorldPosition()
     {
         Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
-        Plane groundPlane = new Plane(Vector3.up, Vector3.zero); // Adjust for different surfaces
-        float enter;
+        RaycastHit hit;
 
-        if (groundPlane.Raycast(ray, out enter))
+        if (Physics.Raycast(ray, out hit, Mathf.Infinity, surfaceLayer))
         {
-            return ray.GetPoint(enter);
+            return hit.point;
         }
 
         return ray.origin + ray.direction * 50f; // Default far point
     }
-
-
 }
