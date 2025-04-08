@@ -133,12 +133,9 @@ MonoBehaviour:
     m_Bits: 192
   projectileSpeed: 10
   procChance: 0
-  groundLayer:
+  checkingLayer:
     serializedVersion: 2
-    m_Bits: 8
-  groundOffset: 0.1
-  raycastDistance: 2
-  rotationSpeed: 10
+    m_Bits: 136
 --- !u!54 &8776667637653338336
 Rigidbody:
   m_ObjectHideFlags: 0
