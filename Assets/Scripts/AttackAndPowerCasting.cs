@@ -258,8 +258,13 @@ public class AttackAndPowerCasting : MonoBehaviour
 
         if (groundPlane.Raycast(ray, out float distance))
         {
+            //Vector3 hitPoint = ray.GetPoint(distance);
+            //Vector3 direction = (hitPoint - exitPoint.transform.position).normalized;
+
+            // Here's where you adjust the hit point to flatten it
             Vector3 hitPoint = ray.GetPoint(distance);
-            Vector3 direction = (hitPoint - exitPoint.transform.position).normalized;
+            Vector3 hitPointXZ = new Vector3(hitPoint.x, exitPoint.transform.position.y, hitPoint.z);
+            Vector3 direction = (hitPointXZ - exitPoint.transform.position).normalized;
 
             GameObject newObject = PoolingManagerSingleton.Instance.GetObjectFromPool(attackPrefabName, exitPoint.transform.position);
 

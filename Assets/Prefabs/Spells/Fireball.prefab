@@ -136,6 +136,8 @@ MonoBehaviour:
   checkingLayer:
     serializedVersion: 2
     m_Bits: 136
+  hoverHeight: 1
+  raycastDistance: 10
 --- !u!54 &8776667637653338336
 Rigidbody:
   m_ObjectHideFlags: 0

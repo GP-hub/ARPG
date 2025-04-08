@@ -1,6 +1,7 @@
 using System.Collections;
 using UnityEngine;
 using UnityEngine.EventSystems;
+using UnityEngine.UIElements;
 
 public class Fireball : MonoBehaviour
 {
@@ -19,7 +20,7 @@ public class Fireball : MonoBehaviour
     [Header("Overing Raycast")]
     [SerializeField] private LayerMask checkingLayer;
     [SerializeField] private float hoverHeight = 1f;
-    [SerializeField] private float raycastDistance = 3f;
+    [SerializeField] private float raycastDistance = 10f;
 
 
     private void Update()
@@ -27,12 +28,12 @@ public class Fireball : MonoBehaviour
         //transform.Translate(Vector3.forward * projectileSpeed * Time.deltaTime);
         transform.position += transform.forward * projectileSpeed * Time.deltaTime;
 
-        // Raycast down from current position
-        if (Physics.Raycast(transform.position, Vector3.down, out RaycastHit hit, raycastDistance, checkingLayer))
+        if (Physics.SphereCast(transform.position, 0.2f, Vector3.down, out RaycastHit hit, raycastDistance, checkingLayer))
         {
             Vector3 targetPosition = hit.point + Vector3.up * hoverHeight;
             transform.position = Vector3.Lerp(transform.position, targetPosition, 10f * Time.deltaTime);
         }
+
     }
 
     void OnTriggerEnter(Collider other)
