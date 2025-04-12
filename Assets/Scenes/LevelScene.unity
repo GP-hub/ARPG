@@ -1783,7 +1783,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!114 &548437931
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -5115,7 +5115,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!114 &1172247604
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -5137,8 +5137,8 @@ MonoBehaviour:
   m_UVBias: {x: 0, y: 0}
   m_DecalLayerMask: 2
   m_ScaleMode: 0
-  m_Offset: {x: 1.5, y: 0, z: 0}
-  m_Size: {x: 3, y: 0.04, z: 10}
+  m_Offset: {x: 10, y: 0, z: 0}
+  m_Size: {x: 20, y: 0.04, z: 10}
   m_FadeFactor: 1
 --- !u!4 &1172247605
 Transform:
@@ -5148,7 +5148,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1172247602}
   serializedVersion: 2
-  m_LocalRotation: {x: 0.7071068, y: 0, z: 0, w: 0.7071068}
+  m_LocalRotation: {x: 0.7071068, y: -0, z: -0, w: 0.7071068}
   m_LocalPosition: {x: -6.96, y: 0, z: 181.47}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
@@ -5172,6 +5172,9 @@ MonoBehaviour:
     serializedVersion: 2
     m_Bits: 136
   offsetDistance: 0.01
+  offsetX: 0
+  offsetY: 0
+  offsetZ: 0.4
 --- !u!4 &1249520370 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 839425786960260319, guid: db2ab821124dfaa428eb41235a2e4794, type: 3}
@@ -5914,7 +5917,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 6894551819877516500, guid: c030b677f1aa4a043837074f45635c7a, type: 3}
       propertyPath: m_IsActive
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 8237003867044120221, guid: c030b677f1aa4a043837074f45635c7a, type: 3}
       propertyPath: m_LocalPosition.x
@@ -16837,6 +16840,6 @@ SceneRoots:
   - {fileID: 824125146}
   - {fileID: 1838817474}
   - {fileID: 1333084710}
+  - {fileID: 1172247605}
   - {fileID: 548437933}
   - {fileID: 1674619551}
-  - {fileID: 1172247605}

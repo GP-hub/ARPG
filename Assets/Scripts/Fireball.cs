@@ -30,8 +30,9 @@ public class Fireball : MonoBehaviour
 
         if (Physics.SphereCast(transform.position, 0.2f, Vector3.down, out RaycastHit hit, raycastDistance, checkingLayer))
         {
-            Vector3 targetPosition = hit.point + Vector3.up * hoverHeight;
-            transform.position = Vector3.Lerp(transform.position, targetPosition, 10f * Time.deltaTime);
+            Vector3 pos = transform.position;
+            pos.y = Mathf.Lerp(pos.y, hit.point.y + hoverHeight, 10f * Time.deltaTime);
+            transform.position = pos;
         }
 
     }

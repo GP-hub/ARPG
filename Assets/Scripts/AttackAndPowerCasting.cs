@@ -52,6 +52,7 @@ public class AttackAndPowerCasting : MonoBehaviour
     private PlayerHealth playerHealth;
 
     private Animator animator;
+    [SerializeField] private Transform lineDecal;
 
     public bool IsCasting { get => isCasting; }
     public float AttackDamage { get => attackDamage; set => attackDamage = value; }
@@ -244,37 +245,63 @@ public class AttackAndPowerCasting : MonoBehaviour
 
     //    return sideA;
     //}
+    
 
-    // Called by Player Attack Animation Keyframe
     public void CastFireball()
     {
         // We return the player speed to its original value
         playerMovement.PlayerSpeed += attackPlayerMovementSpeedPercent;
         animator.ResetTrigger("Attack");
 
-        Plane groundPlane = new Plane(Vector3.up, new Vector3(0, exitPoint.transform.position.y, 0));
+        //////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        //////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        //////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-        Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
+        //// Define the plane at the current height of the projectile above ground
+        //Plane aimingPlane = new Plane(Vector3.up, new Vector3(0, exitPoint.transform.position.y, 0));
 
-        if (groundPlane.Raycast(ray, out float distance))
+        //// Raycast from camera to mouse cursor on that plane
+        //Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
+
+        //if (aimingPlane.Raycast(ray, out float distance))
+        //{
+        //    // Get the cursor position on that plane, keeping the Y value fixed to the projectile's height
+        //    Vector3 targetPoint = ray.GetPoint(distance);
+        //    targetPoint.y = exitPoint.transform.position.y;  // Fix height to projectile's current hover height
+
+        //    // Calculate the direction towards the target point on the plane
+        //    Vector3 direction = (targetPoint - exitPoint.transform.position).normalized;
+
+        //    // Spawn the projectile and set its direction
+        //    GameObject newObject = PoolingManagerSingleton.Instance.GetObjectFromPool(attackPrefabName, exitPoint.transform.position);
+
+        //    if (newObject != null)
+        //    {
+        //        newObject.transform.rotation = Quaternion.LookRotation(direction);
+        //        Debug.DrawLine(exitPoint.transform.position, targetPoint, Color.magenta, 2f); // Visualize the direction
+        //    }
+        //}
+
+        //////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        //////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        //////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+        float yRotation = lineDecal.transform.eulerAngles.y;
+        Debug.Log("Y Rotation: " + yRotation);
+        Vector3 direction = Quaternion.Euler(0, yRotation + 90, 0) * Vector3.forward;
+        //Vector3 direction = Quaternion.Euler(0, this.transform.eulerAngles.y, 0) * Vector3.forward;
+
+        GameObject newObject = PoolingManagerSingleton.Instance.GetObjectFromPool(attackPrefabName, exitPoint.transform.position);
+
+        if (newObject != null)
         {
-            //Vector3 hitPoint = ray.GetPoint(distance);
-            //Vector3 direction = (hitPoint - exitPoint.transform.position).normalized;
-
-            // Here's where you adjust the hit point to flatten it
-            Vector3 hitPoint = ray.GetPoint(distance);
-            Vector3 hitPointXZ = new Vector3(hitPoint.x, exitPoint.transform.position.y, hitPoint.z);
-            Vector3 direction = (hitPointXZ - exitPoint.transform.position).normalized;
-
-            GameObject newObject = PoolingManagerSingleton.Instance.GetObjectFromPool(attackPrefabName, exitPoint.transform.position);
-
-            if (newObject != null)
-            {
-                newObject.transform.rotation = Quaternion.LookRotation(direction);
-
-                Debug.DrawLine(exitPoint.transform.position, hitPoint, Color.magenta, 2f);
-            }
+            newObject.transform.rotation = Quaternion.LookRotation(direction);
+            Debug.DrawRay(exitPoint.transform.position, direction * 5f, Color.magenta, 2f); // Visualize the direction
         }
+
+        //////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        //////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        //////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
         EventManager.Casting(false);
         isCasting = false;

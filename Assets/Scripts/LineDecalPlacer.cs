@@ -6,6 +6,10 @@ public class LineDecalPlacer : MonoBehaviour
     public LayerMask surfaceLayer; // Define valid surfaces
     public float offsetDistance = 0.01f; // Prevents Z-fighting
 
+    public float offsetX = 0f; // X-axis offset
+    public float offsetY = 0f; // Y-axis offset
+    public float offsetZ = 0f; // Z-axis offset
+
     void Update()
     {
         FollowMouse();
@@ -29,12 +33,12 @@ public class LineDecalPlacer : MonoBehaviour
             targetPosition = ray.origin + ray.direction * 50f; // Default far point if no hit
         }
 
-        // Set the decal position at the player's position (with small height offset)
-        transform.position = player.position + Vector3.up * offsetDistance;
+        // Set the decal position at the player's position with offsets
+        transform.position = player.position + new Vector3(offsetX, offsetY, offsetZ) + Vector3.up * offsetDistance;
 
-        // Get direction from player to cursor position
-        Vector3 direction = targetPosition - player.position;
-        direction.y = 0; // Completely ignore vertical movement
+        Vector3 decalPosition = player.position + new Vector3(offsetX, offsetY, offsetZ);
+        Vector3 direction = targetPosition - decalPosition;
+        direction.y = 0;
 
         // Compute rotation but lock it to Y-axis only
         if (direction.sqrMagnitude > 0.01f) // Prevents issues when cursor is on player
