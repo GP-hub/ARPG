@@ -93,6 +93,7 @@ MonoBehaviour:
   healthBar: {fileID: 0}
   objectToFollow: {fileID: 0}
   healthbarImage: {fileID: 3313655751300142005}
+  fireChargeBarImage: {fileID: 0}
 --- !u!1 &4920457926719513556
 GameObject:
   m_ObjectHideFlags: 0

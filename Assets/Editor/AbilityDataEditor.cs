@@ -17,7 +17,6 @@ public class AbilityDataEditor : Editor
         EditorGUILayout.Space();
         EditorGUILayout.LabelField("Select Enemy Function", EditorStyles.boldLabel);
 
-        // Get all attack methods from Enemy class that have the [AttackMethod] attribute
         Type enemyType = typeof(Enemy);
         MethodInfo[] methods = enemyType
             .GetMethods(BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic)
@@ -26,7 +25,6 @@ public class AbilityDataEditor : Editor
 
         string[] methodNames = methods.Select(m => m.Name).ToArray();
 
-        // Ensure there is at least one valid function
         if (methodNames.Length == 0)
         {
             EditorGUILayout.HelpBox("No attack methods found in Enemy class!", MessageType.Warning);
@@ -34,17 +32,14 @@ public class AbilityDataEditor : Editor
             return;
         }
 
-        // If no function is assigned, set the first method as default
         if (string.IsNullOrEmpty(abilityData.selectedFunctionName) || !methodNames.Contains(abilityData.selectedFunctionName))
         {
-            abilityData.selectedFunctionName = methodNames[0]; // Assign default method
+            abilityData.selectedFunctionName = methodNames[0]; 
         }
 
-        // Find the index of the current function in the list
         int selectedIndex = Array.IndexOf(methodNames, abilityData.selectedFunctionName);
         selectedIndex = EditorGUILayout.Popup("Function to Call", selectedIndex, methodNames);
 
-        // Update the selected function name
         if (selectedIndex >= 0)
         {
             abilityData.selectedFunctionName = methodNames[selectedIndex];
