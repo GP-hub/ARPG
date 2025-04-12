@@ -631,7 +631,6 @@ public class Enemy : MonoBehaviour
         // Draw a debug ray to visualize the raycast in the scene view
         Debug.DrawRay(transform.position + new Vector3(0f, 1f, 0f), directionToPlayer, Color.blue);
 
-        // Check if there's a clear line of sight by performing a raycast from the enemy's position to the player's position
         //if (Physics.Raycast(transform.position + new Vector3(0f, 1f, 0f), directionToPlayer, out RaycastHit hit, 100, ~groundLayerMask))
         if (Physics.Raycast(transform.position + new Vector3(0f, 1f, 0f), directionToPlayer, out RaycastHit hit, 100, LayerMask.GetMask("Character", "Obstacle")))
         {

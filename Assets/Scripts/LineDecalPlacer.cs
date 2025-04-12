@@ -2,13 +2,14 @@ using UnityEngine;
 
 public class LineDecalPlacer : MonoBehaviour
 {
-    public Transform player; // Assign your character
-    public LayerMask surfaceLayer; // Define valid surfaces
-    public float offsetDistance = 0.01f; // Prevents Z-fighting
+    [SerializeField] private Transform player; // Assign your character
+    [SerializeField] private LayerMask surfaceLayer; // Define valid surfaces
+    [SerializeField] private float offsetDistance = 0.01f; // Prevents Z-fighting
+    [Space(5)]
+    [SerializeField] private float offsetX;
+    [SerializeField] private float offsetY;
 
-    public float offsetX = 0f; // X-axis offset
-    public float offsetY = 0f; // Y-axis offset
-    public float offsetZ = 0f; // Z-axis offset
+
 
     void Update()
     {
@@ -19,7 +20,6 @@ public class LineDecalPlacer : MonoBehaviour
     {
         if (player == null) return;
 
-        // Raycast from mouse to world
         Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
         RaycastHit hit;
         Vector3 targetPosition;
@@ -30,21 +30,19 @@ public class LineDecalPlacer : MonoBehaviour
         }
         else
         {
-            targetPosition = ray.origin + ray.direction * 50f; // Default far point if no hit
+            targetPosition = ray.origin + ray.direction * 50f; 
         }
 
-        // Set the decal position at the player's position with offsets
-        transform.position = player.position + new Vector3(offsetX, offsetY, offsetZ) + Vector3.up * offsetDistance;
+        transform.position = player.position + Vector3.up * offsetDistance;
 
-        Vector3 decalPosition = player.position + new Vector3(offsetX, offsetY, offsetZ);
+        Vector3 decalPosition = player.position;
         Vector3 direction = targetPosition - decalPosition;
         direction.y = 0;
 
-        // Compute rotation but lock it to Y-axis only
-        if (direction.sqrMagnitude > 0.01f) // Prevents issues when cursor is on player
+        if (direction.sqrMagnitude > 0.01f) 
         {
             float yRotation = Mathf.Atan2(direction.x, direction.z) * Mathf.Rad2Deg;
-            transform.rotation = Quaternion.Euler(90, yRotation, 90);
+            transform.rotation = Quaternion.Euler(offsetX, yRotation, offsetY);
         }
     }
 }
