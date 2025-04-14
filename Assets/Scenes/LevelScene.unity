@@ -4767,17 +4767,6 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 361067721089019045, guid: c7e2f6a1b195de74f850e180d6abb20c, type: 3}
   m_PrefabInstance: {fileID: 4059577762263301935}
   m_PrefabAsset: {fileID: 0}
---- !u!114 &1136859079 stripped
-MonoBehaviour:
-  m_CorrespondingSourceObject: {fileID: 7331111412944048092, guid: 056cd2ef5c48bd543a8b8a967be299d2, type: 3}
-  m_PrefabInstance: {fileID: 573478108610039295}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 0777d029ed3dffa4692f417d4aba19ca, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!1001 &1165150540
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -7997,17 +7986,6 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: c030b677f1aa4a043837074f45635c7a, type: 3}
---- !u!114 &1850704013 stripped
-MonoBehaviour:
-  m_CorrespondingSourceObject: {fileID: 4727415649089755015, guid: 056cd2ef5c48bd543a8b8a967be299d2, type: 3}
-  m_PrefabInstance: {fileID: 573478108610039295}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 0777d029ed3dffa4692f417d4aba19ca, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!1 &1881322214
 GameObject:
   m_ObjectHideFlags: 0
@@ -10043,17 +10021,33 @@ PrefabInstance:
       propertyPath: dashCooldownImage
       value: 
       objectReference: {fileID: 1733174547}
-    - target: {fileID: 2740951673079534500, guid: 056cd2ef5c48bd543a8b8a967be299d2, type: 3}
-      propertyPath: m_IsActive
-      value: 1
+    - target: {fileID: 2356516993354989031, guid: 056cd2ef5c48bd543a8b8a967be299d2, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 0.1
       objectReference: {fileID: 0}
-    - target: {fileID: 3142904809075892329, guid: 056cd2ef5c48bd543a8b8a967be299d2, type: 3}
-      propertyPath: powerPrefabName
-      value: Meteor
+    - target: {fileID: 2356516993354989031, guid: 056cd2ef5c48bd543a8b8a967be299d2, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 0.7071068
       objectReference: {fileID: 0}
-    - target: {fileID: 3142904809075892329, guid: 056cd2ef5c48bd543a8b8a967be299d2, type: 3}
-      propertyPath: attackCooldownTime
-      value: 1
+    - target: {fileID: 2356516993354989031, guid: 056cd2ef5c48bd543a8b8a967be299d2, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: 0.7071068
+      objectReference: {fileID: 0}
+    - target: {fileID: 2356516993354989031, guid: 056cd2ef5c48bd543a8b8a967be299d2, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2356516993354989031, guid: 056cd2ef5c48bd543a8b8a967be299d2, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2356516993354989031, guid: 056cd2ef5c48bd543a8b8a967be299d2, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 90
+      objectReference: {fileID: 0}
+    - target: {fileID: 2356516993354989031, guid: 056cd2ef5c48bd543a8b8a967be299d2, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 3142904809075892329, guid: 056cd2ef5c48bd543a8b8a967be299d2, type: 3}
       propertyPath: powerCooldownImage
@@ -10064,57 +10058,21 @@ PrefabInstance:
       value: 
       objectReference: {fileID: 1312029674}
     - target: {fileID: 3142904809075892329, guid: 056cd2ef5c48bd543a8b8a967be299d2, type: 3}
-      propertyPath: powerSpellIndicator
-      value: 
-      objectReference: {fileID: 1850704013}
-    - target: {fileID: 3142904809075892329, guid: 056cd2ef5c48bd543a8b8a967be299d2, type: 3}
-      propertyPath: attackSpellIndicator
-      value: 
-      objectReference: {fileID: 1136859079}
-    - target: {fileID: 3142904809075892329, guid: 056cd2ef5c48bd543a8b8a967be299d2, type: 3}
-      propertyPath: powerPlayerMovementSpeedPercent
-      value: 5
+      propertyPath: attackProjectileSpeed
+      value: 20
       objectReference: {fileID: 0}
-    - target: {fileID: 4164652428348068059, guid: 056cd2ef5c48bd543a8b8a967be299d2, type: 3}
-      propertyPath: m_IsActive
-      value: 0
-      objectReference: {fileID: 0}
+    - target: {fileID: 3254165198453713158, guid: 056cd2ef5c48bd543a8b8a967be299d2, type: 3}
+      propertyPath: 'm_Materials.Array.data[0]'
+      value: 
+      objectReference: {fileID: 2100000, guid: 4d90d6718d2dff5498bc6467187a49b3, type: 2}
     - target: {fileID: 4490511338154228046, guid: 056cd2ef5c48bd543a8b8a967be299d2, type: 3}
       propertyPath: ultimateCooldownImage
       value: 
       objectReference: {fileID: 474089946}
-    - target: {fileID: 4727415649089755015, guid: 056cd2ef5c48bd543a8b8a967be299d2, type: 3}
-      propertyPath: m_FadeFactor
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 5236445889759510849, guid: 056cd2ef5c48bd543a8b8a967be299d2, type: 3}
-      propertyPath: m_IsActive
-      value: 1
-      objectReference: {fileID: 0}
     - target: {fileID: 5402577145949455183, guid: 056cd2ef5c48bd543a8b8a967be299d2, type: 3}
       propertyPath: healthPanelRect
       value: 
       objectReference: {fileID: 1913881814}
-    - target: {fileID: 6811639953851729930, guid: 056cd2ef5c48bd543a8b8a967be299d2, type: 3}
-      propertyPath: m_IsActive
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 7331111412944048092, guid: 056cd2ef5c48bd543a8b8a967be299d2, type: 3}
-      propertyPath: m_FadeFactor
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 7331111412944048092, guid: 056cd2ef5c48bd543a8b8a967be299d2, type: 3}
-      propertyPath: m_DecalLayerMask
-      value: 2
-      objectReference: {fileID: 0}
-    - target: {fileID: 8718781050231582373, guid: 056cd2ef5c48bd543a8b8a967be299d2, type: 3}
-      propertyPath: m_IsActive
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 8825288649079597302, guid: 056cd2ef5c48bd543a8b8a967be299d2, type: 3}
-      propertyPath: m_Camera
-      value: 
-      objectReference: {fileID: 963194227}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
