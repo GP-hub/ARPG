@@ -1,15 +1,14 @@
 using UnityEngine;
+using UnityEngine.Rendering.Universal;
 
 public class LineDecalPlacer : MonoBehaviour
 {
-    [SerializeField] private Transform player; // Assign your character
-    [SerializeField] private LayerMask surfaceLayer; // Define valid surfaces
+    [SerializeField] private Transform player; 
+    [SerializeField] private LayerMask surfaceLayer; 
     [SerializeField] private float offsetDistance = 0.01f; // Prevents Z-fighting
     [Space(5)]
     [SerializeField] private float offsetX;
     [SerializeField] private float offsetY;
-
-
 
     void Update()
     {

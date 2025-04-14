@@ -18,8 +18,6 @@ public class PlayerMovement : MonoBehaviour
     private Vector3 worldAim;
     private float smoothnessInputTransition = 2.5f; // 12.5f with old rotation method // 25f latest value
 
-    private Canvas aimCanvas;
-
     private PlayerControls playerControls;
     private PlayerHealth playerHealth;
 
@@ -40,7 +38,6 @@ public class PlayerMovement : MonoBehaviour
         controller = GetComponent<CharacterController>();
         animator = GetComponent<Animator>();
         playerControls = new PlayerControls();
-        aimCanvas = transform.GetChild(2).GetComponent<Canvas>();
     }
 
     private void OnEnable()
@@ -61,7 +58,6 @@ public class PlayerMovement : MonoBehaviour
 
         HandleInput();
         HandleRotation();
-        HandleAimCanvasRotation();
 
         HandleAnimation();
         HandleMovement();
@@ -167,11 +163,6 @@ public class PlayerMovement : MonoBehaviour
         transform.rotation = Quaternion.Lerp(transform.rotation, targetRotation, Time.deltaTime * 50 /2);
     }
 
-    void HandleAimCanvasRotation()
-    {
-        float angle = Mathf.Atan2(aim.y - Screen.height / 2, aim.x - Screen.width / 2) * Mathf.Rad2Deg;
-        aimCanvas.transform.rotation = Quaternion.Euler(90, 0, angle - 90);
-    }
 
     private void HandleNavMeshAgentObstacle()
     {

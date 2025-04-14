@@ -10021,6 +10021,34 @@ PrefabInstance:
       propertyPath: dashCooldownImage
       value: 
       objectReference: {fileID: 1733174547}
+    - target: {fileID: 2356516993354989031, guid: 056cd2ef5c48bd543a8b8a967be299d2, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 0.1
+      objectReference: {fileID: 0}
+    - target: {fileID: 2356516993354989031, guid: 056cd2ef5c48bd543a8b8a967be299d2, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 0.7071068
+      objectReference: {fileID: 0}
+    - target: {fileID: 2356516993354989031, guid: 056cd2ef5c48bd543a8b8a967be299d2, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: 0.7071068
+      objectReference: {fileID: 0}
+    - target: {fileID: 2356516993354989031, guid: 056cd2ef5c48bd543a8b8a967be299d2, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2356516993354989031, guid: 056cd2ef5c48bd543a8b8a967be299d2, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2356516993354989031, guid: 056cd2ef5c48bd543a8b8a967be299d2, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 90
+      objectReference: {fileID: 0}
+    - target: {fileID: 2356516993354989031, guid: 056cd2ef5c48bd543a8b8a967be299d2, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 3142904809075892329, guid: 056cd2ef5c48bd543a8b8a967be299d2, type: 3}
       propertyPath: powerCooldownImage
       value: 
@@ -10029,6 +10057,14 @@ PrefabInstance:
       propertyPath: attackCooldownImage
       value: 
       objectReference: {fileID: 1312029674}
+    - target: {fileID: 3142904809075892329, guid: 056cd2ef5c48bd543a8b8a967be299d2, type: 3}
+      propertyPath: attackProjectileSpeed
+      value: 20
+      objectReference: {fileID: 0}
+    - target: {fileID: 3254165198453713158, guid: 056cd2ef5c48bd543a8b8a967be299d2, type: 3}
+      propertyPath: 'm_Materials.Array.data[0]'
+      value: 
+      objectReference: {fileID: 2100000, guid: 4d90d6718d2dff5498bc6467187a49b3, type: 2}
     - target: {fileID: 4490511338154228046, guid: 056cd2ef5c48bd543a8b8a967be299d2, type: 3}
       propertyPath: ultimateCooldownImage
       value: 
@@ -10037,14 +10073,6 @@ PrefabInstance:
       propertyPath: healthPanelRect
       value: 
       objectReference: {fileID: 1913881814}
-    - target: {fileID: 8718781050231582373, guid: 056cd2ef5c48bd543a8b8a967be299d2, type: 3}
-      propertyPath: m_IsActive
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 8825288649079597302, guid: 056cd2ef5c48bd543a8b8a967be299d2, type: 3}
-      propertyPath: m_Camera
-      value: 
-      objectReference: {fileID: 963194227}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []

@@ -1,6 +1,7 @@
 using System.Collections;
 using UnityEngine;
 using UnityEngine.InputSystem;
+using UnityEngine.Rendering.Universal;
 using UnityEngine.UI;
 
 public class AttackAndPowerCasting : MonoBehaviour
@@ -12,6 +13,7 @@ public class AttackAndPowerCasting : MonoBehaviour
 
     [Space(10)]
     [Header("Attack")]
+    [SerializeField] private DecalProjector attackSpellIndicator;
     [SerializeField] private string attackPrefabName;
     [SerializeField] private float attackDamage = 10f;
     [SerializeField] private float attackCCDuration = 3f;
@@ -24,7 +26,8 @@ public class AttackAndPowerCasting : MonoBehaviour
 
     [Space(10)]
     [Header("Power")]
-    [SerializeField] private string meteorPrefabName;
+    [SerializeField] private DecalProjector powerSpellIndicator;
+    [SerializeField] private string powerPrefabName;
     [SerializeField] private float powerDamage = 5f;
     [SerializeField] private float powerCCDuration = 5f;
     [SerializeField] private float powerCooldownTime = 5f;
@@ -36,6 +39,7 @@ public class AttackAndPowerCasting : MonoBehaviour
     private PlayerInput playerInput;
 
     private bool isAlive;
+    private bool canCast = true;
 
     private bool isAttackingHeldDown = false;
     private bool isPoweringHeldDown = false;
@@ -87,6 +91,8 @@ public class AttackAndPowerCasting : MonoBehaviour
     private void Update()
     {
         HandlingCasting();
+        CheckAnimationState();
+        Debug.Log("can Cast: " + canCast);
     }
 
     private void HandlingCasting()
@@ -98,7 +104,7 @@ public class AttackAndPowerCasting : MonoBehaviour
         // If we want to be able to cast while dashing
         //if (isDashing) return;
 
-        if (isAttackingHeldDown && !isAttackCooldown)
+        if (isAttackingHeldDown && !isAttackCooldown && canCast)
         {
             CastAttack();
             return;
@@ -112,6 +118,26 @@ public class AttackAndPowerCasting : MonoBehaviour
             }
         }
     }
+
+    private bool IsAnimationPlaying(string stateName)
+    {
+        AnimatorStateInfo stateInfo = animator.GetCurrentAnimatorStateInfo(1);
+        return stateInfo.IsName(stateName) && stateInfo.normalizedTime < 1f && !animator.IsInTransition(1);
+    }
+    private void CheckAnimationState()
+    {
+        if (IsAnimationPlaying("Attack"))
+        {
+            canCast = false;
+            return;
+        }
+
+        if (animator.GetCurrentAnimatorStateInfo(1).IsName("Attack"))
+        {
+            canCast = true;
+        }
+    }
+
     private void Dashing(bool dashing)
     {
         isDashing = dashing;
@@ -131,12 +157,25 @@ public class AttackAndPowerCasting : MonoBehaviour
 
     private void CastAttack()
     {
-        EventManager.Casting(true);
         isCasting = true;
-
         isAttackingHeldDown = true;
+        EventManager.Casting(true);
+        Debug.Log("CastAttack");
         animator.SetTrigger("Attack");
+        attackSpellIndicator.fadeFactor = 1;
+
         StartCoroutine(CooldownAttackCoroutine(attackCooldownTime));
+    }
+
+
+    // Triggered by the end of the Attack animation
+    public void ResetAttack()
+    {
+        Debug.Log("ResetAttack");
+        EventManager.Casting(false);
+        isCasting = false;
+        animator.ResetTrigger("Attack");
+        attackSpellIndicator.fadeFactor = 0;
     }
 
     // Trigger by first keyframe of Attack animation
@@ -156,6 +195,8 @@ public class AttackAndPowerCasting : MonoBehaviour
 
         isPoweringHeldDown = true;
         animator.SetTrigger("Power");
+        powerSpellIndicator.fadeFactor = 1;
+
         StartCoroutine(CooldownPowerCoroutine(powerCooldownTime));
     }
 
@@ -251,8 +292,8 @@ public class AttackAndPowerCasting : MonoBehaviour
     {
         // We return the player speed to its original value
         playerMovement.PlayerSpeed += attackPlayerMovementSpeedPercent;
-        animator.ResetTrigger("Attack");
 
+        #region previous method
         //////////////////////////////////////////////////////////////////////////////////////////////////////////////
         ///////////////////////////////////////      OLD WAY      ////////////////////////////////////////////////////
         //////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -285,6 +326,7 @@ public class AttackAndPowerCasting : MonoBehaviour
         //////////////////////////////////////////////////////////////////////////////////////////////////////////////
         //////////////////////////////////////////////////////////////////////////////////////////////////////////////
         //////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        #endregion previous method
 
         float yRotation = lineDecal.transform.eulerAngles.y;
  
@@ -298,15 +340,16 @@ public class AttackAndPowerCasting : MonoBehaviour
             newObject.transform.rotation = Quaternion.LookRotation(direction);
         }
 
-        EventManager.Casting(false);
-        isCasting = false;
+        //EventManager.Casting(false);
+        //isCasting = false;
+        //animator.ResetTrigger("Attack");
+        //attackSpellIndicator.fadeFactor = 0;
     }
 
     // Called by Player Power Animation Keyframe
     public void CastMeteor()
     {
         playerMovement.PlayerSpeed += powerPlayerMovementSpeedPercent;
-        animator.ResetTrigger("Power");
 
         Ray cursorRay = Camera.main.ScreenPointToRay(Input.mousePosition);
 
@@ -314,7 +357,7 @@ public class AttackAndPowerCasting : MonoBehaviour
         {
             Vector3 targetPosition = hit.point;
 
-            GameObject newObject = PoolingManagerSingleton.Instance.GetObjectFromPool(meteorPrefabName, targetPosition);
+            GameObject newObject = PoolingManagerSingleton.Instance.GetObjectFromPool(powerPrefabName, targetPosition);
 
             if (newObject != null)
             {
@@ -327,6 +370,8 @@ public class AttackAndPowerCasting : MonoBehaviour
 
         EventManager.Casting(false);
         isCasting = false;
+        animator.ResetTrigger("Power");
+        powerSpellIndicator.fadeFactor = 0;
     }
 
 
@@ -336,7 +381,7 @@ public class AttackAndPowerCasting : MonoBehaviour
         {
             enemy.TakeDamage(attackDamage);
         }
-        else if (skill.ToLower().Contains(meteorPrefabName.ToLower()))
+        else if (skill.ToLower().Contains(powerPrefabName.ToLower()))
         {
             enemy.TakeDamage(powerDamage);
         }
@@ -348,7 +393,7 @@ public class AttackAndPowerCasting : MonoBehaviour
         {
             enemy.UpdateCCDuration(attackCCDuration);
         }
-        else if (skill.ToLower().Contains(meteorPrefabName.ToLower()))
+        else if (skill.ToLower().Contains(powerPrefabName.ToLower()))
         {
             enemy.UpdateCCDuration(powerCCDuration);
         }
