@@ -16,7 +16,8 @@ MonoBehaviour:
   maxAttackRange: 3
   minAttackRange: 0
   damage: 5
-  cooldown: 5
+  cooldown: 2
   projectilePrefab: {fileID: 0}
   animationClip: {fileID: 7400000, guid: 8700cb6560d35f44fbc8529c8e6abdf1, type: 2}
-  functionName: MeleeHit
+  selectedFunctionName: ChargingCoroutineStart
+  conditions: []

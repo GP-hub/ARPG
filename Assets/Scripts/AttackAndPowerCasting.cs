@@ -92,7 +92,6 @@ public class AttackAndPowerCasting : MonoBehaviour
     {
         HandlingCasting();
         CheckAnimationState();
-        Debug.Log("can Cast: " + canCast);
     }
 
     private void HandlingCasting()
@@ -160,7 +159,6 @@ public class AttackAndPowerCasting : MonoBehaviour
         isCasting = true;
         isAttackingHeldDown = true;
         EventManager.Casting(true);
-        Debug.Log("CastAttack");
         animator.SetTrigger("Attack");
         attackSpellIndicator.fadeFactor = 1;
 
@@ -171,7 +169,6 @@ public class AttackAndPowerCasting : MonoBehaviour
     // Triggered by the end of the Attack animation
     public void ResetAttack()
     {
-        Debug.Log("ResetAttack");
         EventManager.Casting(false);
         isCasting = false;
         animator.ResetTrigger("Attack");
