@@ -172,7 +172,6 @@ public class AttackAndPowerCasting : MonoBehaviour
         EventManager.Casting(false);
         isCasting = false;
         animator.ResetTrigger("Attack");
-        attackSpellIndicator.fadeFactor = 0;
     }
 
     // Trigger by first keyframe of Attack animation
@@ -336,7 +335,7 @@ public class AttackAndPowerCasting : MonoBehaviour
         {
             newObject.transform.rotation = Quaternion.LookRotation(direction);
         }
-
+        attackSpellIndicator.fadeFactor = 0;
         //EventManager.Casting(false);
         //isCasting = false;
         //animator.ResetTrigger("Attack");

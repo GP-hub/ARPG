@@ -12905,6 +12905,7 @@ GameObject:
   - component: {fileID: 4870149140949956724}
   - component: {fileID: 1609635756744779422}
   - component: {fileID: 6238366809543001203}
+  - component: {fileID: 7913329954386793729}
   m_Layer: 6
   m_Name: Boss
   m_TagString: Enemy
@@ -15363,6 +15364,21 @@ Transform:
   - {fileID: 1213870968869058304}
   m_Father: {fileID: 1881322215}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &7913329954386793729
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4625234833949546313}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9ebcffd39ba443c479bad769c7fed273, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  targetForgetDistance: 100
+  maxTimeTargetTooFar: 3
+  checkInterval: 1
 --- !u!1 &7916319809022378786
 GameObject:
   m_ObjectHideFlags: 0
