@@ -17,7 +17,8 @@ public class LogOnAnimationLoop : StateMachineBehaviour
         if (currentLoopCount > previousLoopCount)
         {
             previousLoopCount = currentLoopCount;
-            animator.gameObject.GetComponent<Enemy>().ChangeState(new IdleState());
+            //animator.gameObject.GetComponent<Enemy>().ChangeState(new IdleState());
+            animator.gameObject.GetComponent<Enemy>().currentState.Exit();
 
         }
     }

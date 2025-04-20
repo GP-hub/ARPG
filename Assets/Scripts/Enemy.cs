@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using System.Reflection;
 using System.Security.Cryptography;
 using UnityEditor.Animations;
@@ -110,7 +111,9 @@ public class Enemy : MonoBehaviour
     public bool IsAttacking { get => isAttacking; }
     public float CCDuration { get => cCDuration; }
     public bool IsCC { get => isCC; set => isCC = value; }
-
+    public float CurrentHealth { get => currentHealth; }
+    public float MaxHealth { get => maxHealth; }
+    public bool IsBoss { get => isBoss; }
 
     private void Awake()
     {
@@ -137,7 +140,8 @@ public class Enemy : MonoBehaviour
 
         lastPosition = transform.position;
 
-        offCooldownAbilities = new List<AbilityData>(abilities);
+        offCooldownAbilities = new List<AbilityData>();
+        //AbilityFilteringAndSorting(0f);
 
         ChangeState(new IdleState());
 
@@ -443,7 +447,7 @@ public class Enemy : MonoBehaviour
             }
         }
 
-        if (minMaxAttackRange <= 0) Debug.LogError($"Issue with setting up ability range on {gameObject.name}. minMaxAttackRange is {minMaxAttackRange}");
+        if (minMaxAttackRange <= 0) Debug.Log($"Issue with setting up ability range on {gameObject.name}. minMaxAttackRange is {minMaxAttackRange}");
         
         return minMaxAttackRange;
     }
@@ -467,30 +471,60 @@ public class Enemy : MonoBehaviour
 
         //Debug.Log("Abilities list: " + offCooldownAbilities.Count + " distance to target: " + distanceToTarget);
 
-        // Add abilities that are now in range and not on cooldown
+
+
+        //Add abilities that are now in range and not on cooldown
         foreach (AbilityData ability in abilities)
         {
             if (distanceToTarget >= ability.minAttackRange && distanceToTarget <= ability.maxAttackRange && !offCooldownAbilities.Contains(ability))
             {
                 if (!abilityCooldowns.ContainsKey(ability) || abilityCooldowns[ability] <= 0)
                 {
-                    offCooldownAbilities.Add(ability);
+                    if (CheckForConditions(ability))
+                    {
+                        offCooldownAbilities.Add(ability);
+                    }
                 }
             }
         }
+
+
+
         // Filter out abilities where the distance to the target is not between minAttackRange and maxAttackRange
         for (int i = offCooldownAbilities.Count - 1; i >= 0; i--)
         {
-            AbilityData obj = offCooldownAbilities[i];
-            if (distanceToTarget < obj.minAttackRange || distanceToTarget > obj.maxAttackRange)
+            AbilityData ability = offCooldownAbilities[i];
+            if (distanceToTarget < ability.minAttackRange || distanceToTarget > ability.maxAttackRange)
             {
                 offCooldownAbilities.RemoveAt(i);
+                //offCooldownAbilities.Remove(ability);
             }
         }
 
         offCooldownAbilities.Sort((a, b) => b.cooldown.CompareTo(a.cooldown));
         //Debug.Log("Off cooldown abilities: " + offCooldownAbilities.Count + ", distance to target: " + distanceToTarget);
     }
+
+    private bool CheckForConditions(AbilityData ability)
+    {
+        if (ability.conditions != null && ability.conditions.Count > 0)
+        {
+            foreach (ScriptableAbilityCondition condition in ability.conditions)
+            {
+                bool isConditionMet = condition.IsMet(this);
+
+                if (!isConditionMet)
+                    return false; 
+            }
+            return true; // All conditions passed
+        }
+        else
+        {
+            return true; // No conditions = always valid
+        }
+
+    }
+
 
     public void PerformAttack()
     {
@@ -734,7 +768,7 @@ public class Enemy : MonoBehaviour
         List<AbilityData> abilitiesToReset = new List<AbilityData>();
 
         // Collect abilities that need to be reset
-        foreach (var ability in new List<AbilityData>(abilityCooldowns.Keys))
+        foreach (AbilityData ability in new List<AbilityData>(abilityCooldowns.Keys))
         {
             if (abilityCooldowns[ability] > 0)
             {
@@ -747,10 +781,13 @@ public class Enemy : MonoBehaviour
         }
 
         // Reset abilities after iteration
-        foreach (var ability in abilitiesToReset)
+        foreach (AbilityData ability in abilitiesToReset)
         {
             abilityCooldowns[ability] = 0;
-            offCooldownAbilities.Add(ability);
+            if(CheckForConditions(ability))
+            {
+                offCooldownAbilities.Add(ability);
+            }
         }
 
         //if (currentAttackCooldown > 0f && isAttackOnCooldown)
@@ -824,21 +861,15 @@ public class Enemy : MonoBehaviour
         // If we are not already in phase 2 => WE ENTER PHASE 2 and we play ONCE the phase 2 ability 
         if (currentHealth <= 0.75f * maxHealth && !isPhaseTwo)
         {
-            Debug.Log("ENTER PHASE TWO");
             isPhaseTwo = true;
         }
         // If we are not already in phase 3 => WE ENTER PHASE 3 and we play ONCE the phase 3 ability 
         if (currentHealth <= 0.50f * maxHealth && !isPhaseTree)
         {
-            Debug.Log("ENTER PHASE THREE");
             isPhaseTree = true;
         }
-        // otherwise basic attack
-        else
-        {
-            currentAbility = offCooldownAbilities[0];
-        }
 
+        currentAbility = offCooldownAbilities[0];
         UseAbility(currentAbility);
     }
 
