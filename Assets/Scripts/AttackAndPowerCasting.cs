@@ -18,7 +18,7 @@ public class AttackAndPowerCasting : MonoBehaviour
     [SerializeField] private float attackDamage = 10f;
     [SerializeField] private float attackCCDuration = 3f;
     // the player attack projectile which is the fireball, has its speed dictated by the fireball prefab itself
-    [SerializeField] private float attackProjectileSpeed = 10f;
+    //[SerializeField] private float attackProjectileSpeed = 10f;
     [SerializeField] private float attackCooldownTime = 1f;
     [SerializeField] private float attackPlayerMovementSpeedPercent = 2;
     [SerializeField] private float attackSpeedMultiplier = 1;

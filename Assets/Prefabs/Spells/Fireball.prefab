@@ -131,7 +131,7 @@ MonoBehaviour:
   allowedLayersToCollideWith:
     serializedVersion: 2
     m_Bits: 192
-  projectileSpeed: 10
+  projectileSpeed: 20
   procChance: 0
   checkingLayer:
     serializedVersion: 2
