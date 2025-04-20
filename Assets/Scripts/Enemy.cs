@@ -359,20 +359,10 @@ public class Enemy : MonoBehaviour
         // Update CC duration
         if (cCDuration > 0)
         {
-            Debug.Log("CC duration: " + cCDuration);
-            if (currentState.GetStateName() != "StunState")
-            {
-                Debug.Log("change to stunstate");
-                ChangeState(new StunState());
-            }
-            //Debug.Log("cCDuration:" + cCDuration);
-            //cCDuration -= Time.deltaTime;
+            ChangeState(new StunState());
         }
 
-        if (IsCC)
-        {
-            return;
-        }
+        if (IsCC) return;
 
         if (target == null || target.tag == "Dead")
         {
