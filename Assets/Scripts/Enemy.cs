@@ -411,13 +411,11 @@ public class Enemy : MonoBehaviour
                 {
                     if (distanceToTarget <= minMaxAbilityRange)
                     {
-                        Debug.Log("ChangeState to IdleState");
                         ChangeState(new IdleState());
                         return;
                     }
                     else
                     {
-                        Debug.Log("ChangeState to FollowState");
                         ChangeState(new FollowState());
                         return;
                     }
