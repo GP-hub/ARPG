@@ -109,7 +109,7 @@ public class Enemy : MonoBehaviour
     public Animator Animator { get => animator; }
     public bool IsPowering { get => isPowering; }
     public bool IsAttacking { get => isAttacking; }
-    public float CCDuration { get => cCDuration; }
+    public float CCDuration { get => cCDuration; set => cCDuration = value; }
     public bool IsCC { get => isCC; set => isCC = value; }
     public float CurrentHealth { get => currentHealth; }
     public float MaxHealth { get => maxHealth; }
@@ -135,7 +135,7 @@ public class Enemy : MonoBehaviour
         if (player)
         {
             // Pass the player as the target for now
-            target = player.transform;
+            //target = player.transform;
         }
 
         lastPosition = transform.position;
@@ -359,7 +359,7 @@ public class Enemy : MonoBehaviour
         // Update CC duration
         if (cCDuration > 0)
         {
-            cCDuration -= Time.deltaTime;
+            ChangeState(new StunState());
         }
 
         if (IsCC) return;
@@ -424,7 +424,6 @@ public class Enemy : MonoBehaviour
         }
         if (!CanSeeTarget(target) && target.tag != "Dead")
         {
-            Debug.Log("Can't see target, following.");
             ChangeState(new FollowState());
             return;
         }
