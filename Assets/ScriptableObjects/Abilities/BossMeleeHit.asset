@@ -20,4 +20,5 @@ MonoBehaviour:
   projectilePrefab: {fileID: 0}
   animationClip: {fileID: 7400000, guid: 8700cb6560d35f44fbc8529c8e6abdf1, type: 2}
   selectedFunctionName: ChargingCoroutineStart
-  conditions: []
+  conditions:
+  - {fileID: 11400000, guid: e1c9bcc5f47fa8247aebb02f58cc2e25, type: 2}

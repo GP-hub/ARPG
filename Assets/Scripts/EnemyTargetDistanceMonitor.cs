@@ -30,6 +30,7 @@ public class EnemyTargetDistanceMonitor : MonoBehaviour
             if (enemy.Target != null)
             {
                 float sqrDistance = (enemy.Target.position - transform.position).sqrMagnitude;
+
                 if (sqrDistance > targetForgetDistance)
                 {
                     timeTargetTooFar += checkInterval;

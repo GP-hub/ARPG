@@ -5,7 +5,6 @@ using System.Reflection;
 using UnityEditor.Animations;
 using UnityEngine;
 using UnityEngine.AI;
-using UnityEngine.Analytics;
 
 
 [RequireComponent(typeof(NavMeshAgent))]
@@ -18,15 +17,17 @@ public class Enemy : MonoBehaviour
     [SerializeField] private float rotationSpeed = 25f;
     private BlendTree attackBlendTree;
     private BlendTree powerBlendTree;
+    private int currentPhase = 1;
     public float RotationSpeed { get => rotationSpeed; }
     [SerializeField] private float currentHealth, maxHealth = 30;
     [Tooltip("Animator issue when speed is below 2")]
     [SerializeField] private float speed;
     [SerializeField] private int xp;
+    [SerializeField] private int searchTargetRadius = 25;
 
     [SerializeField] private bool isBoss;
-    private bool isPhaseTwo = false;
-    private bool isPhaseTree = false;
+    //private bool isPhaseTwo = false;
+    //private bool isPhaseTree = false;
 
     private float cCDuration;
 
@@ -113,6 +114,7 @@ public class Enemy : MonoBehaviour
     public float CurrentHealth { get => currentHealth; }
     public float MaxHealth { get => maxHealth; }
     public bool IsBoss { get => isBoss; }
+    public int CurrentPhase { get => currentPhase; }
 
     private void Awake()
     {
@@ -369,14 +371,27 @@ public class Enemy : MonoBehaviour
             //Destroy(gameObject);
         }
         healthBar.OnHealthChanged(currentHealth / maxHealth);
+        UpdateCurrentPhase();
         //Debug.Log("Enemy hp: " + health);
+    }
+
+    private void UpdateCurrentPhase()
+    {
+        if (currentHealth <= 0.66f * maxHealth && currentPhase == 1)
+        {
+            currentPhase = 2;
+        }
+        if (currentHealth <= 0.33f * maxHealth && currentPhase == 2)
+        {
+            currentPhase = 3;
+        }
     }
 
     private void Death()
     {
         this.gameObject.tag = "Dead";
         isAlive = false;
-        Debug.Log("Enemy is dead.");
+        Debug.Log(this.name + " is dead.");
         animator.SetTrigger("TriggerDeath");
         EventManager.EnemyDeath(xp);
         StopAllCoroutines();
@@ -467,7 +482,8 @@ public class Enemy : MonoBehaviour
     {
         if (powerAbility == null) return false;
         if (isPowerOnCooldown) return false;
-        // Check if the power ability is off cooldown and within range
+        if (!AreConditionsMet(powerAbility)) return false;
+
         if (currentPowerCooldown <= 0 && distanceToTarget < powerAbility.maxAttackRange && distanceToTarget > powerAbility.minAttackRange)
         {
             return true;
@@ -525,7 +541,7 @@ public class Enemy : MonoBehaviour
             {
                 if (!abilityCooldowns.ContainsKey(ability) || abilityCooldowns[ability] <= 0)
                 {
-                    if (CheckForConditions(ability))
+                    if (AreConditionsMet(ability))
                     {
                         offCooldownAbilities.Add(ability);
                     }
@@ -550,7 +566,7 @@ public class Enemy : MonoBehaviour
         //Debug.Log("Off cooldown abilities: " + offCooldownAbilities.Count + ", distance to target: " + distanceToTarget);
     }
 
-    private bool CheckForConditions(AbilityData ability)
+    private bool AreConditionsMet(AbilityData ability)
     {
         if (ability.conditions != null && ability.conditions.Count > 0)
         {
@@ -733,7 +749,7 @@ public class Enemy : MonoBehaviour
             // Max number of entities in the OverlapSphere
             int maxColliders = 10;
             Collider[] hitColliders = new Collider[maxColliders];
-            int numColliders = Physics.OverlapSphereNonAlloc(transform.position, 50f, hitColliders, characterLayer);
+            int numColliders = Physics.OverlapSphereNonAlloc(transform.position, searchTargetRadius, hitColliders, characterLayer);
 
             for (int i = 0; i < numColliders; i++)
             {
@@ -762,6 +778,12 @@ public class Enemy : MonoBehaviour
             // Wait for 2 seconds before performing the next SphereCast
             yield return new WaitForSeconds(2f);
         }
+    }
+
+    void OnDrawGizmosSelected()
+    {
+        Gizmos.color = Color.red;
+        Gizmos.DrawWireSphere(transform.position, searchTargetRadius);
     }
 
     public void SetBoolSingle(string triggerName)
@@ -829,7 +851,7 @@ public class Enemy : MonoBehaviour
         foreach (AbilityData ability in abilitiesToReset)
         {
             abilityCooldowns[ability] = 0;
-            if(CheckForConditions(ability))
+            if(AreConditionsMet(ability))
             {
                 offCooldownAbilities.Add(ability);
             }
@@ -910,16 +932,16 @@ public class Enemy : MonoBehaviour
 
     private void DecideNextBossMoveID()
     {
-        // If we are not already in phase 2 => WE ENTER PHASE 2 and we play ONCE the phase 2 ability 
-        if (currentHealth <= 0.75f * maxHealth && !isPhaseTwo)
-        {
-            isPhaseTwo = true;
-        }
-        // If we are not already in phase 3 => WE ENTER PHASE 3 and we play ONCE the phase 3 ability 
-        if (currentHealth <= 0.50f * maxHealth && !isPhaseTree)
-        {
-            isPhaseTree = true;
-        }
+        //// If we are not already in phase 2 => WE ENTER PHASE 2 and we play ONCE the phase 2 ability 
+        //if (currentHealth <= 0.75f * maxHealth && !isPhaseTwo)
+        //{
+        //    isPhaseTwo = true;
+        //}
+        //// If we are not already in phase 3 => WE ENTER PHASE 3 and we play ONCE the phase 3 ability 
+        //if (currentHealth <= 0.50f * maxHealth && !isPhaseTree)
+        //{
+        //    isPhaseTree = true;
+        //}
 
         currentAbility = offCooldownAbilities[0];
 
