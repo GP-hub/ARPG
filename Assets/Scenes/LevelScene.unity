@@ -13005,17 +13005,12 @@ MonoBehaviour:
   abilities:
   - {fileID: 11400000, guid: d995aa56f0cc4a749bd16fa67f2471cc, type: 2}
   - {fileID: 11400000, guid: 8d3a6b942e3e91e4d8b04809eb9af661, type: 2}
-  powerAbilities: []
+  powerAbility: {fileID: 11400000, guid: ef3f768d4277eff468fdf13eced44d75, type: 2}
   exitPoint: {fileID: 353010217}
   characterLayer:
     serializedVersion: 2
     m_Bits: 64
   meleeHitboxSize: 2
-  hasPowerAbility: 0
-  AoePrefabName: AoE_Enemy
-  powerDamage: 0
-  powerRange: 40
-  powerCooldown: 5
   isCharging: 0
   isPowerOnCooldown: 0
 --- !u!4 &4870943629191089752
@@ -15351,7 +15346,7 @@ Transform:
   m_GameObject: {fileID: 4625234833949546313}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 13.28, y: 0, z: 209.58}
+  m_LocalPosition: {x: 10, y: 0, z: 195.94}
   m_LocalScale: {x: 1.25, y: 1.25, z: 1.25}
   m_ConstrainProportionsScale: 0
   m_Children:

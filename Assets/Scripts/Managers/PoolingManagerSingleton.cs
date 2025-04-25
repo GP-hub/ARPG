@@ -14,11 +14,13 @@ public class PoolingManagerSingleton : Singleton<PoolingManagerSingleton>
 
     public List<ObjectPool> objectPools;
 
-    void Awake()
+    protected override void Awake()
     {
+        base.Awake(); // Call the base class's Awake method
         EventManager.onSceneLoad += CheckForGameSceneLoad;
-        //InitializeObjectPools();
+        // InitializeObjectPools();
     }
+
 
     void CheckForGameSceneLoad(string sceneName)
     {

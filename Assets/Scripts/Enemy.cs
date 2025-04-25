@@ -1,13 +1,11 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.Linq;
 using System.Reflection;
-using System.Security.Cryptography;
 using UnityEditor.Animations;
-using UnityEditor.Playables;
 using UnityEngine;
 using UnityEngine.AI;
+using UnityEngine.Analytics;
 
 
 [RequireComponent(typeof(NavMeshAgent))]
@@ -19,6 +17,7 @@ public class Enemy : MonoBehaviour
     [Header("Miscellaneous")]
     [SerializeField] private float rotationSpeed = 25f;
     private BlendTree attackBlendTree;
+    private BlendTree powerBlendTree;
     public float RotationSpeed { get => rotationSpeed; }
     [SerializeField] private float currentHealth, maxHealth = 30;
     [Tooltip("Animator issue when speed is below 2")]
@@ -47,7 +46,7 @@ public class Enemy : MonoBehaviour
 
     [Space(10)]
     [Header("Power Abilities")]
-    [SerializeField] private List<AbilityData> powerAbilities;
+    [SerializeField] private AbilityData powerAbility;
 
 
 
@@ -63,11 +62,11 @@ public class Enemy : MonoBehaviour
 
     [Space(10)]
     [Header("Power")]
-    [SerializeField] private bool hasPowerAbility;
-    [SerializeField] private string AoePrefabName;
-    [SerializeField] private int powerDamage;
-    [SerializeField] private float powerRange;
-    [SerializeField] private float powerCooldown;
+    //[SerializeField] private bool hasPowerAbility;
+    //[SerializeField] private string AoePrefabName;
+    //[SerializeField] private int powerDamage;
+    //[SerializeField] private float powerRange;
+    //[SerializeField] private float powerCooldown;
     private float currentPowerCooldown;
     private float lastPowerTime;
 
@@ -148,7 +147,6 @@ public class Enemy : MonoBehaviour
         StartCoroutine(CheckGroundedStatus());
 
         GetAnimatorController();
-        //OverrideSpecificAnimationByStateName("Power", powerAbilities[0].animationClip);
 
         minMaxAbilityRange = MinMaxRangeAttackRange();
     }
@@ -171,27 +169,48 @@ public class Enemy : MonoBehaviour
         abilityCooldowns[ability] = ability.cooldown;
     }
 
+    private void UsePowerAbility(AbilityData ability)
+    {
+        if (ability.cooldown <= 0) return;
+        isPowering = true;
+        isPowerOnCooldown = true;
+        //abilityCooldowns[ability] = ability.cooldown;
+        currentPowerCooldown = ability.cooldown;
+    }
+
 
 
     private void GetAnimatorController()
     {
-        // Get the AnimatorController
-        AnimatorController controller = animator.runtimeAnimatorController as AnimatorController;
-        if (controller == null) return;
+        AnimatorController animatorController = animator.runtimeAnimatorController as AnimatorController;
+        if (animatorController == null) return;
 
-        foreach (AnimatorControllerLayer layer in controller.layers)
+        foreach (AnimatorControllerLayer layer in animatorController.layers)
         {
             foreach (ChildAnimatorState state in layer.stateMachine.states)
             {
                 if (state.state.motion is BlendTree blendTree)
                 {
-                    attackBlendTree = blendTree;
-                    PopulateBlendTree(attackBlendTree);
-                    return;
+                    // Check by name
+                    if (state.state.name == "Attack") // or blendTree.name == "AttackBlendTree"
+                    {
+                        attackBlendTree = blendTree;
+                        PopulateBlendTree(attackBlendTree);
+                    }
+                    else if (state.state.name == "Power") // or blendTree.name == "PowerBlendTree"
+                    {
+                        powerBlendTree = blendTree;
+                        PopulateBlendTree(powerBlendTree); // Or a different method if needed
+                    }
+
+                    // Exit early if both are found
+                    if (attackBlendTree != null && powerBlendTree != null)
+                        return;
                 }
             }
         }
     }
+
 
     private void OverrideSpecificAnimationByStateName(string targetStateName, AnimationClip newClip)
     {
@@ -236,24 +255,44 @@ public class Enemy : MonoBehaviour
 
     private void PopulateBlendTree(BlendTree blendTree)
     {
-        if (abilities == null || abilities.Count == 0) return;
-
-        //blendTree.useAutomaticThresholds = false; // Set manual thresholds if needed
-
-        ChildMotion[] newChildren = new ChildMotion[abilities.Count];
-
-        for (int i = 0; i < abilities.Count; i++)
+        if (blendTree == null) return;
+        if (blendTree.name == "AttackBlendTree")
         {
-            newChildren[i] = new ChildMotion
+            if (abilities == null || abilities.Count == 0) return;
+
+            //blendTree.useAutomaticThresholds = false; // Set manual thresholds if needed
+
+            ChildMotion[] newChildren = new ChildMotion[abilities.Count];
+
+            for (int i = 0; i < abilities.Count; i++)
             {
-                motion = abilities[i].animationClip,
-                threshold = i,
-                timeScale = 1f // Set the speed of the animation to 1
+                newChildren[i] = new ChildMotion
+                {
+                    motion = abilities[i].animationClip,
+                    threshold = i,
+                    timeScale = 1f // Set the speed of the animation to 1
+                };
+            }
+
+            blendTree.children = newChildren;
+        }
+        if (blendTree.name == "PowerBlendTree")
+        {
+            if (powerAbility == null) return;
+
+            blendTree.children = new ChildMotion[]
+            {
+                new ChildMotion
+                {
+                    motion = powerAbility.animationClip,
+                    threshold = 0f, // You can use any number here, depending on your blend parameter
+                    timeScale = 1f
+                }
             };
         }
-
-        blendTree.children = newChildren;
+        
     }
+
     [AttackMethod]
     public void ChargingCoroutineStart()
     {
@@ -340,6 +379,7 @@ public class Enemy : MonoBehaviour
         Debug.Log("Enemy is dead.");
         animator.SetTrigger("TriggerDeath");
         EventManager.EnemyDeath(xp);
+        StopAllCoroutines();
     }
 
     private void TriggerAnimationOnDeath()
@@ -382,20 +422,14 @@ public class Enemy : MonoBehaviour
 
             if (isPowering || isAttacking) return;
 
-            if (!isPowerOnCooldown && hasPowerAbility)
+            if (CanPower(distanceToTarget))
             {
-                if (distanceToTarget <= powerRange)
-                {
-                    ChangeState(new PowerState());
-                    return;
-                }
-                else if (distanceToTarget > powerRange)
-                {
-                    ChangeState(new FollowState());
-                    return;
-                }
+
+                ChangeState(new PowerState());
+                return;
+
             }
-            else if (isPowerOnCooldown || !hasPowerAbility)
+            else if (!CanPower(distanceToTarget))
             {
                 AbilityFilteringAndSorting(distanceToTarget);
 
@@ -409,7 +443,7 @@ public class Enemy : MonoBehaviour
                 }
                 else
                 {
-                    if (distanceToTarget <= minMaxAbilityRange)
+                    if (distanceToTarget < minMaxAbilityRange)
                     {
                         ChangeState(new IdleState());
                         return;
@@ -427,6 +461,18 @@ public class Enemy : MonoBehaviour
             ChangeState(new FollowState());
             return;
         }
+    }
+
+    private bool CanPower(float distanceToTarget)
+    {
+        if (powerAbility == null) return false;
+        if (isPowerOnCooldown) return false;
+        // Check if the power ability is off cooldown and within range
+        if (currentPowerCooldown <= 0 && distanceToTarget < powerAbility.maxAttackRange && distanceToTarget > powerAbility.minAttackRange)
+        {
+            return true;
+        }
+        return false;
     }
 
     private float MinMaxRangeAttackRange()
@@ -592,12 +638,12 @@ public class Enemy : MonoBehaviour
     public void SpawnAOE()
     {
         if (!target) return;
-        GameObject newObject = PoolingManagerSingleton.Instance.GetObjectFromPool(AoePrefabName, target.transform.position + new Vector3(0, 0.2f, 0));
+        GameObject newObject = PoolingManagerSingleton.Instance.GetObjectFromPool(currentAbility.projectilePrefab.name, target.transform.position + new Vector3(0, 0.2f, 0));
 
         if (newObject.TryGetComponent<AbilityValues>(out AbilityValues aoeSpell))
         {
-            aoeSpell.Damage = powerDamage;
-            aoeSpell.DoDamage(powerDamage);
+            aoeSpell.Damage = currentAbility.damage;
+            aoeSpell.DoDamage(currentAbility.damage);
         }
         ResetAttackingAndPowering();
     }
@@ -756,9 +802,9 @@ public class Enemy : MonoBehaviour
 
     public void CastPower()
     {
-        currentPowerCooldown = powerCooldown;
-        isPowerOnCooldown = true;
-        isPowering = true;
+        //currentPowerCooldown = powerCooldown;
+        //isPowerOnCooldown = true;
+        //isPowering = true;
     }
 
     private void UpdateSpellCooldowns()
@@ -787,16 +833,12 @@ public class Enemy : MonoBehaviour
             {
                 offCooldownAbilities.Add(ability);
             }
+            //if (!abilities.Contains(ability))
+            //{
+            //    Debug.Log($"Ability {ability.name} is off cooldown and can be used.");
+            //    isPowerOnCooldown = false;
+            //}
         }
-
-        //if (currentAttackCooldown > 0f && isAttackOnCooldown)
-        //{
-        //    currentAttackCooldown -= Time.deltaTime;
-        //}
-        //if (currentAttackCooldown <= 0 && isAttackOnCooldown)
-        //{
-        //    isAttackOnCooldown = false;
-        //}
 
         if (currentPowerCooldown > 0f && isPowerOnCooldown)
         {
@@ -830,6 +872,17 @@ public class Enemy : MonoBehaviour
     {
         if (isBoss) DecideNextBossMoveID();
         else DecideNextMoveID();
+    }
+
+    public void DecideNextPowerAbility()
+    {
+        DecideNextPowerMoveID();
+    }
+
+    private void DecideNextPowerMoveID()
+    {
+        currentAbility = powerAbility;
+        UsePowerAbility(currentAbility);
     }
 
     // 1 = basic attack, 2 = charge attack, 3 = jump attack, 4 = ranged attack
@@ -869,6 +922,7 @@ public class Enemy : MonoBehaviour
         }
 
         currentAbility = offCooldownAbilities[0];
+
         UseAbility(currentAbility);
     }
 

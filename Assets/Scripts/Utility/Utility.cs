@@ -14,11 +14,11 @@ public static class Utility
     {
         if (blendTree == null || clipToFind == null)
         {
-            Debug.LogError("BlendTree or AnimationClip is null.");
+            Debug.Log("BlendTree or AnimationClip is null.");
             return -1f;
         }
 
-        foreach (var child in blendTree.children)
+        foreach (ChildMotion child in blendTree.children)
         {
             if (child.motion is AnimationClip clip && clip == clipToFind)
             {

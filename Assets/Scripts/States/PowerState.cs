@@ -12,7 +12,7 @@ class PowerState : IState
         if (enemy.Agent.isOnNavMesh && enemy.Agent.enabled) enemy.Stop();
 
         enemy.SetBoolSingle("TriggerPower");
-
+        enemy.DecideNextPowerAbility();
     }
 
     void IState.Exit()
