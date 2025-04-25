@@ -79,6 +79,15 @@ public static class EventManager/* : Singleton<EventManager>*/
         }
     }
 
+    public static event Action<int, int> onPlayerUpdateHealthUI;
+    public static void PlayerUpdateHealthUI(int currentLife, int maxLife)
+    {
+        if (onPlayerUpdateHealthUI != null)
+        {
+            onPlayerUpdateHealthUI(currentLife, maxLife);
+        }
+    }
+
     public static event Action<Enemy, string> onEnemyTakeDamage;
     public static void EnemyTakeDamage(Enemy enemy, string skill)
     {

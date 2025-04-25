@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class PlayerHealth : MonoBehaviour
 {
-    [SerializeField] private float health, maxHealth = 100;
+    [SerializeField] private int health, maxHealth = 100;
 
     private PlayerNameplate playerNameplate;
     private Animator animator;
@@ -17,9 +17,13 @@ public class PlayerHealth : MonoBehaviour
     {
         playerNameplate = GetComponent<PlayerNameplate>();
         animator = GetComponent<Animator>();
+
         health = maxHealth;
+
         EventManager.onPlayerTakeDamage += PlayerTakeDamage;
         EventManager.onPlayerTakeHeal += PlayerTakeHeal;
+
+        EventManager.PlayerUpdateHealthUI(health, maxHealth);
     }
 
     public void PlayerTakeDamage(int damageAmount)
@@ -31,6 +35,7 @@ public class PlayerHealth : MonoBehaviour
         if (health <= 0) Death();
 
         playerNameplate.UpdateHealthUI(health, maxHealth);
+        EventManager.PlayerUpdateHealthUI(health, maxHealth);
     }
 
     public void PlayerTakeHeal(int healAmount)
@@ -42,6 +47,7 @@ public class PlayerHealth : MonoBehaviour
         if (health <= 0) Death();
 
         playerNameplate.UpdateHealthUI(health, maxHealth);
+        EventManager.PlayerUpdateHealthUI(health, maxHealth);
     }
 
     private void Death()
