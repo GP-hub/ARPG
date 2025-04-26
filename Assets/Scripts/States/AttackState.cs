@@ -28,6 +28,10 @@ class AttackState : IState
     }
     void IState.Update()
     {
+        if (enemy.Target == null)
+        {
+            enemy.ChangeState(new IdleState());
+        }
         if (enemy.isCharging) return;
         //if (!enemy.OffCooldownAbilities.Contains(enemy.CurrentAbility))
         //{

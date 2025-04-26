@@ -292,57 +292,10 @@ public class Enemy : MonoBehaviour
                 }
             };
         }
-        
+
     }
 
-    [AttackMethod]
-    public void ChargingCoroutineStart()
-    {
-        StartCoroutine(MoveForwardCoroutine());
-    }
 
-    IEnumerator MoveForwardCoroutine()
-    {
-        float timer = .5f;
-        isCharging = true;
-        while (timer > 0f)
-        {
-            //this.transform.LookAt(this.transform.forward);
-            // Move the CharacterController forward
-            controller.Move(transform.forward * speed * 5f * Time.deltaTime);
-
-            agent.avoidancePriority = 10;
-            agent.obstacleAvoidanceType = ObstacleAvoidanceType.NoObstacleAvoidance;
-
-            // Check for collisions with objects on the 'Player' layer
-            Collider[] colliders = Physics.OverlapBox(transform.position, transform.localScale / 2, Quaternion.identity, LayerMask.GetMask("Character"));
-
-            foreach (Collider collider in colliders)
-            {
-                if (collider.CompareTag("Player"))
-                {
-                    //Debug.Log("Collided with a character: " + collider.name);
-
-                    // Handle collision with 'Player' here
-                }
-            }
-
-            // Decrease the timer
-            timer -= Time.deltaTime;
-
-            // Wait for the next frame
-            yield return null;
-        }
-        isCharging = false;
-        ResetAttackingAndPowering();
-
-        agent.obstacleAvoidanceType = ObstacleAvoidanceType.LowQualityObstacleAvoidance;
-
-        agent.avoidancePriority = 50;
-
-        // Stop the CharacterController when the time is up
-        controller.Move(Vector3.zero);
-    }
 
     private IEnumerator CheckGroundedStatus()
     {
@@ -411,8 +364,8 @@ public class Enemy : MonoBehaviour
             return;
         }
 
-        // Update CC duration
-        if (cCDuration > 0)
+        // Update CC duration, we cant stun bosses
+        if (cCDuration > 0 && !isBoss)
         {
             ChangeState(new StunState());
         }
@@ -509,7 +462,7 @@ public class Enemy : MonoBehaviour
         }
 
         if (minMaxAttackRange <= 0) Debug.Log($"Issue with setting up ability range on {gameObject.name}. minMaxAttackRange is {minMaxAttackRange}");
-        
+
         return minMaxAttackRange;
     }
     public void ChangeState(IState newState)
@@ -575,7 +528,7 @@ public class Enemy : MonoBehaviour
                 bool isConditionMet = condition.IsMet(this);
 
                 if (!isConditionMet)
-                    return false; 
+                    return false;
             }
             return true; // All conditions passed
         }
@@ -606,87 +559,30 @@ public class Enemy : MonoBehaviour
         //}
         //else
         //{
-            if (currentAbility == null || string.IsNullOrEmpty(currentAbility.selectedFunctionName))
-            {
-                Debug.Log($"{gameObject.name} has no ability or function selected.");
-                return;
-            }
+        if (currentAbility == null || string.IsNullOrEmpty(currentAbility.selectedFunctionName))
+        {
+            Debug.Log($"{gameObject.name} has no ability or function selected.");
+            return;
+        }
 
-            // Get the method by name
-            MethodInfo method = GetType().GetMethod(currentAbility.selectedFunctionName,
-                BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic);
+        // Get the method by name
+        MethodInfo method = GetType().GetMethod(currentAbility.selectedFunctionName,
+            BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic);
 
-            if (method != null)
-            {
-                method.Invoke(this, null);
-            }
-            else
-            {
-                Debug.Log($"Method '{currentAbility.selectedFunctionName}' not found on {gameObject.name}");
-            }
+        if (method != null)
+        {
+            method.Invoke(this, null);
+        }
+        else
+        {
+            Debug.Log($"Method '{currentAbility.selectedFunctionName}' not found on {gameObject.name}");
+        }
 
         //}
 
     }
 
 
-    // Triggered via Melee Attack animation
-    [AttackMethod]
-    public void MeleeHit()
-    {
-        // Max number of entities in the OverlapSphere
-        int maxColliders = 10;
-        Collider[] hitColliders = new Collider[maxColliders];
-        int numColliders = Physics.OverlapSphereNonAlloc(transform.position, meleeHitboxSize, hitColliders, characterLayer);
-
-        for (int i = 0; i < numColliders; i++)
-        {
-            if (hitColliders[i].CompareTag("Player"))
-            {
-                EventManager.PlayerTakeDamage(currentAbility.damage);
-            }
-        }
-        //ResetAttackingAndPowering();
-    }
-
-    // Triggered via SpawnAoe Attack Animation
-    [AttackMethod]
-    public void SpawnAOE()
-    {
-        if (!target) return;
-        GameObject newObject = PoolingManagerSingleton.Instance.GetObjectFromPool(currentAbility.projectilePrefab.name, target.transform.position + new Vector3(0, 0.2f, 0));
-
-        if (newObject.TryGetComponent<AbilityValues>(out AbilityValues aoeSpell))
-        {
-            aoeSpell.Damage = currentAbility.damage;
-            aoeSpell.DoDamage(currentAbility.damage);
-        }
-        ResetAttackingAndPowering();
-    }
-
-
-    // Triggered via Ranged Attack animation
-    [AttackMethod]
-    public void RangedHit()
-    {
-        if (!target) return;
-
-        Vector3 targetCorrectedPosition = target.transform.position;
-        Vector3 direction = (targetCorrectedPosition - this.transform.position).normalized;
-
-        GameObject newObject = PoolingManagerSingleton.Instance.GetObjectFromPool(currentAbility.projectilePrefab.name, exitPoint.transform.position);
-
-        if (newObject != null)
-        {
-            if (newObject.TryGetComponent<AbilityValues>(out AbilityValues projectile))
-            {
-                projectile.Damage = currentAbility.damage;
-            }
-            Quaternion rotationToTarget = Quaternion.LookRotation(direction);
-            newObject.transform.rotation = rotationToTarget;
-        }
-        //ResetAttackingAndPowering();
-    }
 
     // Moving around the target via AIManager, circling the target
     public void MoveAIUnit(Vector3 targetPos)
@@ -851,7 +747,7 @@ public class Enemy : MonoBehaviour
         foreach (AbilityData ability in abilitiesToReset)
         {
             abilityCooldowns[ability] = 0;
-            if(AreConditionsMet(ability))
+            if (AreConditionsMet(ability))
             {
                 offCooldownAbilities.Add(ability);
             }
@@ -956,25 +852,6 @@ public class Enemy : MonoBehaviour
     // Useless but present in some animation so keep it to avoid null refs
     public void DecideNextMove() { }
 
-    public void BossRockFall()
-    {
-        Debug.Log("ROCKS ARE FALLING HERE");
-    }
-
-    [AttackMethod]
-    public void JumpAttack()
-    {
-        if (target == null) return;
-
-        // distance from the target
-        float jumpDistance = 1f;
-
-        Vector3 directionToTarget = (target.position - transform.position).normalized;
-        Vector3 finalPosition = target.position - directionToTarget * jumpDistance;
-
-        StartCoroutine(JumpToLocation(finalPosition));
-    }
-
 
     private IEnumerator JumpToLocation(Vector3 destination)
     {
@@ -997,5 +874,132 @@ public class Enemy : MonoBehaviour
         isCharging = false;
     }
 
+    [AttackMethod]
+    public void JumpAttack()
+    {
+        if (target == null) return;
+
+        // distance from the target
+        float jumpDistance = 1f;
+
+        Vector3 directionToTarget = (target.position - transform.position).normalized;
+        Vector3 finalPosition = target.position - directionToTarget * jumpDistance;
+
+        StartCoroutine(JumpToLocation(finalPosition));
+    }
+
+    [AttackMethod]
+    public void ChargingCoroutineStart()
+    {
+        StartCoroutine(MoveForwardCoroutine());
+    }
+
+    IEnumerator MoveForwardCoroutine()
+    {
+        float timer = .5f;
+        isCharging = true;
+        while (timer > 0f)
+        {
+            //this.transform.LookAt(this.transform.forward);
+            // Move the CharacterController forward
+            controller.Move(transform.forward * speed * 5f * Time.deltaTime);
+
+            agent.avoidancePriority = 10;
+            agent.obstacleAvoidanceType = ObstacleAvoidanceType.NoObstacleAvoidance;
+
+            // Check for collisions with objects on the 'Player' layer
+            Collider[] colliders = Physics.OverlapBox(transform.position, transform.localScale / 2, Quaternion.identity, LayerMask.GetMask("Character"));
+
+            foreach (Collider collider in colliders)
+            {
+                if (collider.CompareTag("Player"))
+                {
+                    //Debug.Log("Collided with a character: " + collider.name);
+
+                    // Handle collision with 'Player' here
+                }
+            }
+
+            // Decrease the timer
+            timer -= Time.deltaTime;
+
+            // Wait for the next frame
+            yield return null;
+        }
+        isCharging = false;
+        ResetAttackingAndPowering();
+
+        agent.obstacleAvoidanceType = ObstacleAvoidanceType.LowQualityObstacleAvoidance;
+
+        agent.avoidancePriority = 50;
+
+        // Stop the CharacterController when the time is up
+        controller.Move(Vector3.zero);
+    }
+
+    // Triggered via Melee Attack animation
+    [AttackMethod]
+    public void MeleeHit()
+    {
+        // Max number of entities in the OverlapSphere
+        int maxColliders = 10;
+        Collider[] hitColliders = new Collider[maxColliders];
+        int numColliders = Physics.OverlapSphereNonAlloc(transform.position, meleeHitboxSize, hitColliders, characterLayer);
+
+        for (int i = 0; i < numColliders; i++)
+        {
+            if (hitColliders[i].CompareTag("Player"))
+            {
+                EventManager.PlayerTakeDamage(currentAbility.damage);
+            }
+        }
+        //ResetAttackingAndPowering();
+    }
+
+    // Triggered via SpawnAoe Attack Animation
+    [AttackMethod]
+    public void SpawnAOE()
+    {
+        if (!target) return;
+        GameObject newObject = PoolingManagerSingleton.Instance.GetObjectFromPool(currentAbility.projectilePrefab.name, target.transform.position + new Vector3(0, 0.2f, 0));
+
+        if (newObject.TryGetComponent<AbilityValues>(out AbilityValues aoeSpell))
+        {
+            aoeSpell.Damage = currentAbility.damage;
+            aoeSpell.DoDamage(currentAbility.damage);
+        }
+        ResetAttackingAndPowering();
+    }
+
+
+    // Triggered via Ranged Attack animation
+    [AttackMethod]
+    public void RangedHit()
+    {
+        if (!target) return;
+
+        Vector3 targetCorrectedPosition = target.transform.position;
+        Vector3 direction = (targetCorrectedPosition - this.transform.position).normalized;
+
+        GameObject newObject = PoolingManagerSingleton.Instance.GetObjectFromPool(currentAbility.projectilePrefab.name, exitPoint.transform.position);
+
+        if (newObject != null)
+        {
+            if (newObject.TryGetComponent<AbilityValues>(out AbilityValues projectile))
+            {
+                projectile.Damage = currentAbility.damage;
+            }
+            Quaternion rotationToTarget = Quaternion.LookRotation(direction);
+            newObject.transform.rotation = rotationToTarget;
+        }
+        //ResetAttackingAndPowering();
+    }
+
+    [AttackMethod]
+    public void BossRockFall()
+    {
+        Debug.Log("Boss Rock Fall");
+        EventManager.BossRockFall(1);
+    }
 
 }
