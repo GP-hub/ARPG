@@ -10,7 +10,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: bf59774016b20b6448aa62df6df3e087, type: 3}
-  m_Name: Boss_Roar_Rock_Fall
+  m_Name: Boss_Roar_Rock_Fall_Phase3
   m_EditorClassIdentifier: 
   moveName: RoarRockFall
   maxAttackRange: 10000
@@ -21,4 +21,4 @@ MonoBehaviour:
   animationClip: {fileID: 7400000, guid: 09b049ffd9dd6b748aff4a78c21099ac, type: 2}
   selectedFunctionName: ChargingCoroutineStart
   conditions:
-  - {fileID: 11400000, guid: e1c9bcc5f47fa8247aebb02f58cc2e25, type: 2}
+  - {fileID: 11400000, guid: 8b4f8624c8b0a8b43a336b3c9ed8ba4e, type: 2}

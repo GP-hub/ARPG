@@ -2,9 +2,11 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Reflection;
+using TMPro;
 using UnityEditor.Animations;
 using UnityEngine;
 using UnityEngine.AI;
+using UnityEngine.Rendering.Universal;
 
 
 [RequireComponent(typeof(NavMeshAgent))]
@@ -853,6 +855,20 @@ public class Enemy : MonoBehaviour
     public void DecideNextMove() { }
 
 
+    [AttackMethod]
+    public void JumpAttack()
+    {
+        if (target == null) return;
+
+        // distance from the target
+        float jumpDistance = 1f;
+
+        Vector3 directionToTarget = (target.position - transform.position).normalized;
+        Vector3 finalPosition = target.position - directionToTarget * jumpDistance;
+
+        StartCoroutine(JumpToLocation(finalPosition));
+    }
+
     private IEnumerator JumpToLocation(Vector3 destination)
     {
         float jumpDuration = 1f; // Adjust the duration as needed
@@ -867,25 +883,37 @@ public class Enemy : MonoBehaviour
             yield return null;
         }
 
+        // Max number of entities in the OverlapSphere
+        int maxColliders = 10;
+        Collider[] hitColliders = new Collider[maxColliders];
+        int numColliders = Physics.OverlapSphereNonAlloc(transform.position, meleeHitboxSize, hitColliders, characterLayer);
+
+        for (int i = 0; i < numColliders; i++)
+        {
+            if (hitColliders[i].CompareTag("Player"))
+            {
+                EventManager.PlayerTakeDamage(currentAbility.damage);
+            }
+        }
+
+        // We check for rocks to destroy them
+        int maxRockColliders = 2;
+        Collider[] hitRocksColliders = new Collider[maxRockColliders];
+        int numRocksColliders = Physics.OverlapSphereNonAlloc(transform.position, meleeHitboxSize + 1, hitRocksColliders, LayerMask.GetMask("Obstacle"));
+
+        for (int i = 0; i < numRocksColliders; i++)
+        {
+            if (hitRocksColliders[i].CompareTag("Destructible"))
+            {
+                hitRocksColliders[i].gameObject.SetActive(false);
+            }
+        }
+
         transform.position = destination;
 
         // wait time before the next action, so we dont rotate towards target while ending the animation
         yield return new WaitForSeconds(1.5f);
         isCharging = false;
-    }
-
-    [AttackMethod]
-    public void JumpAttack()
-    {
-        if (target == null) return;
-
-        // distance from the target
-        float jumpDistance = 1f;
-
-        Vector3 directionToTarget = (target.position - transform.position).normalized;
-        Vector3 finalPosition = target.position - directionToTarget * jumpDistance;
-
-        StartCoroutine(JumpToLocation(finalPosition));
     }
 
     [AttackMethod]
@@ -968,7 +996,7 @@ public class Enemy : MonoBehaviour
             aoeSpell.Damage = currentAbility.damage;
             aoeSpell.DoDamage(currentAbility.damage);
         }
-        ResetAttackingAndPowering();
+        //ResetAttackingAndPowering();
     }
 
 
@@ -1001,5 +1029,96 @@ public class Enemy : MonoBehaviour
         Debug.Log("Boss Rock Fall");
         EventManager.BossRockFall(1);
     }
+
+    [AttackMethod]
+    public void TestSpellIndicator()
+    {
+        Vector3 targetPosition = target.transform.position + new Vector3(0, 0.01f, 0);
+
+        GameObject newObject = PoolingManagerSingleton.Instance.GetObjectFromPool("Telegraph_AoE", targetPosition);
+
+        if (newObject.TryGetComponent<TelegraphIndicator>(out TelegraphIndicator indicator))
+        {
+            // Set the indicator delay duration and size
+            indicator.SetIndicatorPosition(4, 3);
+            StartCoroutine(RockFalling(4f, 3f,targetPosition));
+        }
+    }
+    private IEnumerator RockFalling(float indicatorDuration, float size, Vector3 targetPos)
+    {
+        float desiredFallDuration = 1f;
+
+        float waitTime = indicatorDuration - desiredFallDuration;
+        yield return new WaitForSeconds(waitTime);
+
+        // Now spawn the rock
+        GameObject newObject = PoolingManagerSingleton.Instance.GetObjectFromPool("Rock_Cylinder", targetPos + Vector3.up * 10f);
+
+        Vector3 startPos = newObject.transform.position;
+        float halfHeight = newObject.transform.localScale.y * 0.5f;
+        Vector3 endPos = targetPos + Vector3.up * halfHeight + new Vector3(0, 0.5f, 0);
+
+        float elapsed = 0f;
+
+        // Make the rock fall in exactly 1 second
+        while (elapsed < 1f)
+        {
+            elapsed += Time.deltaTime;
+            float t = Mathf.Clamp01(elapsed / 1f); // 1 second for the fall duration
+
+            float curvedT = Mathf.Pow(t, 4); // Accelerating fall (optional for more "impact")
+
+            newObject.transform.position = Vector3.Lerp(startPos, endPos, curvedT);
+
+            yield return null;
+        }
+
+        newObject.transform.position = endPos; // Ensure it reaches the exact target position
+
+        int maxColliders = 10;
+        Collider[] hitColliders = new Collider[maxColliders];
+        int numColliders = Physics.OverlapSphereNonAlloc(newObject.transform.position, size, hitColliders, characterLayer);
+
+        for (int i = 0; i < numColliders; i++)
+        {
+            if (hitColliders[i].CompareTag("Player"))
+            {
+                EventManager.PlayerTakeDamage(currentAbility.damage);
+            }
+        }
+
+        // We check for rocks to destroy them
+        int maxRockColliders = 5;
+        Collider[] hitRocksColliders = new Collider[maxRockColliders];
+        int numRocksColliders = Physics.OverlapSphereNonAlloc(newObject.transform.position, size, hitRocksColliders, LayerMask.GetMask("Obstacle"));
+
+        for (int i = 0; i < numRocksColliders; i++)
+        {
+            if (hitRocksColliders[i].CompareTag("Destructible"))
+            {
+                hitRocksColliders[i].gameObject.SetActive(false);
+            }
+        }
+    }
+
+
+    private IEnumerator TriggerAbilityAfterDelay(float delay, Vector3 targetPos)
+    {
+        yield return new WaitForSeconds(delay);
+
+        TriggerAbility(targetPos);
+    }
+
+    private void TriggerAbility(Vector3 targetPos)
+    {
+        GameObject newObject = PoolingManagerSingleton.Instance.GetObjectFromPool(currentAbility.projectilePrefab.name, targetPos + new Vector3(0, 0.2f, 0));
+
+        if (newObject.TryGetComponent<AbilityValues>(out AbilityValues aoeSpell))
+        {
+            aoeSpell.Damage = currentAbility.damage;
+            aoeSpell.DoDamage(currentAbility.damage);
+        }
+    }
+
 
 }

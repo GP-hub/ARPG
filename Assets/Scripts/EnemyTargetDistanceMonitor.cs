@@ -36,7 +36,10 @@ public class EnemyTargetDistanceMonitor : MonoBehaviour
                     timeTargetTooFar += checkInterval;
                     if (timeTargetTooFar >= maxTimeTargetTooFar)
                     {
-                        enemy.Target = null;
+                        if (!enemy.IsBoss)
+                        {
+                            enemy.Target = null;
+                        }
                         timeTargetTooFar = 0f;
                     }
                 }

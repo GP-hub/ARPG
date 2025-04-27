@@ -6289,6 +6289,12 @@ MonoBehaviour:
   - prefab: {fileID: 2029881061899082543, guid: bc95b0fac6d1ec340bc9ed3ceffb04b3, type: 3}
     poolSize: 5
     objects: []
+  - prefab: {fileID: 7720122207539733930, guid: de783819775339b46bf0ebffb569ba41, type: 3}
+    poolSize: 10
+    objects: []
+  - prefab: {fileID: 4612806041526020447, guid: 8534027fe79bb054aa43f5bb6301a126, type: 3}
+    poolSize: 10
+    objects: []
 --- !u!114 &1269496527
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -9459,17 +9465,29 @@ PrefabInstance:
       propertyPath: healthPanelRect
       value: 
       objectReference: {fileID: 1913881814}
+    - target: {fileID: 6631623146585664489, guid: c030b677f1aa4a043837074f45635c7a, type: 3}
+      propertyPath: searchTargetRadius
+      value: 50
+      objectReference: {fileID: 0}
+    - target: {fileID: 6631623146585664489, guid: c030b677f1aa4a043837074f45635c7a, type: 3}
+      propertyPath: abilities.Array.size
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 6631623146585664489, guid: c030b677f1aa4a043837074f45635c7a, type: 3}
+      propertyPath: 'abilities.Array.data[0]'
+      value: 
+      objectReference: {fileID: 11400000, guid: 5849de4c6a89069468ca839ff680d699, type: 2}
     - target: {fileID: 6894551819877516500, guid: c030b677f1aa4a043837074f45635c7a, type: 3}
       propertyPath: m_Name
       value: Enemy (2)
       objectReference: {fileID: 0}
     - target: {fileID: 6894551819877516500, guid: c030b677f1aa4a043837074f45635c7a, type: 3}
       propertyPath: m_IsActive
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 8237003867044120221, guid: c030b677f1aa4a043837074f45635c7a, type: 3}
       propertyPath: m_LocalPosition.x
-      value: 2.94
+      value: 213.4
       objectReference: {fileID: 0}
     - target: {fileID: 8237003867044120221, guid: c030b677f1aa4a043837074f45635c7a, type: 3}
       propertyPath: m_LocalPosition.y
@@ -9477,7 +9495,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 8237003867044120221, guid: c030b677f1aa4a043837074f45635c7a, type: 3}
       propertyPath: m_LocalPosition.z
-      value: -200
+      value: -26.7
       objectReference: {fileID: 0}
     - target: {fileID: 8237003867044120221, guid: c030b677f1aa4a043837074f45635c7a, type: 3}
       propertyPath: m_LocalRotation.w
@@ -11982,6 +12000,10 @@ PrefabInstance:
       propertyPath: ultimateCooldownImage
       value: 
       objectReference: {fileID: 474089946}
+    - target: {fileID: 4727415649089755015, guid: 056cd2ef5c48bd543a8b8a967be299d2, type: 3}
+      propertyPath: m_FadeFactor
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 5236445889759510849, guid: 056cd2ef5c48bd543a8b8a967be299d2, type: 3}
       propertyPath: m_IsActive
       value: 1
@@ -14962,14 +14984,13 @@ GameObject:
   - component: {fileID: 4870149140949956724}
   - component: {fileID: 1609635756744779422}
   - component: {fileID: 6238366809543001203}
-  - component: {fileID: 7913329954386793729}
   m_Layer: 6
   m_Name: Boss
   m_TagString: Enemy
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &4736039081563158653
 RectTransform:
   m_ObjectHideFlags: 0
@@ -15061,8 +15082,7 @@ MonoBehaviour:
   healthPanelRect: {fileID: 1913881814}
   hpBarProxyFollow: {fileID: 5956537109383397450}
   abilities:
-  - {fileID: 11400000, guid: 6744fef291d86704a91ba569f976c145, type: 2}
-  - {fileID: 11400000, guid: 43e2815c328dfc947adb8afa01198ea6, type: 2}
+  - {fileID: 11400000, guid: 8044c79b1f759d549924415e11626b1b, type: 2}
   powerAbility: {fileID: 0}
   exitPoint: {fileID: 353010217}
   characterLayer:
@@ -17434,21 +17454,6 @@ Transform:
   - {fileID: 1213870968869058304}
   m_Father: {fileID: 1881322215}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &7913329954386793729
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 4625234833949546313}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 9ebcffd39ba443c479bad769c7fed273, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  targetForgetDistance: 50
-  maxTimeTargetTooFar: 3
-  checkInterval: 1
 --- !u!1 &7916319809022378786
 GameObject:
   m_ObjectHideFlags: 0
