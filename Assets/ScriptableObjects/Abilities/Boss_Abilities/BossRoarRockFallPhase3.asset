@@ -10,15 +10,15 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: bf59774016b20b6448aa62df6df3e087, type: 3}
-  m_Name: Boss_basic_attack
+  m_Name: BossRoarRockFallPhase3
   m_EditorClassIdentifier: 
   moveName: 
-  maxAttackRange: 2
-  minAttackRange: 0
-  damage: 10
-  cooldown: 4
+  maxAttackRange: 1000
+  minAttackRange: 1
+  damage: 1
+  cooldown: 999
   projectilePrefab: {fileID: 0}
-  animationClip: {fileID: 7400000, guid: 236c9f44da5105442914fe3af7b66ba5, type: 2}
-  selectedFunctionName: MeleeHit
+  animationClip: {fileID: 7400000, guid: 09b049ffd9dd6b748aff4a78c21099ac, type: 2}
+  selectedFunctionName: BossRockFall
   conditions:
-  - {fileID: 11400000, guid: 326fff6e967fd9b4d9699f15544c6451, type: 2}
+  - {fileID: 11400000, guid: 8b4f8624c8b0a8b43a336b3c9ed8ba4e, type: 2}
