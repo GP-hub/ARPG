@@ -1040,8 +1040,8 @@ public class Enemy : MonoBehaviour
         if (newObject.TryGetComponent<TelegraphIndicator>(out TelegraphIndicator indicator))
         {
             // Set the indicator delay duration and size
-            indicator.SetIndicatorPosition(4, 3);
-            StartCoroutine(RockFalling(4f, 3f,targetPosition));
+            indicator.SetIndicatorPosition(2, 3);
+            StartCoroutine(RockFalling(2f, 3f,targetPosition));
         }
     }
     private IEnumerator RockFalling(float indicatorDuration, float size, Vector3 targetPos)
@@ -1074,10 +1074,12 @@ public class Enemy : MonoBehaviour
         }
 
         newObject.transform.position = endPos; // Ensure it reaches the exact target position
+        newObject.GetComponent<RockMaterialFade>().StartCoroutine("RockFalling");
 
+        // overlap sphere to check for characters
         int maxColliders = 10;
         Collider[] hitColliders = new Collider[maxColliders];
-        int numColliders = Physics.OverlapSphereNonAlloc(newObject.transform.position, size, hitColliders, characterLayer);
+        int numColliders = Physics.OverlapSphereNonAlloc(newObject.transform.position, size/2, hitColliders, characterLayer);
 
         for (int i = 0; i < numColliders; i++)
         {
@@ -1087,10 +1089,10 @@ public class Enemy : MonoBehaviour
             }
         }
 
-        // We check for rocks to destroy them
+        // overlap sphere to check for rocks
         int maxRockColliders = 5;
         Collider[] hitRocksColliders = new Collider[maxRockColliders];
-        int numRocksColliders = Physics.OverlapSphereNonAlloc(newObject.transform.position, size, hitRocksColliders, LayerMask.GetMask("Obstacle"));
+        int numRocksColliders = Physics.OverlapSphereNonAlloc(newObject.transform.position, size/2, hitRocksColliders, LayerMask.GetMask("Obstacle"));
 
         for (int i = 0; i < numRocksColliders; i++)
         {
@@ -1098,6 +1100,28 @@ public class Enemy : MonoBehaviour
             {
                 hitRocksColliders[i].gameObject.SetActive(false);
             }
+        }
+
+        // === Set gizmo debug sphere here ===
+        debugSpherePos = newObject.transform.position;
+        debugSphereRadius = size/2;
+
+        // === Perform your OverlapSphere checks here ===
+
+        // OPTIONAL: Clear debug gizmo after some seconds
+        yield return new WaitForSeconds(2f);
+        debugSpherePos = null;
+
+    }
+    private Vector3? debugSpherePos = null;
+    private float debugSphereRadius = 0f;
+
+    private void OnDrawGizmos()
+    {
+        if (debugSpherePos.HasValue)
+        {
+            Gizmos.color = Color.red;
+            Gizmos.DrawWireSphere(debugSpherePos.Value, debugSphereRadius);
         }
     }
 
