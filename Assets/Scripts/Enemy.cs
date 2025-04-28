@@ -1125,6 +1125,42 @@ public class Enemy : MonoBehaviour
         }
     }
 
+    [AttackMethod]
+    public void TripleRockFallFront()
+    {
+        StartCoroutine(TripleRockFallRoutine());
+    }
+
+    private IEnumerator TripleRockFallRoutine()
+    {
+        Vector3 forwardDirection = transform.forward.normalized;
+        Vector3 basePosition = target.transform.position + new Vector3(0, 0.01f, 0);
+        float spacing = 3f;
+
+        for (int i = 0; i < 3; i++)
+        {
+
+            Vector3 spawnPosition = basePosition + forwardDirection * (i * spacing);
+
+
+            float indicatorDuration = 1.25f + (i * 0.33f); // Example: 2s, 2.5s, 3s
+            float size = 3f + (i * 0.65f); // Example: 3, 3.5, 4 units
+
+            GameObject newObject = PoolingManagerSingleton.Instance.GetObjectFromPool("Telegraph_AoE", spawnPosition);
+
+            if (newObject.TryGetComponent<TelegraphIndicator>(out TelegraphIndicator indicator))
+            {
+                indicator.SetIndicatorPosition(indicatorDuration, size);
+            }
+
+
+            StartCoroutine(RockFalling(indicatorDuration, size, spawnPosition));
+
+
+            yield return new WaitForSeconds(1f); // Small delay between rocks
+        }
+    }
+
 
     private IEnumerator TriggerAbilityAfterDelay(float delay, Vector3 targetPos)
     {
