@@ -32,7 +32,7 @@ class AttackState : IState
         {
             enemy.ChangeState(new IdleState());
         }
-        if (enemy.isCharging) return;
+        if (enemy.IsAttacking || enemy.IsPowering) return;
         //if (!enemy.OffCooldownAbilities.Contains(enemy.CurrentAbility))
         //{
         //    enemy.ChangeState(new IdleState());

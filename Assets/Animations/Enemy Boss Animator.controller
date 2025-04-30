@@ -682,7 +682,7 @@ BlendTree:
   m_Name: AttackBlendTree
   m_Childs:
   - serializedVersion: 2
-    m_Motion: {fileID: 7400000, guid: 09b049ffd9dd6b748aff4a78c21099ac, type: 2}
+    m_Motion: {fileID: 7400000, guid: f951e9a812fdba94dbd0547e0d3cc749, type: 2}
     m_Threshold: 0
     m_Position: {x: 0, y: 0}
     m_TimeScale: 1

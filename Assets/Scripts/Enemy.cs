@@ -376,6 +376,7 @@ public class Enemy : MonoBehaviour
 
         if (target == null || target.tag == "Dead")
         {
+            Debug.Log("Target is null, IDLE");
             ChangeState(new IdleState());
             if (!isLookingForTarget)
             {
@@ -383,13 +384,13 @@ public class Enemy : MonoBehaviour
             }
             return;
         }
+        Debug.Log(isPowering + " " + isAttacking + " " + isCharging);
 
         if (CanSeeTarget(target) && target.tag != "Dead")
         {
             // Previous method of calculating distance that do one more operation: a square root
             //float distanceToTarget1 = Vector3.Distance(transform.position, target.position);
             float distanceToTarget = (transform.position - target.position).sqrMagnitude;
-
             if (isPowering || isAttacking) return;
 
             if (CanPower(distanceToTarget))
@@ -426,8 +427,12 @@ public class Enemy : MonoBehaviour
                 }
             }
         }
+
+        if (isPowering || isAttacking || isCharging) return;
+
         if (!CanSeeTarget(target) && target.tag != "Dead")
         {
+            Debug.Log("Target not in sight, FOLLOW");
             ChangeState(new FollowState());
             return;
         }
@@ -625,7 +630,7 @@ public class Enemy : MonoBehaviour
         Debug.DrawRay(transform.position + new Vector3(0f, 1f, 0f), directionToPlayer, Color.blue);
 
         //if (Physics.Raycast(transform.position + new Vector3(0f, 1f, 0f), directionToPlayer, out RaycastHit hit, 100, ~groundLayerMask))
-        if (Physics.Raycast(transform.position + new Vector3(0f, 1f, 0f), directionToPlayer, out RaycastHit hit, 100, LayerMask.GetMask("Character", "Obstacle")))
+        if (Physics.Raycast(transform.position + new Vector3(0f, 1f, 0f), directionToPlayer, out RaycastHit hit, 1000, LayerMask.GetMask("Character", "Obstacle")))
         {
             if (hit.collider.CompareTag("Player"))
             {
@@ -678,11 +683,11 @@ public class Enemy : MonoBehaviour
         }
     }
 
-    void OnDrawGizmosSelected()
-    {
-        Gizmos.color = Color.red;
-        Gizmos.DrawWireSphere(transform.position, searchTargetRadius);
-    }
+    //void OnDrawGizmosSelected()
+    //{
+    //    Gizmos.color = Color.red;
+    //    Gizmos.DrawWireSphere(transform.position, searchTargetRadius);
+    //}
 
     public void SetBoolSingle(string triggerName)
     {
@@ -1159,6 +1164,89 @@ public class Enemy : MonoBehaviour
 
             yield return new WaitForSeconds(1f); // Small delay between rocks
         }
+    }
+
+    [AttackMethod]
+    public void ChargingUntilObstacleStart()
+    {
+        if (target == null) return;
+
+        Vector3 chargeDirection = (target.position - transform.position).normalized;
+        StartCoroutine(ChargeUntilObstacleCoroutine(chargeDirection));
+    }
+
+    private IEnumerator ChargeUntilObstacleCoroutine(Vector3 chargeDirection)
+    {
+        isCharging = true;
+
+        transform.forward = chargeDirection;
+
+        // Configure the agent to ignore avoidance
+        agent.avoidancePriority = 0;
+        agent.obstacleAvoidanceType = ObstacleAvoidanceType.NoObstacleAvoidance;
+        agent.updateRotation = false;
+
+        HashSet<Collider> alreadyHitPlayers = new HashSet<Collider>();
+
+        while (true)
+        {
+            // Move the agent forward
+            agent.Move(chargeDirection * speed * 5f * Time.deltaTime);
+
+            float characterHeight = 2.25f;
+            float radius = 1f;
+
+            Vector3 capsuleStart = transform.position + Vector3.up * (characterHeight - radius);
+            Vector3 capsuleEnd = transform.position + Vector3.up * radius;
+
+            Collider[] hits = Physics.OverlapCapsule(capsuleStart, capsuleEnd, radius, LayerMask.GetMask("Character", "Obstacle"));
+
+            foreach (Collider hit in hits)
+            {
+                if (hit.CompareTag("Player") && !alreadyHitPlayers.Contains(hit))
+                {
+                    alreadyHitPlayers.Add(hit);
+                    OnHitPlayer(hit);
+                }
+                else if (hit.CompareTag("Destructible"))
+                {
+                    OnHitObstacle(hit);
+                    cCDuration += 2.5f;
+                    yield return BreakCharge();
+                    yield break;
+                }
+            }
+
+            yield return null; // wait for next frame
+        }
+    }
+
+
+    private IEnumerator BreakCharge()
+    {
+        isCharging = false;
+        ResetAttackingAndPowering();
+
+        // Restore normal agent settings
+        agent.avoidancePriority = 50;
+        agent.obstacleAvoidanceType = ObstacleAvoidanceType.LowQualityObstacleAvoidance;
+        agent.updateRotation = true;
+
+        agent.Move(Vector3.zero);
+        yield return null;
+    }
+
+
+    private void OnHitPlayer(Collider player)
+    {
+        Debug.Log("Hit player!");
+        // Damage, knockback, etc.
+    }
+
+    private void OnHitObstacle(Collider obstacle)
+    {
+        Debug.Log("Hit obstacle!");
+        // Unique behavior
     }
 
 

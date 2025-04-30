@@ -27,7 +27,7 @@ class PowerState : IState
     }
     void IState.Update()
     {
-        if (enemy.isCharging) return;
+        if (enemy.IsAttacking || enemy.IsPowering) return;
 
         //enemy.transform.LookAt(enemy.Target);
         Utility.RotateTowardsTarget(enemy.transform, enemy.Target, enemy.RotationSpeed);
