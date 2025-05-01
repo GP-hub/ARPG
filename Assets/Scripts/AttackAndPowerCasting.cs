@@ -387,11 +387,11 @@ public class AttackAndPowerCasting : MonoBehaviour
     {
         if (skill.ToLower().Contains(attackPrefabName.ToLower()))
         {
-            enemy.UpdateCCDuration(attackCCDuration);
+            enemy.UpdateCCDuration(attackCCDuration, this.gameObject.tag);
         }
         else if (skill.ToLower().Contains(powerPrefabName.ToLower()))
         {
-            enemy.UpdateCCDuration(powerCCDuration);
+            enemy.UpdateCCDuration(powerCCDuration, this.gameObject.tag);
         }
     }
 }

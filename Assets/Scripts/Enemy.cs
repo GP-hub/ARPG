@@ -367,7 +367,7 @@ public class Enemy : MonoBehaviour
         }
 
         // Update CC duration, we cant stun bosses
-        if (cCDuration > 0 && !isBoss)
+        if (cCDuration > 0)
         {
             ChangeState(new StunState());
         }
@@ -775,8 +775,10 @@ public class Enemy : MonoBehaviour
         }
     }
 
-    public void UpdateCCDuration(float newCCDuration)
+    public void UpdateCCDuration(float newCCDuration, string source)
     {
+        if (isBoss && source == "Player") return; // bosses cant get CCed by players
+
         //Debug.Log("cCDuration:" + cCDuration + ", newCCDuration:" + newCCDuration);
         if (newCCDuration >= cCDuration)
         {
