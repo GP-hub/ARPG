@@ -7,6 +7,7 @@ using UnityEditor.Animations;
 using UnityEngine;
 using UnityEngine.AI;
 using UnityEngine.Rendering.Universal;
+using static UnityEngine.EventSystems.EventTrigger;
 
 
 [RequireComponent(typeof(NavMeshAgent))]
@@ -84,6 +85,8 @@ public class Enemy : MonoBehaviour
 
     private Transform target;
 
+    private Vector3 targetPosition;
+
     private GameObject player;
 
     private Vector3 lastPosition;
@@ -107,6 +110,7 @@ public class Enemy : MonoBehaviour
     public IState currentState;
 
     public Transform Target { get => target; set => target = value; }
+    public Vector3 TargetPosition { get => targetPosition; set => targetPosition = value; }
     public NavMeshAgent Agent { get => agent; }
     public Animator Animator { get => animator; }
     public bool IsPowering { get => isPowering; }
@@ -376,7 +380,7 @@ public class Enemy : MonoBehaviour
 
         if (target == null || target.tag == "Dead")
         {
-            Debug.Log("Target is null, IDLE");
+
             ChangeState(new IdleState());
             if (!isLookingForTarget)
             {
@@ -384,9 +388,9 @@ public class Enemy : MonoBehaviour
             }
             return;
         }
-        Debug.Log(isPowering + " " + isAttacking + " " + isCharging);
 
-        if (CanSeeTarget(target) && target.tag != "Dead")
+
+        if (/*CanSeeTarget(target) && */target.tag != "Dead")
         {
             // Previous method of calculating distance that do one more operation: a square root
             //float distanceToTarget1 = Vector3.Distance(transform.position, target.position);
@@ -414,7 +418,7 @@ public class Enemy : MonoBehaviour
                 }
                 else
                 {
-                    if (distanceToTarget < minMaxAbilityRange)
+                    if (distanceToTarget < minMaxAbilityRange && CanSeeTarget(target))
                     {
                         ChangeState(new IdleState());
                         return;
@@ -549,23 +553,6 @@ public class Enemy : MonoBehaviour
 
     public void PerformAttack()
     {
-        //if (isPowering)
-        //{
-        //    // Get the method by name
-        //    MethodInfo powerMethod = GetType().GetMethod(powerAbilities[0].selectedFunctionName,
-        //        BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic);
-
-        //    if (powerMethod != null)
-        //    {
-        //        powerMethod.Invoke(this, null);
-        //    }
-        //    else
-        //    {
-        //        Debug.Log($"Method '{currentAbility.selectedFunctionName}' not found on {gameObject.name}");
-        //    }
-        //}
-        //else
-        //{
         if (currentAbility == null || string.IsNullOrEmpty(currentAbility.selectedFunctionName))
         {
             Debug.Log($"{gameObject.name} has no ability or function selected.");
@@ -584,9 +571,6 @@ public class Enemy : MonoBehaviour
         {
             Debug.Log($"Method '{currentAbility.selectedFunctionName}' not found on {gameObject.name}");
         }
-
-        //}
-
     }
 
 
@@ -606,6 +590,50 @@ public class Enemy : MonoBehaviour
         }
     }
 
+    public IEnumerator DelayedAttackEnter()
+    {
+        float duration = 0.2f;
+        float timer = 0f;
+
+        TargetPosition = Target.position;
+
+
+        while (timer < duration)
+        {
+            Utility.RotateTowardsTarget(transform, Target, RotationSpeed);
+            timer += Time.deltaTime;
+            yield return null;
+        }
+
+        if (Agent.isOnNavMesh && Agent.enabled) Stop();
+        TargetPosition = Target.position;
+
+        SetBoolSingle("TriggerAttack");
+        DecideNextAbility();
+        Animator.SetFloat("AttackTree", BlendTreeThreshold());
+    }
+
+    public IEnumerator DelayedPowerEnter()
+    {
+        float duration = 0.2f;
+        float timer = 0f;
+
+
+        while (timer < duration)
+        {
+            Utility.RotateTowardsTarget(transform, Target, RotationSpeed);
+            timer += Time.deltaTime;
+            yield return null;
+        }
+
+        TargetPosition = Target.position;
+        if (Agent.isOnNavMesh && Agent.enabled) Stop();
+
+        SetBoolSingle("TriggerPower");
+        DecideNextPowerAbility();
+    }
+
+
     public void Stop()
     {
         agent.ResetPath();
@@ -621,25 +649,63 @@ public class Enemy : MonoBehaviour
         healthBar.transform.SetParent(healthPanelRect, false);
     }
 
-    private bool CanSeeTarget(Transform target)
+    //public bool CanSeeTarget(Transform target)
+    //{
+    //    // Direction from the enemy to the player
+    //    Vector3 directionToPlayer = (target.position + new Vector3(0f, 1f, 0f)) - (transform.position + new Vector3(0f, 1f, 0f));
+
+    //    // Draw a debug ray to visualize the raycast in the scene view
+    //    Debug.DrawRay(transform.position + new Vector3(0f, 1f, 0f), directionToPlayer, Color.blue);
+
+    //    //if (Physics.Raycast(transform.position + new Vector3(0f, 1f, 0f), directionToPlayer, out RaycastHit hit, 100, ~groundLayerMask))
+    //    if (Physics.Raycast(transform.position + new Vector3(0f, 1f, 0f), directionToPlayer, out RaycastHit hit, 1000, LayerMask.GetMask("Character", "Obstacle")))
+    //    {
+    //        if (hit.collider.CompareTag("Player"))
+    //        {
+    //            return true;
+    //        }
+    //    }
+
+    //    return false;
+    //}
+
+    public bool CanSeeTarget(Transform target)
     {
-        // Direction from the enemy to the player
-        Vector3 directionToPlayer = (target.position + new Vector3(0f, 1f, 0f)) - (transform.position + new Vector3(0f, 1f, 0f));
+        Vector3 capsuleStart = transform.position;
+        Vector3 capsuleEnd = exitPoint.transform.position;
+        Vector3 targetPos = target.position + new Vector3(0f, 1f, 0f);
 
-        // Draw a debug ray to visualize the raycast in the scene view
-        Debug.DrawRay(transform.position + new Vector3(0f, 1f, 0f), directionToPlayer, Color.blue);
+        Vector3 direction = (targetPos - capsuleStart).normalized;
+        float radius = 0.2f;
 
-        //if (Physics.Raycast(transform.position + new Vector3(0f, 1f, 0f), directionToPlayer, out RaycastHit hit, 100, ~groundLayerMask))
-        if (Physics.Raycast(transform.position + new Vector3(0f, 1f, 0f), directionToPlayer, out RaycastHit hit, 1000, LayerMask.GetMask("Character", "Obstacle")))
+        RaycastHit[] hits = Physics.CapsuleCastAll(
+            capsuleStart,
+            capsuleEnd,
+            radius,
+            direction,
+            300,
+            LayerMask.GetMask("Character", "Obstacle")
+        );
+
+        float closestHitDist = Mathf.Infinity;
+        RaycastHit? closestHit = null;
+
+        foreach (RaycastHit hit in hits)
         {
-            if (hit.collider.CompareTag("Player"))
+            if (hit.collider.gameObject == gameObject) continue; // ignore self
+
+            if (hit.distance < closestHitDist)
             {
-                return true;
+                closestHit = hit;
+                closestHitDist = hit.distance;
             }
         }
 
-        return false;
+        return closestHit.HasValue && closestHit.Value.collider.CompareTag("Player");
     }
+
+
+
 
 
 
@@ -718,19 +784,7 @@ public class Enemy : MonoBehaviour
         animator.SetBool(triggerName, false);
     }
 
-    public void CastAttack()
-    {
-        //currentAttackCooldown = attackCooldown;
-        //isAttackOnCooldown = true;
-        //isAttacking = true;
-    }
 
-    public void CastPower()
-    {
-        //currentPowerCooldown = powerCooldown;
-        //isPowerOnCooldown = true;
-        //isPowering = true;
-    }
 
     private void UpdateSpellCooldowns()
     {
@@ -870,8 +924,8 @@ public class Enemy : MonoBehaviour
         // distance from the target
         float jumpDistance = 1f;
 
-        Vector3 directionToTarget = (target.position - transform.position).normalized;
-        Vector3 finalPosition = target.position - directionToTarget * jumpDistance;
+        Vector3 directionToTarget = (targetPosition - transform.position).normalized;
+        Vector3 finalPosition = targetPosition - directionToTarget * jumpDistance;
 
         StartCoroutine(JumpToLocation(finalPosition));
     }
@@ -996,7 +1050,7 @@ public class Enemy : MonoBehaviour
     public void SpawnAOE()
     {
         if (!target) return;
-        GameObject newObject = PoolingManagerSingleton.Instance.GetObjectFromPool(currentAbility.projectilePrefab.name, target.transform.position + new Vector3(0, 0.2f, 0));
+        GameObject newObject = PoolingManagerSingleton.Instance.GetObjectFromPool(currentAbility.projectilePrefab.name, targetPosition + new Vector3(0, 0.2f, 0));
 
         if (newObject.TryGetComponent<AbilityValues>(out AbilityValues aoeSpell))
         {
@@ -1011,11 +1065,15 @@ public class Enemy : MonoBehaviour
     [AttackMethod]
     public void RangedHit()
     {
-        if (!target) return;
+        if (targetPosition == Vector3.zero) return; // Ensure targetPosition is valid
 
-        Vector3 targetCorrectedPosition = target.transform.position;
-        Vector3 direction = (targetCorrectedPosition - this.transform.position).normalized;
+        // Add an offset of 1 to the Y-axis of the target position
+        Vector3 adjustedTargetPosition = targetPosition + new Vector3(0, 1f, 0);
 
+        // Calculate the direction to the adjusted target position
+        Vector3 direction = (adjustedTargetPosition - exitPoint.transform.position).normalized;
+
+        // Spawn the projectile at the exit point
         GameObject newObject = PoolingManagerSingleton.Instance.GetObjectFromPool(currentAbility.projectilePrefab.name, exitPoint.transform.position);
 
         if (newObject != null)
@@ -1024,11 +1082,14 @@ public class Enemy : MonoBehaviour
             {
                 projectile.Damage = currentAbility.damage;
             }
+
+            // Set the projectile's rotation to face the adjusted target position
             Quaternion rotationToTarget = Quaternion.LookRotation(direction);
             newObject.transform.rotation = rotationToTarget;
         }
-        //ResetAttackingAndPowering();
     }
+
+
 
     [AttackMethod]
     public void BossRockFall()
@@ -1040,15 +1101,15 @@ public class Enemy : MonoBehaviour
     [AttackMethod]
     public void TestSpellIndicator()
     {
-        Vector3 targetPosition = target.transform.position + new Vector3(0, 0.01f, 0);
+        Vector3 groundTargetPosition = targetPosition + new Vector3(0, 0.01f, 0);
 
-        GameObject newObject = PoolingManagerSingleton.Instance.GetObjectFromPool("Telegraph_AoE", targetPosition);
+        GameObject newObject = PoolingManagerSingleton.Instance.GetObjectFromPool("Telegraph_AoE", groundTargetPosition);
 
         if (newObject.TryGetComponent<TelegraphIndicator>(out TelegraphIndicator indicator))
         {
             // Set the indicator delay duration and size
             indicator.SetIndicatorPosition(2, 3);
-            StartCoroutine(RockFalling(2f, 3f,targetPosition));
+            StartCoroutine(RockFalling(2f, 3f,groundTargetPosition));
         }
     }
     private IEnumerator RockFalling(float indicatorDuration, float size, Vector3 targetPos)
@@ -1141,7 +1202,7 @@ public class Enemy : MonoBehaviour
     private IEnumerator TripleRockFallRoutine()
     {
         Vector3 forwardDirection = transform.forward.normalized;
-        Vector3 basePosition = target.transform.position + new Vector3(0, 0.01f, 0);
+        Vector3 basePosition = targetPosition + new Vector3(0, 0.01f, 0);
         float spacing = 3f;
 
         for (int i = 0; i < 3; i++)
@@ -1173,7 +1234,7 @@ public class Enemy : MonoBehaviour
     {
         if (target == null) return;
 
-        Vector3 chargeDirection = (target.position - transform.position).normalized;
+        Vector3 chargeDirection = (targetPosition - transform.position).normalized;
         StartCoroutine(ChargeUntilObstacleCoroutine(chargeDirection));
     }
 

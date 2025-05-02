@@ -7,20 +7,12 @@ class AttackState : IState
     {
         this.enemy = enemy;
 
-        if (enemy.Agent.isOnNavMesh && enemy.Agent.enabled) enemy.Stop();
-
-        enemy.SetBoolSingle("TriggerAttack");
-        enemy.DecideNextAbility();
-        // Only work if enemy Attack state as the AttackTree parameter and a blend tree for attack State animation
-        enemy.Animator.SetFloat("AttackTree", enemy.BlendTreeThreshold());
-
+        enemy.StartCoroutine(enemy.DelayedAttackEnter());
     }
 
     void IState.Exit()
     {
         if (enemy.Agent.isOnNavMesh && enemy.Agent.enabled) enemy.Agent.isStopped = false;
-
-        //enemy.Animator.SetFloat("AttackAndPower", 0f);
 
         enemy.ResetSingleBool("TriggerAttack");
 
@@ -33,13 +25,7 @@ class AttackState : IState
             enemy.ChangeState(new IdleState());
         }
         if (enemy.IsAttacking || enemy.IsPowering) return;
-        //if (!enemy.OffCooldownAbilities.Contains(enemy.CurrentAbility))
-        //{
-        //    enemy.ChangeState(new IdleState());
-        //    return;
-        //}
 
-        //enemy.transform.LookAt(enemy.Target);
         Utility.RotateTowardsTarget(enemy.transform, enemy.Target, enemy.RotationSpeed);
     }
 

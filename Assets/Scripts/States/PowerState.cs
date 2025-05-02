@@ -1,6 +1,4 @@
 
-using UnityEngine;
-
 class PowerState : IState
 {
     private Enemy enemy;
@@ -9,17 +7,12 @@ class PowerState : IState
     {
         this.enemy = enemy;
 
-        if (enemy.Agent.isOnNavMesh && enemy.Agent.enabled) enemy.Stop();
-
-        enemy.SetBoolSingle("TriggerPower");
-        enemy.DecideNextPowerAbility();
+        enemy.StartCoroutine(enemy.DelayedPowerEnter());
     }
 
     void IState.Exit()
     {
         if (enemy.Agent.isOnNavMesh && enemy.Agent.enabled) enemy.Agent.isStopped = false;
-
-        //enemy.Animator.SetFloat("AttackAndPower", 0f);
 
         enemy.ResetSingleBool("TriggerPower");
 
@@ -29,7 +22,6 @@ class PowerState : IState
     {
         if (enemy.IsAttacking || enemy.IsPowering) return;
 
-        //enemy.transform.LookAt(enemy.Target);
         Utility.RotateTowardsTarget(enemy.transform, enemy.Target, enemy.RotationSpeed);
     }
 

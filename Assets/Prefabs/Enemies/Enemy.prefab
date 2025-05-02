@@ -254,7 +254,6 @@ Transform:
   - {fileID: 5202899124285160574}
   - {fileID: 6027426059203826333}
   - {fileID: 1687579024350817348}
-  - {fileID: 6956009129704464932}
   m_Father: {fileID: 882051256032341537}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1456511412121504277
@@ -503,12 +502,12 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2520992503807935118}
   serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalRotation: {x: 1, y: -0, z: -0, w: -0.000000029802319}
+  m_LocalPosition: {x: 0, y: 1.25, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
-  m_Father: {fileID: 6937392412659622955}
+  m_Father: {fileID: 8237003867044120221}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &2815850737299540587
 GameObject:
@@ -1608,6 +1607,7 @@ GameObject:
   - component: {fileID: 6631623146585664489}
   - component: {fileID: 705077206615586051}
   - component: {fileID: 5263966090406664174}
+  - component: {fileID: 2851212429317307378}
   m_Layer: 6
   m_Name: Enemy
   m_TagString: Enemy
@@ -1635,6 +1635,7 @@ Transform:
   - {fileID: 4032795162423372604}
   - {fileID: 5998320160265056769}
   - {fileID: 1100837623290176669}
+  - {fileID: 6956009129704464932}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!95 &675197755208206620
@@ -1696,27 +1697,24 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5e24f3c77ae37aa4bb36160e81b3ce15, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  rotationSpeed: 25
+  rotationSpeed: 5
   currentHealth: 0
   maxHealth: 30
   speed: 2
   xp: 0
-  isBoss: 0
+  searchTargetRadius: 50
+  isBoss: 1
   healthBarPrefab: {fileID: 2505273644731239485, guid: f032af557d41213499ccbdd815c15a7b, type: 3}
   healthPanelRect: {fileID: 0}
   hpBarProxyFollow: {fileID: 5564094242101072855}
-  abilities: []
-  powerAbilities: []
+  abilities:
+  - {fileID: 11400000, guid: d995aa56f0cc4a749bd16fa67f2471cc, type: 2}
+  powerAbility: {fileID: 0}
   exitPoint: {fileID: 2520992503807935118}
   characterLayer:
     serializedVersion: 2
     m_Bits: 64
   meleeHitboxSize: 2
-  hasPowerAbility: 0
-  AoePrefabName: AoE_Enemy
-  powerDamage: 0
-  powerRange: 40
-  powerCooldown: 5
   isCharging: 0
   isPowerOnCooldown: 0
 --- !u!195 &705077206615586051
@@ -1753,6 +1751,21 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9c18389bd7ccb55408949813ac67ac64, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!114 &2851212429317307378
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6894551819877516500}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9ebcffd39ba443c479bad769c7fed273, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  targetForgetDistance: 35
+  maxTimeTargetTooFar: 5
+  checkInterval: 5
 --- !u!1 &6925136475282096085
 GameObject:
   m_ObjectHideFlags: 0

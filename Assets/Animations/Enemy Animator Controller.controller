@@ -435,7 +435,7 @@ BlendTree:
   m_Name: AttackBlendTree
   m_Childs:
   - serializedVersion: 2
-    m_Motion: {fileID: 7400000, guid: 09b049ffd9dd6b748aff4a78c21099ac, type: 2}
+    m_Motion: {fileID: 7400000, guid: 765f267ec951b5c4baf6eec079cda586, type: 2}
     m_Threshold: 0
     m_Position: {x: 0, y: 0}
     m_TimeScale: 1
@@ -626,7 +626,7 @@ AnimatorStateTransition:
   serializedVersion: 3
   m_TransitionDuration: 0.2
   m_TransitionOffset: 0
-  m_ExitTime: 0.6938776
+  m_ExitTime: 0.75173575
   m_HasExitTime: 0
   m_HasFixedDuration: 1
   m_InterruptionSource: 0
@@ -651,7 +651,7 @@ AnimatorStateTransition:
   serializedVersion: 3
   m_TransitionDuration: 0.2
   m_TransitionOffset: 0
-  m_ExitTime: 0.78571427
+  m_ExitTime: 0.8288228
   m_HasExitTime: 0
   m_HasFixedDuration: 1
   m_InterruptionSource: 0

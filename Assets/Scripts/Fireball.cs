@@ -76,7 +76,6 @@ public class Fireball : MonoBehaviour
                 {
                     EventManager.EnemyTakeDamage(enemy, this.name);
                     EventManager.EnemyGetCC(enemy, this.gameObject.name);
-                    //healthComponent.TakeDamage(damageAmount);
                 }
             }
         }
