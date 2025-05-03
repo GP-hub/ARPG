@@ -7,6 +7,7 @@ class IdleState : IState
     void IState.Enter(Enemy enemy)
     {
         this.enemy = enemy;
+
         //this.enemy.Target = null;
         if (enemy.Agent.isOnNavMesh && enemy.Agent.enabled) enemy.Stop();
         enemy.SetBoolSingle("TriggerIdle");
@@ -23,7 +24,7 @@ class IdleState : IState
     void IState.Update()
     {
         //enemy.ResetAttackingAndPowering();
-        if (enemy.Target != null)
+        if (enemy.Target != null && enemy.CanSeeTarget(enemy.Target))
         {
             Utility.RotateTowardsTarget(enemy.transform, enemy.Target, enemy.RotationSpeed);
             //enemy.ChangeState(new FollowState());

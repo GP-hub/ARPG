@@ -239,14 +239,15 @@ AnimatorState:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: PowerBlendTree
+  m_Name: Power
   m_Speed: 1
   m_CycleOffset: 0
   m_Transitions:
   - {fileID: -4172476811555433661}
   - {fileID: 4201082126199599140}
   - {fileID: -4801895686794283514}
-  m_StateMachineBehaviours: []
+  m_StateMachineBehaviours:
+  - {fileID: 1757671099400055372}
   m_Position: {x: 50, y: 50, z: 0}
   m_IKOnFeet: 1
   m_WriteDefaultValues: 1
@@ -435,7 +436,7 @@ BlendTree:
   m_Name: AttackBlendTree
   m_Childs:
   - serializedVersion: 2
-    m_Motion: {fileID: 7400000, guid: 765f267ec951b5c4baf6eec079cda586, type: 2}
+    m_Motion: {fileID: 7400000, guid: 222519241767d4e43a9943228eb7e227, type: 2}
     m_Threshold: 0
     m_Position: {x: 0, y: 0}
     m_TimeScale: 1
@@ -573,8 +574,16 @@ BlendTree:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: Blend Tree
-  m_Childs: []
+  m_Name: PowerBlendTree
+  m_Childs:
+  - serializedVersion: 2
+    m_Motion: {fileID: 7400000, guid: 15c96838997819943b7e1e1592f3051e, type: 2}
+    m_Threshold: 0
+    m_Position: {x: 0, y: 0}
+    m_TimeScale: 1
+    m_CycleOffset: 0
+    m_DirectBlendParameter: 
+    m_Mirror: 0
   m_BlendParameter: AttackTree
   m_BlendParameterY: AttackTree
   m_MinThreshold: 0
@@ -682,6 +691,18 @@ AnimatorStateTransition:
   m_InterruptionSource: 0
   m_OrderedInterruption: 1
   m_CanTransitionToSelf: 1
+--- !u!114 &1757671099400055372
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e8260b0090d7073468f8e79ba2343639, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!206 &2104454695614531446
 BlendTree:
   m_ObjectHideFlags: 1

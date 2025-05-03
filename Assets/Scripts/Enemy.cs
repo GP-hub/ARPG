@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Reflection;
+using System.Runtime.CompilerServices;
 using TMPro;
 using UnityEditor.Animations;
 using UnityEngine;
@@ -47,6 +48,10 @@ public class Enemy : MonoBehaviour
     private AbilityData currentAbility;
     private float minMaxAbilityRange;
     private Dictionary<AbilityData, float> abilityCooldowns = new Dictionary<AbilityData, float>();
+    private float nextCastTime = 0f;
+    private float delayBetweenAbilities = 0.5f;
+
+    public bool CanCastAbility => Time.time >= nextCastTime;
 
     [Space(10)]
     [Header("Power Abilities")]
@@ -58,7 +63,6 @@ public class Enemy : MonoBehaviour
     [Header("Attack")]
     [SerializeField] private GameObject exitPoint;
     [SerializeField] private LayerMask characterLayer;
-    private float lastAttackTime;
 
     [Space(10)]
     [Header("Attack: Melee")]
@@ -167,6 +171,11 @@ public class Enemy : MonoBehaviour
         HandleStateMachine();
 
         UpdateSpellCooldowns();
+    }
+
+    public void StartCastCooldown()
+    {
+        nextCastTime = Time.time + delayBetweenAbilities;
     }
 
     private void UseAbility(AbilityData ability)
@@ -392,6 +401,12 @@ public class Enemy : MonoBehaviour
 
         if (/*CanSeeTarget(target) && */target.tag != "Dead")
         {
+
+            if (!CanCastAbility)
+            {
+                ChangeState(new IdleState());
+                return;
+            }
             // Previous method of calculating distance that do one more operation: a square root
             //float distanceToTarget1 = Vector3.Distance(transform.position, target.position);
             float distanceToTarget = (transform.position - target.position).sqrMagnitude;
@@ -408,11 +423,12 @@ public class Enemy : MonoBehaviour
             {
                 AbilityFilteringAndSorting(distanceToTarget);
 
-                bool canAttack = offCooldownAbilities.Count > 0;
+                bool abilityAvailable = offCooldownAbilities.Count > 0;
                 //Debug.Log("distance to target:" + distanceToTarget);
 
-                if (canAttack)
+                if (abilityAvailable)
                 {
+                    Debug.Log("Can attack, ATTACK");
                     ChangeState(new AttackState());
                     return;
                 }
@@ -597,6 +613,10 @@ public class Enemy : MonoBehaviour
 
         TargetPosition = Target.position;
 
+        SetBoolSingle("TriggerAttack");
+        DecideNextAbility();
+        if (Agent.isOnNavMesh && Agent.enabled) Stop();
+
 
         while (timer < duration)
         {
@@ -605,11 +625,7 @@ public class Enemy : MonoBehaviour
             yield return null;
         }
 
-        if (Agent.isOnNavMesh && Agent.enabled) Stop();
         TargetPosition = Target.position;
-
-        SetBoolSingle("TriggerAttack");
-        DecideNextAbility();
         Animator.SetFloat("AttackTree", BlendTreeThreshold());
     }
 
@@ -618,6 +634,11 @@ public class Enemy : MonoBehaviour
         float duration = 0.2f;
         float timer = 0f;
 
+        TargetPosition = Target.position;
+
+        SetBoolSingle("TriggerPower");
+        DecideNextPowerAbility();
+        if (Agent.isOnNavMesh && Agent.enabled) Stop();
 
         while (timer < duration)
         {
@@ -627,10 +648,6 @@ public class Enemy : MonoBehaviour
         }
 
         TargetPosition = Target.position;
-        if (Agent.isOnNavMesh && Agent.enabled) Stop();
-
-        SetBoolSingle("TriggerPower");
-        DecideNextPowerAbility();
     }
 
 
@@ -1026,7 +1043,7 @@ public class Enemy : MonoBehaviour
         controller.Move(Vector3.zero);
     }
 
-    // Triggered via Melee Attack animation
+
     [AttackMethod]
     public void MeleeHit()
     {
@@ -1042,7 +1059,6 @@ public class Enemy : MonoBehaviour
                 EventManager.PlayerTakeDamage(currentAbility.damage);
             }
         }
-        //ResetAttackingAndPowering();
     }
 
     // Triggered via SpawnAoe Attack Animation
@@ -1057,23 +1073,18 @@ public class Enemy : MonoBehaviour
             aoeSpell.Damage = currentAbility.damage;
             aoeSpell.DoDamage(currentAbility.damage);
         }
-        //ResetAttackingAndPowering();
     }
 
 
-    // Triggered via Ranged Attack animation
     [AttackMethod]
     public void RangedHit()
     {
-        if (targetPosition == Vector3.zero) return; // Ensure targetPosition is valid
+        if (targetPosition == Vector3.zero) return; 
 
-        // Add an offset of 1 to the Y-axis of the target position
         Vector3 adjustedTargetPosition = targetPosition + new Vector3(0, 1f, 0);
 
-        // Calculate the direction to the adjusted target position
         Vector3 direction = (adjustedTargetPosition - exitPoint.transform.position).normalized;
 
-        // Spawn the projectile at the exit point
         GameObject newObject = PoolingManagerSingleton.Instance.GetObjectFromPool(currentAbility.projectilePrefab.name, exitPoint.transform.position);
 
         if (newObject != null)
@@ -1083,7 +1094,6 @@ public class Enemy : MonoBehaviour
                 projectile.Damage = currentAbility.damage;
             }
 
-            // Set the projectile's rotation to face the adjusted target position
             Quaternion rotationToTarget = Quaternion.LookRotation(direction);
             newObject.transform.rotation = rotationToTarget;
         }
@@ -1107,7 +1117,6 @@ public class Enemy : MonoBehaviour
 
         if (newObject.TryGetComponent<TelegraphIndicator>(out TelegraphIndicator indicator))
         {
-            // Set the indicator delay duration and size
             indicator.SetIndicatorPosition(2, 3);
             StartCoroutine(RockFalling(2f, 3f,groundTargetPosition));
         }
@@ -1119,7 +1128,6 @@ public class Enemy : MonoBehaviour
         float waitTime = indicatorDuration - desiredFallDuration;
         yield return new WaitForSeconds(waitTime);
 
-        // Now spawn the rock
         GameObject newObject = PoolingManagerSingleton.Instance.GetObjectFromPool("Rock_Cylinder", targetPos + Vector3.up * 10f);
 
         Vector3 startPos = newObject.transform.position;
@@ -1132,16 +1140,16 @@ public class Enemy : MonoBehaviour
         while (elapsed < 1f)
         {
             elapsed += Time.deltaTime;
-            float t = Mathf.Clamp01(elapsed / 1f); // 1 second for the fall duration
+            float t = Mathf.Clamp01(elapsed / 1f); 
 
-            float curvedT = Mathf.Pow(t, 4); // Accelerating fall (optional for more "impact")
+            float curvedT = Mathf.Pow(t, 4);
 
             newObject.transform.position = Vector3.Lerp(startPos, endPos, curvedT);
 
             yield return null;
         }
 
-        newObject.transform.position = endPos; // Ensure it reaches the exact target position
+        newObject.transform.position = endPos;
         newObject.GetComponent<RockMaterialFade>().StartCoroutine("RockFalling");
 
         // overlap sphere to check for characters
@@ -1170,13 +1178,10 @@ public class Enemy : MonoBehaviour
             }
         }
 
-        // === Set gizmo debug sphere here ===
+
         debugSpherePos = newObject.transform.position;
         debugSphereRadius = size/2;
 
-        // === Perform your OverlapSphere checks here ===
-
-        // OPTIONAL: Clear debug gizmo after some seconds
         yield return new WaitForSeconds(2f);
         debugSpherePos = null;
 
@@ -1211,8 +1216,8 @@ public class Enemy : MonoBehaviour
             Vector3 spawnPosition = basePosition + forwardDirection * (i * spacing);
 
 
-            float indicatorDuration = 1.25f + (i * 0.33f); // Example: 2s, 2.5s, 3s
-            float size = 3f + (i * 0.65f); // Example: 3, 3.5, 4 units
+            float indicatorDuration = 1.25f + (i * 0.33f);
+            float size = 3f + (i * 0.65f);
 
             GameObject newObject = PoolingManagerSingleton.Instance.GetObjectFromPool("Telegraph_AoE", spawnPosition);
 
@@ -1244,7 +1249,6 @@ public class Enemy : MonoBehaviour
 
         transform.forward = chargeDirection;
 
-        // Configure the agent to ignore avoidance
         agent.avoidancePriority = 0;
         agent.obstacleAvoidanceType = ObstacleAvoidanceType.NoObstacleAvoidance;
         agent.updateRotation = false;
@@ -1253,7 +1257,6 @@ public class Enemy : MonoBehaviour
 
         while (true)
         {
-            // Move the agent forward
             agent.Move(chargeDirection * speed * 5f * Time.deltaTime);
 
             float characterHeight = 2.25f;
@@ -1290,7 +1293,6 @@ public class Enemy : MonoBehaviour
         isCharging = false;
         ResetAttackingAndPowering();
 
-        // Restore normal agent settings
         agent.avoidancePriority = 50;
         agent.obstacleAvoidanceType = ObstacleAvoidanceType.LowQualityObstacleAvoidance;
         agent.updateRotation = true;
@@ -1303,13 +1305,11 @@ public class Enemy : MonoBehaviour
     private void OnHitPlayer(Collider player)
     {
         Debug.Log("Hit player!");
-        // Damage, knockback, etc.
     }
 
     private void OnHitObstacle(Collider obstacle)
     {
         Debug.Log("Hit obstacle!");
-        // Unique behavior
     }
 
 

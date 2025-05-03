@@ -1708,8 +1708,8 @@ MonoBehaviour:
   healthPanelRect: {fileID: 0}
   hpBarProxyFollow: {fileID: 5564094242101072855}
   abilities:
-  - {fileID: 11400000, guid: d995aa56f0cc4a749bd16fa67f2471cc, type: 2}
-  powerAbility: {fileID: 0}
+  - {fileID: 11400000, guid: 1929d1c9722ade74286b3ea395e3c245, type: 2}
+  powerAbility: {fileID: 11400000, guid: ef3f768d4277eff468fdf13eced44d75, type: 2}
   exitPoint: {fileID: 2520992503807935118}
   characterLayer:
     serializedVersion: 2
@@ -1763,7 +1763,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9ebcffd39ba443c479bad769c7fed273, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  targetForgetDistance: 35
+  targetForgetDistance: 100
   maxTimeTargetTooFar: 5
   checkInterval: 5
 --- !u!1 &6925136475282096085

@@ -1,4 +1,6 @@
 
+using UnityEngine;
+
 class AttackState : IState
 {
     private Enemy enemy;
@@ -6,7 +8,6 @@ class AttackState : IState
     void IState.Enter(Enemy enemy)
     {
         this.enemy = enemy;
-
         enemy.StartCoroutine(enemy.DelayedAttackEnter());
     }
 
