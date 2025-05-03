@@ -2,13 +2,9 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Reflection;
-using System.Runtime.CompilerServices;
-using TMPro;
 using UnityEditor.Animations;
 using UnityEngine;
 using UnityEngine.AI;
-using UnityEngine.Rendering.Universal;
-using static UnityEngine.EventSystems.EventTrigger;
 
 
 [RequireComponent(typeof(NavMeshAgent))]
@@ -161,6 +157,8 @@ public class Enemy : MonoBehaviour
         GetAnimatorController();
 
         minMaxAbilityRange = MinMaxRangeAttackRange();
+
+        StartCastCooldown();
     }
 
 
@@ -428,7 +426,6 @@ public class Enemy : MonoBehaviour
 
                 if (abilityAvailable)
                 {
-                    Debug.Log("Can attack, ATTACK");
                     ChangeState(new AttackState());
                     return;
                 }
@@ -569,6 +566,7 @@ public class Enemy : MonoBehaviour
 
     public void PerformAttack()
     {
+        Debug.Log("Performing attack with ability: " + currentAbility.moveName);
         if (currentAbility == null || string.IsNullOrEmpty(currentAbility.selectedFunctionName))
         {
             Debug.Log($"{gameObject.name} has no ability or function selected.");
@@ -720,9 +718,6 @@ public class Enemy : MonoBehaviour
 
         return closestHit.HasValue && closestHit.Value.collider.CompareTag("Player");
     }
-
-
-
 
 
 
@@ -1112,15 +1107,21 @@ public class Enemy : MonoBehaviour
     public void TestSpellIndicator()
     {
         Vector3 groundTargetPosition = targetPosition + new Vector3(0, 0.01f, 0);
+        RockFallAtTargetPos(2f, 3f, groundTargetPosition);
+    }
 
-        GameObject newObject = PoolingManagerSingleton.Instance.GetObjectFromPool("Telegraph_AoE", groundTargetPosition);
+    private void RockFallAtTargetPos(float duration, float size, Vector3 targetPos)
+    {
+        GameObject newObject = PoolingManagerSingleton.Instance.GetObjectFromPool("Telegraph_AoE", targetPos);
 
         if (newObject.TryGetComponent<TelegraphIndicator>(out TelegraphIndicator indicator))
         {
-            indicator.SetIndicatorPosition(2, 3);
-            StartCoroutine(RockFalling(2f, 3f,groundTargetPosition));
+            indicator.SetIndicatorPosition(duration, size);
+            StartCoroutine(RockFalling(duration, size, targetPos));
         }
     }
+
+
     private IEnumerator RockFalling(float indicatorDuration, float size, Vector3 targetPos)
     {
         float desiredFallDuration = 1f;
@@ -1193,7 +1194,7 @@ public class Enemy : MonoBehaviour
     {
         if (debugSpherePos.HasValue)
         {
-            Gizmos.color = Color.red;
+            Gizmos.color = UnityEngine.Color.red;
             Gizmos.DrawWireSphere(debugSpherePos.Value, debugSphereRadius);
         }
     }
@@ -1212,23 +1213,12 @@ public class Enemy : MonoBehaviour
 
         for (int i = 0; i < 3; i++)
         {
-
             Vector3 spawnPosition = basePosition + forwardDirection * (i * spacing);
-
 
             float indicatorDuration = 1.25f + (i * 0.33f);
             float size = 3f + (i * 0.65f);
 
-            GameObject newObject = PoolingManagerSingleton.Instance.GetObjectFromPool("Telegraph_AoE", spawnPosition);
-
-            if (newObject.TryGetComponent<TelegraphIndicator>(out TelegraphIndicator indicator))
-            {
-                indicator.SetIndicatorPosition(indicatorDuration, size);
-            }
-
-
-            StartCoroutine(RockFalling(indicatorDuration, size, spawnPosition));
-
+            RockFallAtTargetPos(indicatorDuration, size, spawnPosition);
 
             yield return new WaitForSeconds(1f); // Small delay between rocks
         }
@@ -1237,9 +1227,11 @@ public class Enemy : MonoBehaviour
     [AttackMethod]
     public void ChargingUntilObstacleStart()
     {
+        Debug.Log("target" + target);
         if (target == null) return;
 
         Vector3 chargeDirection = (targetPosition - transform.position).normalized;
+        Debug.Log("targetPosition: " + targetPosition + " = " + transform.position);
         StartCoroutine(ChargeUntilObstacleCoroutine(chargeDirection));
     }
 
@@ -1276,7 +1268,14 @@ public class Enemy : MonoBehaviour
                 }
                 else if (hit.CompareTag("Destructible"))
                 {
-                    OnHitObstacle(hit);
+                    OnHitDestructibleObstacle(hit);
+                    cCDuration += 2.5f;
+                    yield return BreakCharge();
+                    yield break;
+                }
+                else if (hit.CompareTag("Indestructible"))
+                {
+                    //OnHitIndestructibleObstacle(hit);
                     cCDuration += 2.5f;
                     yield return BreakCharge();
                     yield break;
@@ -1290,6 +1289,7 @@ public class Enemy : MonoBehaviour
 
     private IEnumerator BreakCharge()
     {
+        Debug.Log("BreakCharge");
         isCharging = false;
         ResetAttackingAndPowering();
 
@@ -1307,11 +1307,53 @@ public class Enemy : MonoBehaviour
         Debug.Log("Hit player!");
     }
 
-    private void OnHitObstacle(Collider obstacle)
+    private void OnHitDestructibleObstacle(Collider obstacle)
     {
-        Debug.Log("Hit obstacle!");
+        Debug.Log("Hit Destructible Obstacle!");
+        obstacle.gameObject.SetActive(false);
     }
 
+    private void OnHitIndestructibleObstacle(Collider obstacle)
+    {
+        Debug.Log("RockFallFullArena called");
+        Vector3 start = BossFightManager.Instance.BottomLeftCorner.position;
+        Vector3 end = BossFightManager.Instance.TopRightCorner.position;
+        float spacing = BossFightManager.Instance.Spacing;
+
+        List<Vector3> positions = new List<Vector3>();
+
+        for (float x = start.x; x <= end.x; x += spacing)
+        {
+            for (float z = start.z; z <= end.z; z += spacing)
+            {
+                positions.Add(new Vector3(x, start.y, z)); // y stays fixed — assuming rocks fall from above
+            }
+        }
+
+        // Spawn telegraph spells at the rest
+        foreach (Vector3 pos in positions)
+        {
+            //RockFallAtTargetPos(UnityEngine.Random.Range(3, 7), UnityEngine.Random.Range(3, 7), pos);
+            StartCoroutine(DelayedRockFall(pos));
+            //PoolingManagerSingleton.Instance.GetObjectFromPool("Telegraph_AoE", pos);
+        }
+    }
+    private IEnumerator DelayedRockFall(Vector3 pos)
+    {
+        int delay = UnityEngine.Random.Range(0, 3);
+        yield return new WaitForSeconds(delay);
+
+        int duration = UnityEngine.Random.Range(3, 7);
+        int size = UnityEngine.Random.Range(3, 7);
+
+        // Add random offset to position
+        float offsetX = UnityEngine.Random.Range(-1f, 1f);
+        float offsetZ = UnityEngine.Random.Range(-1f, 1f);
+
+        Vector3 randomizedPos = new Vector3(pos.x + offsetX, pos.y, pos.z + offsetZ);
+
+        RockFallAtTargetPos(duration, size, pos);
+    }
 
     private IEnumerator TriggerAbilityAfterDelay(float delay, Vector3 targetPos)
     {

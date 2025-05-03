@@ -14,8 +14,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   moveName: Boss Charge
   maxAttackRange: 500
-  minAttackRange: 1
-  damage: 10000
+  minAttackRange: 5
+  damage: 1
   cooldown: 10
   projectilePrefab: {fileID: 0}
   animationClip: {fileID: 7400000, guid: f951e9a812fdba94dbd0547e0d3cc749, type: 2}

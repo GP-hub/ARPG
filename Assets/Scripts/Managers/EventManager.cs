@@ -133,6 +133,15 @@ public static class EventManager/* : Singleton<EventManager>*/
         }
     }
 
+    public static event Action onBossHitWall;
+    public static void BossHitWall()
+    {
+        if (onBossHitWall != null)
+        {
+            onBossHitWall();
+        }
+    }
+
 
 
 }

@@ -16,7 +16,7 @@ MonoBehaviour:
   maxAttackRange: 80
   minAttackRange: 1
   damage: 100
-  cooldown: 3
+  cooldown: 0
   projectilePrefab: {fileID: 8762737198241174101, guid: 3ca115d91ca41d14a932113d1b874b1f, type: 3}
   animationClip: {fileID: 7400000, guid: 765f267ec951b5c4baf6eec079cda586, type: 2}
   selectedFunctionName: TestSpellIndicator

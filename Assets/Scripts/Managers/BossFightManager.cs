@@ -1,6 +1,7 @@
+using System.Collections.Generic;
 using UnityEngine;
 
-public class BossFightManager : MonoBehaviour
+public class BossFightManager : Singleton<BossFightManager>
 {
     [SerializeField] private GameObject[] rockTransformArea1;
     [SerializeField] private GameObject[] rockTransformArea2;
@@ -9,17 +10,28 @@ public class BossFightManager : MonoBehaviour
 
     private GameObject[][] rockAreas;
 
-    void Awake()
+    [SerializeField] private Transform bottomLeftCorner;
+    [SerializeField] private Transform topRightCorner;
+    [SerializeField] private float spacing;
+
+    public Transform BottomLeftCorner { get => bottomLeftCorner; }
+    public Transform TopRightCorner { get => topRightCorner; }
+    public float Spacing { get => spacing; }
+
+    protected override void Awake()
     {
-        // Initialize array of arrays (jagged array)
+        base.Awake(); 
+
         rockAreas = new GameObject[][]
         {
-            rockTransformArea1,
-            rockTransformArea2,
-            rockTransformArea3,
-            rockTransformArea4
+        rockTransformArea1,
+        rockTransformArea2,
+        rockTransformArea3,
+        rockTransformArea4
         };
+
     }
+
 
     void OnEnable()
     {
@@ -33,7 +45,7 @@ public class BossFightManager : MonoBehaviour
 
     private void SpawnRocks(int numberOfRocks)
     {
-        foreach (var area in rockAreas)
+        foreach (GameObject[] area in rockAreas)
         {
             EnableRandomRocks(area, numberOfRocks);
         }
@@ -45,18 +57,17 @@ public class BossFightManager : MonoBehaviour
 
         int maxRocks = Mathf.Min(numberToEnable, rocksArray.Length);
 
-        // Fisher-Yates shuffle manually
         for (int i = 0; i < rocksArray.Length; i++)
         {
             int randomIndex = Random.Range(i, rocksArray.Length);
             (rocksArray[i], rocksArray[randomIndex]) = (rocksArray[randomIndex], rocksArray[i]);
         }
 
-        // Activate first 'maxRocks' rocks
         for (int i = 0; i < maxRocks; i++)
         {
             if (rocksArray[i] != null)
                 rocksArray[i].SetActive(true);
         }
     }
+
 }
