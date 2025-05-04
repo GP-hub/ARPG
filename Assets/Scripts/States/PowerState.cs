@@ -8,18 +8,18 @@ class PowerState : IState
     void IState.Enter(Enemy enemy)
     {
         this.enemy = enemy;
-
-        if (enemy.Agent.isOnNavMesh && enemy.Agent.enabled) enemy.Stop();
+        enemy.TargetPosition = enemy.Target.position;
 
         enemy.SetBoolSingle("TriggerPower");
         enemy.DecideNextPowerAbility();
+        if (enemy.Agent.isOnNavMesh && enemy.Agent.enabled) enemy.Stop();
+
+        //enemy.StartCoroutine(enemy.DelayedPowerEnter());
     }
 
     void IState.Exit()
     {
         if (enemy.Agent.isOnNavMesh && enemy.Agent.enabled) enemy.Agent.isStopped = false;
-
-        //enemy.Animator.SetFloat("AttackAndPower", 0f);
 
         enemy.ResetSingleBool("TriggerPower");
 
@@ -27,10 +27,8 @@ class PowerState : IState
     }
     void IState.Update()
     {
-        if (enemy.isCharging) return;
-
-        //enemy.transform.LookAt(enemy.Target);
-        Utility.RotateTowardsTarget(enemy.transform, enemy.Target, enemy.RotationSpeed);
+        if (enemy.IsAttacking || enemy.IsPowering) return;
+        Utility.RotateTowardsTarget(enemy.transform, enemy.TargetPosition, enemy.RotationSpeed);
     }
 
     string IState.GetStateName()

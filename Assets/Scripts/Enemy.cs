@@ -5,7 +5,6 @@ using System.Reflection;
 using UnityEditor.Animations;
 using UnityEngine;
 using UnityEngine.AI;
-using UnityEngine.Analytics;
 
 
 [RequireComponent(typeof(NavMeshAgent))]
@@ -18,15 +17,17 @@ public class Enemy : MonoBehaviour
     [SerializeField] private float rotationSpeed = 25f;
     private BlendTree attackBlendTree;
     private BlendTree powerBlendTree;
+    private int currentPhase = 1;
     public float RotationSpeed { get => rotationSpeed; }
     [SerializeField] private float currentHealth, maxHealth = 30;
     [Tooltip("Animator issue when speed is below 2")]
     [SerializeField] private float speed;
     [SerializeField] private int xp;
+    [SerializeField] private int searchTargetRadius = 25;
 
     [SerializeField] private bool isBoss;
-    private bool isPhaseTwo = false;
-    private bool isPhaseTree = false;
+    //private bool isPhaseTwo = false;
+    //private bool isPhaseTree = false;
 
     private float cCDuration;
 
@@ -43,6 +44,10 @@ public class Enemy : MonoBehaviour
     private AbilityData currentAbility;
     private float minMaxAbilityRange;
     private Dictionary<AbilityData, float> abilityCooldowns = new Dictionary<AbilityData, float>();
+    private float nextCastTime = 0f;
+    private float delayBetweenAbilities = 0.5f;
+
+    public bool CanCastAbility => Time.time >= nextCastTime;
 
     [Space(10)]
     [Header("Power Abilities")]
@@ -54,7 +59,6 @@ public class Enemy : MonoBehaviour
     [Header("Attack")]
     [SerializeField] private GameObject exitPoint;
     [SerializeField] private LayerMask characterLayer;
-    private float lastAttackTime;
 
     [Space(10)]
     [Header("Attack: Melee")]
@@ -62,14 +66,7 @@ public class Enemy : MonoBehaviour
 
     [Space(10)]
     [Header("Power")]
-    //[SerializeField] private bool hasPowerAbility;
-    //[SerializeField] private string AoePrefabName;
-    //[SerializeField] private int powerDamage;
-    //[SerializeField] private float powerRange;
-    //[SerializeField] private float powerCooldown;
     private float currentPowerCooldown;
-    private float lastPowerTime;
-
 
     private NavMeshAgent agent;
 
@@ -80,6 +77,8 @@ public class Enemy : MonoBehaviour
     private Healthbar healthBar;
 
     private Transform target;
+
+    private Vector3 targetPosition;
 
     private GameObject player;
 
@@ -99,11 +98,11 @@ public class Enemy : MonoBehaviour
 
     [HideInInspector] public bool isCharging;
     [HideInInspector] public bool isPowerOnCooldown;
-    //[HideInInspector] public bool isAttackOnCooldown;
 
     public IState currentState;
 
     public Transform Target { get => target; set => target = value; }
+    public Vector3 TargetPosition { get => targetPosition; set => targetPosition = value; }
     public NavMeshAgent Agent { get => agent; }
     public Animator Animator { get => animator; }
     public bool IsPowering { get => isPowering; }
@@ -113,6 +112,7 @@ public class Enemy : MonoBehaviour
     public float CurrentHealth { get => currentHealth; }
     public float MaxHealth { get => maxHealth; }
     public bool IsBoss { get => isBoss; }
+    public int CurrentPhase { get => currentPhase; }
 
     private void Awake()
     {
@@ -125,7 +125,6 @@ public class Enemy : MonoBehaviour
     void Start()
     {
         agent.speed = speed;
-        AIManager.Instance.Units.Add(this);
         currentHealth = maxHealth;
         GenerateEnemyHealthBar(hpBarProxyFollow);
 
@@ -136,6 +135,8 @@ public class Enemy : MonoBehaviour
             // Pass the player as the target for now
             //target = player.transform;
         }
+
+        AIManager.Instance.AddUnit(this);
 
         lastPosition = transform.position;
 
@@ -149,6 +150,8 @@ public class Enemy : MonoBehaviour
         GetAnimatorController();
 
         minMaxAbilityRange = MinMaxRangeAttackRange();
+
+        StartCastCooldown();
     }
 
 
@@ -161,9 +164,14 @@ public class Enemy : MonoBehaviour
         UpdateSpellCooldowns();
     }
 
+    public void StartCastCooldown()
+    {
+        nextCastTime = Time.time + delayBetweenAbilities;
+    }
+
     private void UseAbility(AbilityData ability)
     {
-        if (ability.cooldown <= 0) return;
+        //if (ability.cooldown <= 0) return;
         isAttacking = true;
         offCooldownAbilities.Remove(ability);
         abilityCooldowns[ability] = ability.cooldown;
@@ -171,10 +179,9 @@ public class Enemy : MonoBehaviour
 
     private void UsePowerAbility(AbilityData ability)
     {
-        if (ability.cooldown <= 0) return;
+        //if (ability.cooldown <= 0) return;
         isPowering = true;
         isPowerOnCooldown = true;
-        //abilityCooldowns[ability] = ability.cooldown;
         currentPowerCooldown = ability.cooldown;
     }
 
@@ -260,8 +267,6 @@ public class Enemy : MonoBehaviour
         {
             if (abilities == null || abilities.Count == 0) return;
 
-            //blendTree.useAutomaticThresholds = false; // Set manual thresholds if needed
-
             ChildMotion[] newChildren = new ChildMotion[abilities.Count];
 
             for (int i = 0; i < abilities.Count; i++)
@@ -290,70 +295,20 @@ public class Enemy : MonoBehaviour
                 }
             };
         }
-        
+
     }
 
-    [AttackMethod]
-    public void ChargingCoroutineStart()
-    {
-        StartCoroutine(MoveForwardCoroutine());
-    }
 
-    IEnumerator MoveForwardCoroutine()
-    {
-        float timer = .5f;
-        isCharging = true;
-        while (timer > 0f)
-        {
-            //this.transform.LookAt(this.transform.forward);
-            // Move the CharacterController forward
-            controller.Move(transform.forward * speed * 5f * Time.deltaTime);
-
-            agent.avoidancePriority = 10;
-            agent.obstacleAvoidanceType = ObstacleAvoidanceType.NoObstacleAvoidance;
-
-            // Check for collisions with objects on the 'Player' layer
-            Collider[] colliders = Physics.OverlapBox(transform.position, transform.localScale / 2, Quaternion.identity, LayerMask.GetMask("Character"));
-
-            foreach (Collider collider in colliders)
-            {
-                if (collider.CompareTag("Player"))
-                {
-                    //Debug.Log("Collided with a character: " + collider.name);
-
-                    // Handle collision with 'Player' here
-                }
-            }
-
-            // Decrease the timer
-            timer -= Time.deltaTime;
-
-            // Wait for the next frame
-            yield return null;
-        }
-        isCharging = false;
-        ResetAttackingAndPowering();
-
-        agent.obstacleAvoidanceType = ObstacleAvoidanceType.LowQualityObstacleAvoidance;
-
-        agent.avoidancePriority = 50;
-
-        // Stop the CharacterController when the time is up
-        controller.Move(Vector3.zero);
-    }
 
     private IEnumerator CheckGroundedStatus()
     {
         while (true)
         {
-            // Check if the character controller is grounded
             isGrounded = controller.isGrounded;
 
-            // Enable/disable the NavMeshAgent based on grounding status
             if (isGrounded) agent.enabled = true;
             else agent.enabled = false;
 
-            // Wait for a short duration before checking again
             yield return new WaitForSeconds(0.1f);
         }
     }
@@ -369,14 +324,27 @@ public class Enemy : MonoBehaviour
             //Destroy(gameObject);
         }
         healthBar.OnHealthChanged(currentHealth / maxHealth);
+        UpdateCurrentPhase();
         //Debug.Log("Enemy hp: " + health);
+    }
+
+    private void UpdateCurrentPhase()
+    {
+        if (currentHealth <= 0.66f * maxHealth && currentPhase == 1)
+        {
+            currentPhase = 2;
+        }
+        if (currentHealth <= 0.33f * maxHealth && currentPhase == 2)
+        {
+            currentPhase = 3;
+        }
     }
 
     private void Death()
     {
         this.gameObject.tag = "Dead";
         isAlive = false;
-        Debug.Log("Enemy is dead.");
+        Debug.Log(this.name + " is dead.");
         animator.SetTrigger("TriggerDeath");
         EventManager.EnemyDeath(xp);
         StopAllCoroutines();
@@ -396,7 +364,7 @@ public class Enemy : MonoBehaviour
             return;
         }
 
-        // Update CC duration
+        // Update CC duration, we cant stun bosses
         if (cCDuration > 0)
         {
             ChangeState(new StunState());
@@ -406,6 +374,7 @@ public class Enemy : MonoBehaviour
 
         if (target == null || target.tag == "Dead")
         {
+
             ChangeState(new IdleState());
             if (!isLookingForTarget)
             {
@@ -414,14 +383,20 @@ public class Enemy : MonoBehaviour
             return;
         }
 
-        if (CanSeeTarget(target) && target.tag != "Dead")
+
+        if (/*CanSeeTarget(target) && */target.tag != "Dead")
         {
+
+            if (!CanCastAbility)
+            {
+                ChangeState(new IdleState());
+                return;
+            }
             // Previous method of calculating distance that do one more operation: a square root
             //float distanceToTarget1 = Vector3.Distance(transform.position, target.position);
             float distanceToTarget = (transform.position - target.position).sqrMagnitude;
 
             if (isPowering || isAttacking) return;
-
             if (CanPower(distanceToTarget))
             {
 
@@ -433,17 +408,17 @@ public class Enemy : MonoBehaviour
             {
                 AbilityFilteringAndSorting(distanceToTarget);
 
-                bool canAttack = offCooldownAbilities.Count > 0;
+                bool abilityAvailable = offCooldownAbilities.Count > 0;
                 //Debug.Log("distance to target:" + distanceToTarget);
 
-                if (canAttack)
+                if (abilityAvailable)
                 {
                     ChangeState(new AttackState());
                     return;
                 }
                 else
                 {
-                    if (distanceToTarget < minMaxAbilityRange)
+                    if (distanceToTarget < minMaxAbilityRange && CanSeeTarget(target))
                     {
                         ChangeState(new IdleState());
                         return;
@@ -456,8 +431,12 @@ public class Enemy : MonoBehaviour
                 }
             }
         }
+
+        if (isPowering || isAttacking || isCharging) return;
+
         if (!CanSeeTarget(target) && target.tag != "Dead")
         {
+            Debug.Log("Target not in sight, FOLLOW");
             ChangeState(new FollowState());
             return;
         }
@@ -467,7 +446,8 @@ public class Enemy : MonoBehaviour
     {
         if (powerAbility == null) return false;
         if (isPowerOnCooldown) return false;
-        // Check if the power ability is off cooldown and within range
+        if (!AreConditionsMet(powerAbility)) return false;
+
         if (currentPowerCooldown <= 0 && distanceToTarget < powerAbility.maxAttackRange && distanceToTarget > powerAbility.minAttackRange)
         {
             return true;
@@ -493,7 +473,7 @@ public class Enemy : MonoBehaviour
         }
 
         if (minMaxAttackRange <= 0) Debug.Log($"Issue with setting up ability range on {gameObject.name}. minMaxAttackRange is {minMaxAttackRange}");
-        
+
         return minMaxAttackRange;
     }
     public void ChangeState(IState newState)
@@ -511,12 +491,6 @@ public class Enemy : MonoBehaviour
 
     private void AbilityFilteringAndSorting(float distanceToTarget)
     {
-        //if (Time.time < nextAbilityCheckTime) return;
-        //nextAbilityCheckTime = Time.time + abilityCheckInterval;
-
-        //Debug.Log("Abilities list: " + offCooldownAbilities.Count + " distance to target: " + distanceToTarget);
-
-
 
         //Add abilities that are now in range and not on cooldown
         foreach (AbilityData ability in abilities)
@@ -525,7 +499,7 @@ public class Enemy : MonoBehaviour
             {
                 if (!abilityCooldowns.ContainsKey(ability) || abilityCooldowns[ability] <= 0)
                 {
-                    if (CheckForConditions(ability))
+                    if (AreConditionsMet(ability))
                     {
                         offCooldownAbilities.Add(ability);
                     }
@@ -550,7 +524,7 @@ public class Enemy : MonoBehaviour
         //Debug.Log("Off cooldown abilities: " + offCooldownAbilities.Count + ", distance to target: " + distanceToTarget);
     }
 
-    private bool CheckForConditions(AbilityData ability)
+    private bool AreConditionsMet(AbilityData ability)
     {
         if (ability.conditions != null && ability.conditions.Count > 0)
         {
@@ -559,7 +533,7 @@ public class Enemy : MonoBehaviour
                 bool isConditionMet = condition.IsMet(this);
 
                 if (!isConditionMet)
-                    return false; 
+                    return false;
             }
             return true; // All conditions passed
         }
@@ -573,104 +547,27 @@ public class Enemy : MonoBehaviour
 
     public void PerformAttack()
     {
-        //if (isPowering)
-        //{
-        //    // Get the method by name
-        //    MethodInfo powerMethod = GetType().GetMethod(powerAbilities[0].selectedFunctionName,
-        //        BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic);
-
-        //    if (powerMethod != null)
-        //    {
-        //        powerMethod.Invoke(this, null);
-        //    }
-        //    else
-        //    {
-        //        Debug.Log($"Method '{currentAbility.selectedFunctionName}' not found on {gameObject.name}");
-        //    }
-        //}
-        //else
-        //{
-            if (currentAbility == null || string.IsNullOrEmpty(currentAbility.selectedFunctionName))
-            {
-                Debug.Log($"{gameObject.name} has no ability or function selected.");
-                return;
-            }
-
-            // Get the method by name
-            MethodInfo method = GetType().GetMethod(currentAbility.selectedFunctionName,
-                BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic);
-
-            if (method != null)
-            {
-                method.Invoke(this, null);
-            }
-            else
-            {
-                Debug.Log($"Method '{currentAbility.selectedFunctionName}' not found on {gameObject.name}");
-            }
-
-        //}
-
-    }
-
-
-    // Triggered via Melee Attack animation
-    [AttackMethod]
-    public void MeleeHit()
-    {
-        // Max number of entities in the OverlapSphere
-        int maxColliders = 10;
-        Collider[] hitColliders = new Collider[maxColliders];
-        int numColliders = Physics.OverlapSphereNonAlloc(transform.position, meleeHitboxSize, hitColliders, characterLayer);
-
-        for (int i = 0; i < numColliders; i++)
+        if (currentAbility == null || string.IsNullOrEmpty(currentAbility.selectedFunctionName))
         {
-            if (hitColliders[i].CompareTag("Player"))
-            {
-                EventManager.PlayerTakeDamage(currentAbility.damage);
-            }
+            Debug.Log($"{gameObject.name} has no ability or function selected.");
+            return;
         }
-        //ResetAttackingAndPowering();
-    }
 
-    // Triggered via SpawnAoe Attack Animation
-    [AttackMethod]
-    public void SpawnAOE()
-    {
-        if (!target) return;
-        GameObject newObject = PoolingManagerSingleton.Instance.GetObjectFromPool(currentAbility.projectilePrefab.name, target.transform.position + new Vector3(0, 0.2f, 0));
+        // Get the method by name
+        MethodInfo method = GetType().GetMethod(currentAbility.selectedFunctionName,
+            BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic);
 
-        if (newObject.TryGetComponent<AbilityValues>(out AbilityValues aoeSpell))
+        if (method != null)
         {
-            aoeSpell.Damage = currentAbility.damage;
-            aoeSpell.DoDamage(currentAbility.damage);
+            method.Invoke(this, null);
         }
-        ResetAttackingAndPowering();
-    }
-
-
-    // Triggered via Ranged Attack animation
-    [AttackMethod]
-    public void RangedHit()
-    {
-        if (!target) return;
-
-        Vector3 targetCorrectedPosition = target.transform.position;
-        Vector3 direction = (targetCorrectedPosition - this.transform.position).normalized;
-
-        GameObject newObject = PoolingManagerSingleton.Instance.GetObjectFromPool(currentAbility.projectilePrefab.name, exitPoint.transform.position);
-
-        if (newObject != null)
+        else
         {
-            if (newObject.TryGetComponent<AbilityValues>(out AbilityValues projectile))
-            {
-                projectile.Damage = currentAbility.damage;
-            }
-            Quaternion rotationToTarget = Quaternion.LookRotation(direction);
-            newObject.transform.rotation = rotationToTarget;
+            Debug.Log($"Method '{currentAbility.selectedFunctionName}' not found on {gameObject.name}");
         }
-        //ResetAttackingAndPowering();
     }
+
+
 
     // Moving around the target via AIManager, circling the target
     public void MoveAIUnit(Vector3 targetPos)
@@ -687,6 +584,7 @@ public class Enemy : MonoBehaviour
         }
     }
 
+
     public void Stop()
     {
         agent.ResetPath();
@@ -702,24 +600,59 @@ public class Enemy : MonoBehaviour
         healthBar.transform.SetParent(healthPanelRect, false);
     }
 
-    private bool CanSeeTarget(Transform target)
+    //public bool CanSeeTarget(Transform target)
+    //{
+    //    // Direction from the enemy to the player
+    //    Vector3 directionToPlayer = (target.position + new Vector3(0f, 1f, 0f)) - (transform.position + new Vector3(0f, 1f, 0f));
+
+    //    // Draw a debug ray to visualize the raycast in the scene view
+    //    Debug.DrawRay(transform.position + new Vector3(0f, 1f, 0f), directionToPlayer, Color.blue);
+
+    //    //if (Physics.Raycast(transform.position + new Vector3(0f, 1f, 0f), directionToPlayer, out RaycastHit hit, 100, ~groundLayerMask))
+    //    if (Physics.Raycast(transform.position + new Vector3(0f, 1f, 0f), directionToPlayer, out RaycastHit hit, 1000, LayerMask.GetMask("Character", "Obstacle")))
+    //    {
+    //        if (hit.collider.CompareTag("Player"))
+    //        {
+    //            return true;
+    //        }
+    //    }
+
+    //    return false;
+    //}
+
+    public bool CanSeeTarget(Transform target)
     {
-        // Direction from the enemy to the player
-        Vector3 directionToPlayer = (target.position + new Vector3(0f, 1f, 0f)) - (transform.position + new Vector3(0f, 1f, 0f));
+        Vector3 capsuleStart = transform.position;
+        Vector3 capsuleEnd = exitPoint.transform.position;
+        Vector3 targetPos = target.position + new Vector3(0f, 1f, 0f);
 
-        // Draw a debug ray to visualize the raycast in the scene view
-        Debug.DrawRay(transform.position + new Vector3(0f, 1f, 0f), directionToPlayer, Color.blue);
+        Vector3 direction = (targetPos - capsuleStart).normalized;
+        float radius = 0.2f;
 
-        //if (Physics.Raycast(transform.position + new Vector3(0f, 1f, 0f), directionToPlayer, out RaycastHit hit, 100, ~groundLayerMask))
-        if (Physics.Raycast(transform.position + new Vector3(0f, 1f, 0f), directionToPlayer, out RaycastHit hit, 100, LayerMask.GetMask("Character", "Obstacle")))
+        RaycastHit[] hits = Physics.CapsuleCastAll(
+            capsuleStart,
+            capsuleEnd,
+            radius,
+            direction,
+            300,
+            LayerMask.GetMask("Character", "Obstacle")
+        );
+
+        float closestHitDist = Mathf.Infinity;
+        RaycastHit? closestHit = null;
+
+        foreach (RaycastHit hit in hits)
         {
-            if (hit.collider.CompareTag("Player"))
+            if (hit.collider.gameObject == gameObject) continue; // ignore self
+
+            if (hit.distance < closestHitDist)
             {
-                return true;
+                closestHit = hit;
+                closestHitDist = hit.distance;
             }
         }
 
-        return false;
+        return closestHit.HasValue && closestHit.Value.collider.CompareTag("Player");
     }
 
 
@@ -733,7 +666,7 @@ public class Enemy : MonoBehaviour
             // Max number of entities in the OverlapSphere
             int maxColliders = 10;
             Collider[] hitColliders = new Collider[maxColliders];
-            int numColliders = Physics.OverlapSphereNonAlloc(transform.position, 50f, hitColliders, characterLayer);
+            int numColliders = Physics.OverlapSphereNonAlloc(transform.position, searchTargetRadius, hitColliders, characterLayer);
 
             for (int i = 0; i < numColliders; i++)
             {
@@ -764,6 +697,12 @@ public class Enemy : MonoBehaviour
         }
     }
 
+    //void OnDrawGizmosSelected()
+    //{
+    //    Gizmos.color = Color.red;
+    //    Gizmos.DrawWireSphere(transform.position, searchTargetRadius);
+    //}
+
     public void SetBoolSingle(string triggerName)
     {
         foreach (AnimatorControllerParameter param in animator.parameters)
@@ -793,19 +732,7 @@ public class Enemy : MonoBehaviour
         animator.SetBool(triggerName, false);
     }
 
-    public void CastAttack()
-    {
-        //currentAttackCooldown = attackCooldown;
-        //isAttackOnCooldown = true;
-        //isAttacking = true;
-    }
 
-    public void CastPower()
-    {
-        //currentPowerCooldown = powerCooldown;
-        //isPowerOnCooldown = true;
-        //isPowering = true;
-    }
 
     private void UpdateSpellCooldowns()
     {
@@ -829,7 +756,7 @@ public class Enemy : MonoBehaviour
         foreach (AbilityData ability in abilitiesToReset)
         {
             abilityCooldowns[ability] = 0;
-            if(CheckForConditions(ability))
+            if (AreConditionsMet(ability))
             {
                 offCooldownAbilities.Add(ability);
             }
@@ -850,8 +777,10 @@ public class Enemy : MonoBehaviour
         }
     }
 
-    public void UpdateCCDuration(float newCCDuration)
+    public void UpdateCCDuration(float newCCDuration, string source)
     {
+        if (isBoss && source == "Player") return; // bosses cant get CCed by players
+
         //Debug.Log("cCDuration:" + cCDuration + ", newCCDuration:" + newCCDuration);
         if (newCCDuration >= cCDuration)
         {
@@ -910,16 +839,16 @@ public class Enemy : MonoBehaviour
 
     private void DecideNextBossMoveID()
     {
-        // If we are not already in phase 2 => WE ENTER PHASE 2 and we play ONCE the phase 2 ability 
-        if (currentHealth <= 0.75f * maxHealth && !isPhaseTwo)
-        {
-            isPhaseTwo = true;
-        }
-        // If we are not already in phase 3 => WE ENTER PHASE 3 and we play ONCE the phase 3 ability 
-        if (currentHealth <= 0.50f * maxHealth && !isPhaseTree)
-        {
-            isPhaseTree = true;
-        }
+        //// If we are not already in phase 2 => WE ENTER PHASE 2 and we play ONCE the phase 2 ability 
+        //if (currentHealth <= 0.75f * maxHealth && !isPhaseTwo)
+        //{
+        //    isPhaseTwo = true;
+        //}
+        //// If we are not already in phase 3 => WE ENTER PHASE 3 and we play ONCE the phase 3 ability 
+        //if (currentHealth <= 0.50f * maxHealth && !isPhaseTree)
+        //{
+        //    isPhaseTree = true;
+        //}
 
         currentAbility = offCooldownAbilities[0];
 
@@ -931,13 +860,6 @@ public class Enemy : MonoBehaviour
         return Utility.GetClipThreshold(attackBlendTree, currentAbility.animationClip);
     }
 
-    // Useless but present in some animation so keep it to avoid null refs
-    public void DecideNextMove() { }
-
-    public void BossRockFall()
-    {
-        Debug.Log("ROCKS ARE FALLING HERE");
-    }
 
     [AttackMethod]
     public void JumpAttack()
@@ -947,12 +869,11 @@ public class Enemy : MonoBehaviour
         // distance from the target
         float jumpDistance = 1f;
 
-        Vector3 directionToTarget = (target.position - transform.position).normalized;
-        Vector3 finalPosition = target.position - directionToTarget * jumpDistance;
+        Vector3 directionToTarget = (targetPosition - transform.position).normalized;
+        Vector3 finalPosition = targetPosition - directionToTarget * jumpDistance;
 
         StartCoroutine(JumpToLocation(finalPosition));
     }
-
 
     private IEnumerator JumpToLocation(Vector3 destination)
     {
@@ -968,11 +889,415 @@ public class Enemy : MonoBehaviour
             yield return null;
         }
 
+        // Max number of entities in the OverlapSphere
+        int maxColliders = 10;
+        Collider[] hitColliders = new Collider[maxColliders];
+        int numColliders = Physics.OverlapSphereNonAlloc(transform.position, meleeHitboxSize, hitColliders, characterLayer);
+
+        for (int i = 0; i < numColliders; i++)
+        {
+            if (hitColliders[i].CompareTag("Player"))
+            {
+                EventManager.PlayerTakeDamage(currentAbility.damage);
+            }
+        }
+
+        // We check for rocks to destroy them
+        int maxRockColliders = 2;
+        Collider[] hitRocksColliders = new Collider[maxRockColliders];
+        int numRocksColliders = Physics.OverlapSphereNonAlloc(transform.position, meleeHitboxSize + 1, hitRocksColliders, LayerMask.GetMask("Obstacle"));
+
+        for (int i = 0; i < numRocksColliders; i++)
+        {
+            if (hitRocksColliders[i].CompareTag("Destructible"))
+            {
+                hitRocksColliders[i].gameObject.SetActive(false);
+            }
+        }
+
         transform.position = destination;
 
         // wait time before the next action, so we dont rotate towards target while ending the animation
         yield return new WaitForSeconds(1.5f);
         isCharging = false;
+    }
+
+    [AttackMethod]
+    public void ChargingCoroutineStart()
+    {
+        StartCoroutine(MoveForwardCoroutine());
+    }
+
+    IEnumerator MoveForwardCoroutine()
+    {
+        float timer = .5f;
+        isCharging = true;
+        while (timer > 0f)
+        {
+            //this.transform.LookAt(this.transform.forward);
+            // Move the CharacterController forward
+            controller.Move(transform.forward * speed * 5f * Time.deltaTime);
+
+            agent.avoidancePriority = 10;
+            agent.obstacleAvoidanceType = ObstacleAvoidanceType.NoObstacleAvoidance;
+
+            // Check for collisions with objects on the 'Player' layer
+            Collider[] colliders = Physics.OverlapBox(transform.position, transform.localScale / 2, Quaternion.identity, characterLayer);
+
+            foreach (Collider collider in colliders)
+            {
+                if (collider.CompareTag("Player"))
+                {
+                    //Debug.Log("Collided with a character: " + collider.name);
+
+                    // Handle collision with 'Player' here
+                }
+            }
+
+            // Decrease the timer
+            timer -= Time.deltaTime;
+
+            // Wait for the next frame
+            yield return null;
+        }
+        isCharging = false;
+        ResetAttackingAndPowering();
+
+        agent.obstacleAvoidanceType = ObstacleAvoidanceType.LowQualityObstacleAvoidance;
+
+        agent.avoidancePriority = 50;
+
+        // Stop the CharacterController when the time is up
+        controller.Move(Vector3.zero);
+    }
+
+
+    [AttackMethod]
+    public void MeleeHit()
+    {
+        // Max number of entities in the OverlapSphere
+        int maxColliders = 10;
+        Collider[] hitColliders = new Collider[maxColliders];
+        int numColliders = Physics.OverlapSphereNonAlloc(transform.position, meleeHitboxSize, hitColliders, characterLayer);
+
+        for (int i = 0; i < numColliders; i++)
+        {
+            if (hitColliders[i].CompareTag("Player"))
+            {
+                EventManager.PlayerTakeDamage(currentAbility.damage);
+            }
+        }
+    }
+
+    // Triggered via SpawnAoe Attack Animation
+    [AttackMethod]
+    public void SpawnAOE()
+    {
+        if (!target) return;
+        GameObject newObject = PoolingManagerSingleton.Instance.GetObjectFromPool(currentAbility.projectilePrefab.name, targetPosition + new Vector3(0, 0.2f, 0));
+
+        if (newObject.TryGetComponent<AbilityValues>(out AbilityValues aoeSpell))
+        {
+            aoeSpell.Damage = currentAbility.damage;
+            aoeSpell.DoDamage(currentAbility.damage);
+        }
+    }
+
+
+    [AttackMethod]
+    public void RangedHit()
+    {
+        if (targetPosition == Vector3.zero) return; 
+
+        Vector3 adjustedTargetPosition = targetPosition + new Vector3(0, 1f, 0);
+
+        Vector3 direction = (adjustedTargetPosition - exitPoint.transform.position).normalized;
+
+        GameObject newObject = PoolingManagerSingleton.Instance.GetObjectFromPool(currentAbility.projectilePrefab.name, exitPoint.transform.position);
+
+        if (newObject != null)
+        {
+            if (newObject.TryGetComponent<AbilityValues>(out AbilityValues projectile))
+            {
+                projectile.Damage = currentAbility.damage;
+            }
+
+            Quaternion rotationToTarget = Quaternion.LookRotation(direction);
+            newObject.transform.rotation = rotationToTarget;
+        }
+    }
+
+
+
+    [AttackMethod]
+    public void BossRockFall()
+    {
+        Debug.Log("Boss Rock Fall");
+        EventManager.BossRockFall(1);
+    }
+
+    [AttackMethod]
+    public void TestSpellIndicator()
+    {
+        Vector3 groundTargetPosition = targetPosition + new Vector3(0, 0.01f, 0);
+        RockFallAtTargetPos(2f, 3f, groundTargetPosition);
+    }
+
+    private void RockFallAtTargetPos(float duration, float size, Vector3 targetPos)
+    {
+        GameObject newObject = PoolingManagerSingleton.Instance.GetObjectFromPool("Telegraph_AoE", targetPos);
+
+        if (newObject.TryGetComponent<TelegraphIndicator>(out TelegraphIndicator indicator))
+        {
+            indicator.SetIndicatorPosition(duration, size);
+            StartCoroutine(RockFalling(duration, size, targetPos));
+        }
+    }
+
+
+    private IEnumerator RockFalling(float indicatorDuration, float size, Vector3 targetPos)
+    {
+        float desiredFallDuration = 1f;
+
+        float waitTime = indicatorDuration - desiredFallDuration;
+        yield return new WaitForSeconds(waitTime);
+
+        GameObject newObject = PoolingManagerSingleton.Instance.GetObjectFromPool("Rock_Cylinder", targetPos + Vector3.up * 10f);
+
+        Vector3 startPos = newObject.transform.position;
+        float halfHeight = newObject.transform.localScale.y * 0.5f;
+        Vector3 endPos = targetPos + Vector3.up * halfHeight + new Vector3(0, 0.5f, 0);
+
+        float elapsed = 0f;
+
+        // Make the rock fall in exactly 1 second
+        while (elapsed < 1f)
+        {
+            elapsed += Time.deltaTime;
+            float t = Mathf.Clamp01(elapsed / 1f); 
+
+            float curvedT = Mathf.Pow(t, 4);
+
+            newObject.transform.position = Vector3.Lerp(startPos, endPos, curvedT);
+
+            yield return null;
+        }
+
+        newObject.transform.position = endPos;
+        newObject.GetComponent<RockMaterialFade>().StartCoroutine("RockFalling");
+
+        // overlap sphere to check for characters
+        int maxColliders = 10;
+        Collider[] hitColliders = new Collider[maxColliders];
+        int numColliders = Physics.OverlapSphereNonAlloc(newObject.transform.position, size/2, hitColliders, characterLayer);
+
+        for (int i = 0; i < numColliders; i++)
+        {
+            if (hitColliders[i].CompareTag("Player"))
+            {
+                EventManager.PlayerTakeDamage(currentAbility.damage);
+            }
+        }
+
+        // overlap sphere to check for rocks
+        int maxRockColliders = 5;
+        Collider[] hitRocksColliders = new Collider[maxRockColliders];
+        int numRocksColliders = Physics.OverlapSphereNonAlloc(newObject.transform.position, size/2, hitRocksColliders, LayerMask.GetMask("Obstacle"));
+
+        for (int i = 0; i < numRocksColliders; i++)
+        {
+            if (hitRocksColliders[i].CompareTag("Destructible"))
+            {
+                hitRocksColliders[i].gameObject.SetActive(false);
+            }
+        }
+
+
+        debugSpherePos = newObject.transform.position;
+        debugSphereRadius = size/2;
+
+        yield return new WaitForSeconds(2f);
+        debugSpherePos = null;
+
+    }
+    private Vector3? debugSpherePos = null;
+    private float debugSphereRadius = 0f;
+
+    private void OnDrawGizmos()
+    {
+        if (debugSpherePos.HasValue)
+        {
+            Gizmos.color = UnityEngine.Color.red;
+            Gizmos.DrawWireSphere(debugSpherePos.Value, debugSphereRadius);
+        }
+    }
+
+    [AttackMethod]
+    public void TripleRockFallFront()
+    {
+        StartCoroutine(TripleRockFallRoutine());
+    }
+
+    private IEnumerator TripleRockFallRoutine()
+    {
+        Vector3 forwardDirection = transform.forward.normalized;
+        Vector3 basePosition = targetPosition + new Vector3(0, 0.01f, 0);
+        float spacing = 3f;
+
+        for (int i = 0; i < 3; i++)
+        {
+            Vector3 spawnPosition = basePosition + forwardDirection * (i * spacing);
+
+            float indicatorDuration = 1.25f + (i * 0.33f);
+            float size = 3f + (i * 0.65f);
+
+            RockFallAtTargetPos(indicatorDuration, size, spawnPosition);
+
+            yield return new WaitForSeconds(1f); // Small delay between rocks
+        }
+    }
+
+    [AttackMethod]
+    public void ChargingUntilObstacleStart()
+    {
+        if (target == null) return;
+
+        Vector3 chargeDirection = (targetPosition - transform.position).normalized;
+        StartCoroutine(ChargeUntilObstacleCoroutine(chargeDirection));
+    }
+
+    private IEnumerator ChargeUntilObstacleCoroutine(Vector3 chargeDirection)
+    {
+        isCharging = true;
+
+        transform.forward = chargeDirection;
+
+        agent.avoidancePriority = 0;
+        agent.obstacleAvoidanceType = ObstacleAvoidanceType.NoObstacleAvoidance;
+        agent.updateRotation = false;
+
+        HashSet<Collider> alreadyHitPlayers = new HashSet<Collider>();
+
+        while (true)
+        {
+            agent.Move(chargeDirection * speed * 5f * Time.deltaTime);
+
+            float characterHeight = 2.25f;
+            float radius = 1f;
+
+            Vector3 capsuleStart = transform.position + Vector3.up * (characterHeight - radius);
+            Vector3 capsuleEnd = transform.position + Vector3.up * radius;
+
+            Collider[] hits = Physics.OverlapCapsule(capsuleStart, capsuleEnd, radius, LayerMask.GetMask("Character", "Obstacle"));
+
+            foreach (Collider hit in hits)
+            {
+                if (hit.CompareTag("Player") && !alreadyHitPlayers.Contains(hit))
+                {
+                    alreadyHitPlayers.Add(hit);
+                    OnHitPlayer(hit);
+                }
+                else if (hit.CompareTag("Destructible"))
+                {
+                    OnHitDestructibleObstacle(hit);
+                    cCDuration += 2.5f;
+                    yield return BreakCharge();
+                    yield break;
+                }
+                else if (hit.CompareTag("Indestructible"))
+                {
+                    OnHitIndestructibleObstacle(hit);
+                    cCDuration += 2.5f;
+                    yield return BreakCharge();
+                    yield break;
+                }
+            }
+
+            yield return null; // wait for next frame
+        }
+    }
+
+
+    private IEnumerator BreakCharge()
+    {
+        isCharging = false;
+        ResetAttackingAndPowering();
+
+        agent.avoidancePriority = 50;
+        agent.obstacleAvoidanceType = ObstacleAvoidanceType.LowQualityObstacleAvoidance;
+        agent.updateRotation = true;
+
+        agent.Move(Vector3.zero);
+        yield return null;
+    }
+
+
+    private void OnHitPlayer(Collider player)
+    {
+        Debug.Log("Hit player!");
+    }
+
+    private void OnHitDestructibleObstacle(Collider obstacle)
+    {
+        Debug.Log("Hit Destructible Obstacle!");
+        obstacle.gameObject.SetActive(false);
+    }
+
+    private void OnHitIndestructibleObstacle(Collider obstacle)
+    {
+        Debug.Log("RockFallFullArena called");
+        Vector3 start = BossFightManager.Instance.BottomLeftCorner.position;
+        Vector3 end = BossFightManager.Instance.TopRightCorner.position;
+        float spacing = BossFightManager.Instance.Spacing;
+
+        List<Vector3> positions = new List<Vector3>();
+
+        for (float x = start.x; x <= end.x; x += spacing)
+        {
+            for (float z = start.z; z <= end.z; z += spacing)
+            {
+                positions.Add(new Vector3(x, start.y, z));
+            }
+        }
+
+        foreach (Vector3 pos in positions)
+        {
+            StartCoroutine(DelayedRockFall(pos));
+        }
+    }
+    private IEnumerator DelayedRockFall(Vector3 pos)
+    {
+        int delay = UnityEngine.Random.Range(0, 3);
+        yield return new WaitForSeconds(delay);
+
+        int duration = UnityEngine.Random.Range(3, 7);
+        int size = UnityEngine.Random.Range(3, 7);
+
+        // Add random offset to position
+        float offsetX = UnityEngine.Random.Range(-1f, 1f);
+        float offsetZ = UnityEngine.Random.Range(-1f, 1f);
+
+        Vector3 randomizedPos = new Vector3(pos.x + offsetX, pos.y, pos.z + offsetZ);
+
+        RockFallAtTargetPos(duration, size, pos);
+    }
+
+    private IEnumerator TriggerAbilityAfterDelay(float delay, Vector3 targetPos)
+    {
+        yield return new WaitForSeconds(delay);
+
+        TriggerAbility(targetPos);
+    }
+
+    private void TriggerAbility(Vector3 targetPos)
+    {
+        GameObject newObject = PoolingManagerSingleton.Instance.GetObjectFromPool(currentAbility.projectilePrefab.name, targetPos + new Vector3(0, 0.2f, 0));
+
+        if (newObject.TryGetComponent<AbilityValues>(out AbilityValues aoeSpell))
+        {
+            aoeSpell.Damage = currentAbility.damage;
+            aoeSpell.DoDamage(currentAbility.damage);
+        }
     }
 
 

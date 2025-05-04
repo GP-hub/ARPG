@@ -6,7 +6,7 @@ public static class EventManager/* : Singleton<EventManager>*/
 {
     public static int character;
 
-    public static event Action onEventEnded; 
+    public static event Action onEventEnded;
     public static void EventEnded()
     {
         if (onEventEnded != null)
@@ -55,7 +55,7 @@ public static class EventManager/* : Singleton<EventManager>*/
     public static event Action onEnemyDecideNextMove;
     public static void EnemyDecideNextMove()
     {
-        if (onEnemyDecideNextMove !=null)
+        if (onEnemyDecideNextMove != null)
         {
             onEnemyDecideNextMove();
         }
@@ -121,6 +121,24 @@ public static class EventManager/* : Singleton<EventManager>*/
         if (onSceneLoad != null)
         {
             onSceneLoad(sceneName);
+        }
+    }
+
+    public static event Action<int> onBossRockFall;
+    public static void BossRockFall(int numberOfRocks)
+    {
+        if (onBossRockFall != null)
+        {
+            onBossRockFall(numberOfRocks);
+        }
+    }
+
+    public static event Action onBossHitWall;
+    public static void BossHitWall()
+    {
+        if (onBossHitWall != null)
+        {
+            onBossHitWall();
         }
     }
 

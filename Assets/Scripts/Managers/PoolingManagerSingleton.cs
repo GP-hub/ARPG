@@ -22,6 +22,7 @@ public class PoolingManagerSingleton : Singleton<PoolingManagerSingleton>
     }
 
 
+
     void CheckForGameSceneLoad(string sceneName)
     {
         if (sceneName == LoaderManager.Scene.LevelScene.ToString())

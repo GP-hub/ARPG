@@ -24,6 +24,10 @@ public class Healthbar : MonoBehaviour
 
         EventManager.FireChargeCountChange(SpellCharge.SpellCount);
     }
+    void OnDestroy()
+    {
+        if (isPlayerBar) EventManager.onFireChargeCountChange -= UpdateFireChargeBarUI;
+    }
 
     void Update()
     {
@@ -47,6 +51,11 @@ public class Healthbar : MonoBehaviour
 
     public void OnHealthChanged(float healthFill)
     {
+        if (healthbarImage == null)
+        {
+            Debug.Log("Healthbar image is null. Skipping health update.");
+            return;
+        }
         healthbarImage.fillAmount = healthFill;
 
         if (healthbarImage.fillAmount <= 0)

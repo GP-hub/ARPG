@@ -26,6 +26,12 @@ public class PlayerHealth : MonoBehaviour
         EventManager.PlayerUpdateHealthUI(health, maxHealth);
     }
 
+    void OnDestroy()
+    {
+        EventManager.onPlayerTakeDamage -= PlayerTakeDamage;
+        EventManager.onPlayerTakeHeal -= PlayerTakeHeal;
+    }
+
     public void PlayerTakeDamage(int damageAmount)
     {
         health -= damageAmount;
