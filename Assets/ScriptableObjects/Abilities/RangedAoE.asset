@@ -16,7 +16,7 @@ MonoBehaviour:
   maxAttackRange: 100
   minAttackRange: 20
   damage: 10
-  cooldown: 4
+  cooldown: 20
   projectilePrefab: {fileID: 8762737198241174101, guid: 3ca115d91ca41d14a932113d1b874b1f, type: 3}
   animationClip: {fileID: 7400000, guid: 15c96838997819943b7e1e1592f3051e, type: 2}
   selectedFunctionName: SpawnAOE

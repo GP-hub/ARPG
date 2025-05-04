@@ -124,7 +124,6 @@ public class Enemy : MonoBehaviour
     // 
     void Start()
     {
-        AIManager.Instance.AddUnit(this);
         agent.speed = speed;
         currentHealth = maxHealth;
         GenerateEnemyHealthBar(hpBarProxyFollow);
@@ -136,6 +135,8 @@ public class Enemy : MonoBehaviour
             // Pass the player as the target for now
             //target = player.transform;
         }
+
+        AIManager.Instance.AddUnit(this);
 
         lastPosition = transform.position;
 
@@ -1205,7 +1206,7 @@ public class Enemy : MonoBehaviour
                 }
                 else if (hit.CompareTag("Indestructible"))
                 {
-                    //OnHitIndestructibleObstacle(hit);
+                    OnHitIndestructibleObstacle(hit);
                     cCDuration += 2.5f;
                     yield return BreakCharge();
                     yield break;
@@ -1255,16 +1256,13 @@ public class Enemy : MonoBehaviour
         {
             for (float z = start.z; z <= end.z; z += spacing)
             {
-                positions.Add(new Vector3(x, start.y, z)); // y stays fixed — assuming rocks fall from above
+                positions.Add(new Vector3(x, start.y, z));
             }
         }
 
-        // Spawn telegraph spells at the rest
         foreach (Vector3 pos in positions)
         {
-            //RockFallAtTargetPos(UnityEngine.Random.Range(3, 7), UnityEngine.Random.Range(3, 7), pos);
             StartCoroutine(DelayedRockFall(pos));
-            //PoolingManagerSingleton.Instance.GetObjectFromPool("Telegraph_AoE", pos);
         }
     }
     private IEnumerator DelayedRockFall(Vector3 pos)

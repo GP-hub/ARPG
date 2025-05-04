@@ -12,13 +12,17 @@ public class AIManager : Singleton<AIManager>
 
     protected override void Awake()
     {
-        base.Awake();
         EventManager.onSceneLoad += ResetUnitsList;
+        base.Awake();
     }
 
     private void ResetUnitsList(string sceneName)
     {
-        if (sceneName == LoaderManager.Scene.LevelScene.ToString()) Units.Clear();
+        if (sceneName == LoaderManager.Scene.LevelScene.ToString())
+        {
+            Debug.Log("Resetting units list");
+            Units.Clear();
+        }
     }
 
 
@@ -27,7 +31,7 @@ public class AIManager : Singleton<AIManager>
         if (enemy == null) return;
 
         if (Units.Contains(enemy)) return;
-
+        Debug.Log("Adding enemy to list");
         Units.Add(enemy);
     }
 
