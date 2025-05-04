@@ -13,12 +13,11 @@ MonoBehaviour:
   m_Name: BossJumpAttack
   m_EditorClassIdentifier: 
   moveName: bossjumpattack
-  maxAttackRange: 0
-  minAttackRange: 0
+  maxAttackRange: 200
+  minAttackRange: 10
   damage: 2
   cooldown: 10
   projectilePrefab: {fileID: 0}
   animationClip: {fileID: 7400000, guid: ebecde7db6c91cb42b5ab7e9077ddd6d, type: 2}
-  selectedFunctionName: MeleeHit
-  conditions:
-  - {fileID: 0}
+  selectedFunctionName: JumpAttack
+  conditions: []

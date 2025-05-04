@@ -66,14 +66,7 @@ public class Enemy : MonoBehaviour
 
     [Space(10)]
     [Header("Power")]
-    //[SerializeField] private bool hasPowerAbility;
-    //[SerializeField] private string AoePrefabName;
-    //[SerializeField] private int powerDamage;
-    //[SerializeField] private float powerRange;
-    //[SerializeField] private float powerCooldown;
     private float currentPowerCooldown;
-    private float lastPowerTime;
-
 
     private NavMeshAgent agent;
 
@@ -105,7 +98,6 @@ public class Enemy : MonoBehaviour
 
     [HideInInspector] public bool isCharging;
     [HideInInspector] public bool isPowerOnCooldown;
-    //[HideInInspector] public bool isAttackOnCooldown;
 
     public IState currentState;
 
@@ -132,8 +124,8 @@ public class Enemy : MonoBehaviour
     // 
     void Start()
     {
+        AIManager.Instance.AddUnit(this);
         agent.speed = speed;
-        AIManager.Instance.Units.Add(this);
         currentHealth = maxHealth;
         GenerateEnemyHealthBar(hpBarProxyFollow);
 
@@ -178,7 +170,7 @@ public class Enemy : MonoBehaviour
 
     private void UseAbility(AbilityData ability)
     {
-        if (ability.cooldown <= 0) return;
+        //if (ability.cooldown <= 0) return;
         isAttacking = true;
         offCooldownAbilities.Remove(ability);
         abilityCooldowns[ability] = ability.cooldown;
@@ -186,10 +178,9 @@ public class Enemy : MonoBehaviour
 
     private void UsePowerAbility(AbilityData ability)
     {
-        if (ability.cooldown <= 0) return;
+        //if (ability.cooldown <= 0) return;
         isPowering = true;
         isPowerOnCooldown = true;
-        //abilityCooldowns[ability] = ability.cooldown;
         currentPowerCooldown = ability.cooldown;
     }
 
@@ -275,8 +266,6 @@ public class Enemy : MonoBehaviour
         {
             if (abilities == null || abilities.Count == 0) return;
 
-            //blendTree.useAutomaticThresholds = false; // Set manual thresholds if needed
-
             ChildMotion[] newChildren = new ChildMotion[abilities.Count];
 
             for (int i = 0; i < abilities.Count; i++)
@@ -314,14 +303,11 @@ public class Enemy : MonoBehaviour
     {
         while (true)
         {
-            // Check if the character controller is grounded
             isGrounded = controller.isGrounded;
 
-            // Enable/disable the NavMeshAgent based on grounding status
             if (isGrounded) agent.enabled = true;
             else agent.enabled = false;
 
-            // Wait for a short duration before checking again
             yield return new WaitForSeconds(0.1f);
         }
     }
@@ -408,8 +394,8 @@ public class Enemy : MonoBehaviour
             // Previous method of calculating distance that do one more operation: a square root
             //float distanceToTarget1 = Vector3.Distance(transform.position, target.position);
             float distanceToTarget = (transform.position - target.position).sqrMagnitude;
-            if (isPowering || isAttacking) return;
 
+            if (isPowering || isAttacking) return;
             if (CanPower(distanceToTarget))
             {
 
@@ -504,12 +490,6 @@ public class Enemy : MonoBehaviour
 
     private void AbilityFilteringAndSorting(float distanceToTarget)
     {
-        //if (Time.time < nextAbilityCheckTime) return;
-        //nextAbilityCheckTime = Time.time + abilityCheckInterval;
-
-        //Debug.Log("Abilities list: " + offCooldownAbilities.Count + " distance to target: " + distanceToTarget);
-
-
 
         //Add abilities that are now in range and not on cooldown
         foreach (AbilityData ability in abilities)
@@ -566,7 +546,6 @@ public class Enemy : MonoBehaviour
 
     public void PerformAttack()
     {
-        Debug.Log("Performing attack with ability: " + currentAbility.moveName);
         if (currentAbility == null || string.IsNullOrEmpty(currentAbility.selectedFunctionName))
         {
             Debug.Log($"{gameObject.name} has no ability or function selected.");
@@ -602,50 +581,6 @@ public class Enemy : MonoBehaviour
 
             agent.SetDestination(targetPos);
         }
-    }
-
-    public IEnumerator DelayedAttackEnter()
-    {
-        float duration = 0.2f;
-        float timer = 0f;
-
-        TargetPosition = Target.position;
-
-        SetBoolSingle("TriggerAttack");
-        DecideNextAbility();
-        if (Agent.isOnNavMesh && Agent.enabled) Stop();
-
-
-        while (timer < duration)
-        {
-            Utility.RotateTowardsTarget(transform, Target, RotationSpeed);
-            timer += Time.deltaTime;
-            yield return null;
-        }
-
-        TargetPosition = Target.position;
-        Animator.SetFloat("AttackTree", BlendTreeThreshold());
-    }
-
-    public IEnumerator DelayedPowerEnter()
-    {
-        float duration = 0.2f;
-        float timer = 0f;
-
-        TargetPosition = Target.position;
-
-        SetBoolSingle("TriggerPower");
-        DecideNextPowerAbility();
-        if (Agent.isOnNavMesh && Agent.enabled) Stop();
-
-        while (timer < duration)
-        {
-            Utility.RotateTowardsTarget(transform, Target, RotationSpeed);
-            timer += Time.deltaTime;
-            yield return null;
-        }
-
-        TargetPosition = Target.position;
     }
 
 
@@ -924,9 +859,6 @@ public class Enemy : MonoBehaviour
         return Utility.GetClipThreshold(attackBlendTree, currentAbility.animationClip);
     }
 
-    // Useless but present in some animation so keep it to avoid null refs
-    public void DecideNextMove() { }
-
 
     [AttackMethod]
     public void JumpAttack()
@@ -1009,7 +941,7 @@ public class Enemy : MonoBehaviour
             agent.obstacleAvoidanceType = ObstacleAvoidanceType.NoObstacleAvoidance;
 
             // Check for collisions with objects on the 'Player' layer
-            Collider[] colliders = Physics.OverlapBox(transform.position, transform.localScale / 2, Quaternion.identity, LayerMask.GetMask("Character"));
+            Collider[] colliders = Physics.OverlapBox(transform.position, transform.localScale / 2, Quaternion.identity, characterLayer);
 
             foreach (Collider collider in colliders)
             {
@@ -1227,11 +1159,9 @@ public class Enemy : MonoBehaviour
     [AttackMethod]
     public void ChargingUntilObstacleStart()
     {
-        Debug.Log("target" + target);
         if (target == null) return;
 
         Vector3 chargeDirection = (targetPosition - transform.position).normalized;
-        Debug.Log("targetPosition: " + targetPosition + " = " + transform.position);
         StartCoroutine(ChargeUntilObstacleCoroutine(chargeDirection));
     }
 
@@ -1289,7 +1219,6 @@ public class Enemy : MonoBehaviour
 
     private IEnumerator BreakCharge()
     {
-        Debug.Log("BreakCharge");
         isCharging = false;
         ResetAttackingAndPowering();
 

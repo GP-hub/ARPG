@@ -26,7 +26,7 @@ class IdleState : IState
         //enemy.ResetAttackingAndPowering();
         if (enemy.Target != null && enemy.CanSeeTarget(enemy.Target))
         {
-            Utility.RotateTowardsTarget(enemy.transform, enemy.Target, enemy.RotationSpeed);
+            Utility.RotateTowardsTarget(enemy.transform, enemy.Target.position, enemy.RotationSpeed);
             //enemy.ChangeState(new FollowState());
         }
     }

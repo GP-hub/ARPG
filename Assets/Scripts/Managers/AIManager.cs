@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using Unity.Cinemachine;
 using UnityEngine;
 
 public class AIManager : Singleton<AIManager>
@@ -7,10 +8,36 @@ public class AIManager : Singleton<AIManager>
     [SerializeField] private float radius;
     [SerializeField] public List<Enemy> Units = new List<Enemy>();
 
-    public float Radius { get => radius;}
+    public float Radius { get => radius; }
+
+    protected override void Awake()
+    {
+        base.Awake();
+        EventManager.onSceneLoad += ResetUnitsList;
+    }
+
+    private void ResetUnitsList(string sceneName)
+    {
+        if (sceneName == LoaderManager.Scene.LevelScene.ToString()) Units.Clear();
+    }
+
+
+    public void AddUnit(Enemy enemy)
+    {
+        if (enemy == null) return;
+
+        if (Units.Contains(enemy)) return;
+
+        Units.Add(enemy);
+    }
 
     public void MakeAgentCircleTarget(Transform target)
     {
+        if (Units.Count == 0)
+        {
+            Debug.Log("No enemy units");
+            return;
+        }
         if (Units.Count==1)
         {
             if (Units[0].currentState.GetStateName() == "FollowState")

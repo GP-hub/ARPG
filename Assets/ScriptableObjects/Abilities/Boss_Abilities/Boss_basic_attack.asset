@@ -14,9 +14,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   moveName: 
   maxAttackRange: 2
-  minAttackRange: 0
+  minAttackRange: 1
   damage: 10
-  cooldown: 0
+  cooldown: 1
   projectilePrefab: {fileID: 0}
   animationClip: {fileID: 7400000, guid: 236c9f44da5105442914fe3af7b66ba5, type: 2}
   selectedFunctionName: MeleeHit

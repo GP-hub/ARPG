@@ -4778,7 +4778,7 @@ Transform:
   m_GameObject: {fileID: 963194225}
   serializedVersion: 2
   m_LocalRotation: {x: 0.5847103, y: 0, z: 0, w: 0.8112422}
-  m_LocalPosition: {x: 221.4, y: 9, z: -39.2}
+  m_LocalPosition: {x: 210.5, y: 9, z: -43.3}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -9556,20 +9556,28 @@ PrefabInstance:
     m_TransformParent: {fileID: 1881322215}
     m_Modifications:
     - target: {fileID: 6631623146585664489, guid: c030b677f1aa4a043837074f45635c7a, type: 3}
+      propertyPath: powerAbility
+      value: 
+      objectReference: {fileID: 11400000, guid: ef3f768d4277eff468fdf13eced44d75, type: 2}
+    - target: {fileID: 6631623146585664489, guid: c030b677f1aa4a043837074f45635c7a, type: 3}
       propertyPath: healthPanelRect
       value: 
       objectReference: {fileID: 1913881814}
+    - target: {fileID: 6631623146585664489, guid: c030b677f1aa4a043837074f45635c7a, type: 3}
+      propertyPath: 'abilities.Array.data[0]'
+      value: 
+      objectReference: {fileID: 11400000, guid: 1929d1c9722ade74286b3ea395e3c245, type: 2}
     - target: {fileID: 6894551819877516500, guid: c030b677f1aa4a043837074f45635c7a, type: 3}
       propertyPath: m_Name
       value: Enemy (2)
       objectReference: {fileID: 0}
     - target: {fileID: 6894551819877516500, guid: c030b677f1aa4a043837074f45635c7a, type: 3}
       propertyPath: m_IsActive
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 8237003867044120221, guid: c030b677f1aa4a043837074f45635c7a, type: 3}
       propertyPath: m_LocalPosition.x
-      value: 0.08
+      value: 7.51
       objectReference: {fileID: 0}
     - target: {fileID: 8237003867044120221, guid: c030b677f1aa4a043837074f45635c7a, type: 3}
       propertyPath: m_LocalPosition.y
@@ -9577,7 +9585,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 8237003867044120221, guid: c030b677f1aa4a043837074f45635c7a, type: 3}
       propertyPath: m_LocalPosition.z
-      value: 208.66
+      value: 190.24
       objectReference: {fileID: 0}
     - target: {fileID: 8237003867044120221, guid: c030b677f1aa4a043837074f45635c7a, type: 3}
       propertyPath: m_LocalRotation.w
@@ -11045,7 +11053,7 @@ Transform:
   m_GameObject: {fileID: 2055046826}
   serializedVersion: 2
   m_LocalRotation: {x: 0.5847103, y: 0, z: 0, w: 0.8112422}
-  m_LocalPosition: {x: 221.4, y: 9, z: -39.2}
+  m_LocalPosition: {x: 210.5, y: 9, z: -43.3}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -12454,7 +12462,7 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 178050982910570537, guid: 056cd2ef5c48bd543a8b8a967be299d2, type: 3}
       propertyPath: m_LocalPosition.x
-      value: 221.4
+      value: 210.5
       objectReference: {fileID: 0}
     - target: {fileID: 178050982910570537, guid: 056cd2ef5c48bd543a8b8a967be299d2, type: 3}
       propertyPath: m_LocalPosition.y
@@ -12462,7 +12470,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 178050982910570537, guid: 056cd2ef5c48bd543a8b8a967be299d2, type: 3}
       propertyPath: m_LocalPosition.z
-      value: -36.2
+      value: -40.3
       objectReference: {fileID: 0}
     - target: {fileID: 178050982910570537, guid: 056cd2ef5c48bd543a8b8a967be299d2, type: 3}
       propertyPath: m_LocalRotation.w
@@ -12531,6 +12539,10 @@ PrefabInstance:
     - target: {fileID: 2740951673079534500, guid: 056cd2ef5c48bd543a8b8a967be299d2, type: 3}
       propertyPath: m_IsActive
       value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 3142904809075892329, guid: 056cd2ef5c48bd543a8b8a967be299d2, type: 3}
+      propertyPath: attackDamage
+      value: 80
       objectReference: {fileID: 0}
     - target: {fileID: 3142904809075892329, guid: 056cd2ef5c48bd543a8b8a967be299d2, type: 3}
       propertyPath: powerCooldownImage
@@ -15580,6 +15592,10 @@ MonoBehaviour:
   abilities:
   - {fileID: 11400000, guid: dea3f3412b4549c469b2dcfe8ceccd1e, type: 2}
   - {fileID: 11400000, guid: 43e2815c328dfc947adb8afa01198ea6, type: 2}
+  - {fileID: 11400000, guid: 9d868a3eaac6a6a408ed85981147f3fa, type: 2}
+  - {fileID: 11400000, guid: c51759b53d11fa240ac7f724daf0ce64, type: 2}
+  - {fileID: 11400000, guid: 60fcc436682b08647971458db820cff9, type: 2}
+  - {fileID: 11400000, guid: bd9512b311cfdd94992883a0e7f46f28, type: 2}
   powerAbility: {fileID: 0}
   exitPoint: {fileID: 353010217}
   characterLayer:
