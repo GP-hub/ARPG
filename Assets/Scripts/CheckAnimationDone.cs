@@ -18,7 +18,6 @@ public class LogOnAnimationLoop : StateMachineBehaviour
         {
             previousLoopCount = currentLoopCount;
             animator.gameObject.GetComponent<Enemy>().StartCastCooldown();
-
         }
     }
 

@@ -738,10 +738,8 @@ public class Enemy : MonoBehaviour
 
     private void UpdateSpellCooldowns()
     {
-
         List<AbilityData> abilitiesToReset = new List<AbilityData>();
 
-        // Collect abilities that need to be reset
         foreach (AbilityData ability in new List<AbilityData>(abilityCooldowns.Keys))
         {
             if (abilityCooldowns[ability] > 0)
@@ -762,11 +760,6 @@ public class Enemy : MonoBehaviour
             {
                 offCooldownAbilities.Add(ability);
             }
-            //if (!abilities.Contains(ability))
-            //{
-            //    Debug.Log($"Ability {ability.name} is off cooldown and can be used.");
-            //    isPowerOnCooldown = false;
-            //}
         }
 
         if (currentPowerCooldown > 0f && isPowerOnCooldown)
@@ -783,7 +776,6 @@ public class Enemy : MonoBehaviour
     {
         if (isBoss && source == "Player") return; // bosses cant get CCed by players
 
-        //Debug.Log("cCDuration:" + cCDuration + ", newCCDuration:" + newCCDuration);
         if (newCCDuration >= cCDuration)
         {
             cCDuration = newCCDuration;
@@ -795,9 +787,6 @@ public class Enemy : MonoBehaviour
         if (isAttacking) isAttacking = false;
         if (isPowering) isPowering = false;
     }
-
-
-    /// ///////////////////////////////////////////////////////////////////////////////
 
     public void DecideNextAbility()
     {
@@ -865,10 +854,7 @@ public class Enemy : MonoBehaviour
     {
         if (target == null) return;
 
-        // distance from the target
         float jumpDistance = 1f;
-
-        //Vector3 targetPos = GetInaccurateTarget(target.position);
 
         Vector3 directionToTarget = (TargetPosition - transform.position).normalized;
         Vector3 finalPosition = TargetPosition - directionToTarget * jumpDistance;
@@ -878,9 +864,6 @@ public class Enemy : MonoBehaviour
 
     private IEnumerator JumpToLocation(Vector3 destination)
     {
-
-        //float jumpDuration = 1f; // Adjust the duration as needed
-
         float jumpDuration = (currentAbility.animationClip.length / attackState.speed) * 0.27f; // Adjust the duration as needed
         Debug.Log("Jump duration: " + jumpDuration);
         float t = 0f;
@@ -939,23 +922,18 @@ public class Enemy : MonoBehaviour
         isCharging = true;
         while (timer > 0f)
         {
-            //this.transform.LookAt(this.transform.forward);
-            // Move the CharacterController forward
             controller.Move(transform.forward * speed * 5f * Time.deltaTime);
 
             agent.avoidancePriority = 10;
             agent.obstacleAvoidanceType = ObstacleAvoidanceType.NoObstacleAvoidance;
 
-            // Check for collisions with objects on the 'Player' layer
             Collider[] colliders = Physics.OverlapBox(transform.position, transform.localScale / 2, Quaternion.identity, characterLayer);
 
             foreach (Collider collider in colliders)
             {
                 if (collider.CompareTag("Player"))
                 {
-                    //Debug.Log("Collided with a character: " + collider.name);
                     EventManager.PlayerTakeDamage(currentAbility.damage);
-                    // Handle collision with 'Player' here
                 }
             }
 
@@ -996,8 +974,6 @@ public class Enemy : MonoBehaviour
         }
     }
 
-
-
     private void OnDrawGizmosSelected()
     {
         if (target == null) return;
@@ -1010,7 +986,7 @@ public class Enemy : MonoBehaviour
     public void SpawnAOE()
     {
         if (!target) return;
-        //Vector3 targetPos = GetInaccurateTarget(target.position);
+
         GameObject newObject = PoolingManagerSingleton.Instance.GetObjectFromPool(currentAbility.projectilePrefab.name, TargetPosition + new Vector3(0, 0.2f, 0));
 
         if (newObject.TryGetComponent<AbilityValues>(out AbilityValues aoeSpell))
@@ -1025,7 +1001,7 @@ public class Enemy : MonoBehaviour
     public void RangedHit()
     {
         if (targetPosition == Vector3.zero) return;
-        //Vector3 targetPos = GetInaccurateTarget(target.position);
+
         Vector3 adjustedTargetPosition = TargetPosition + new Vector3(0, 1f, 0);
 
         Vector3 direction = (adjustedTargetPosition - exitPoint.transform.position).normalized;
@@ -1143,7 +1119,7 @@ public class Enemy : MonoBehaviour
 
     private IEnumerator TripleRockFallRoutine()
     {
-        float spacing = 1f;
+        float spacing = 2f;
 
         for (int i = 0; i < 3; i++)
         {
@@ -1155,12 +1131,12 @@ public class Enemy : MonoBehaviour
 
             // Apply the offset to the base position
             Vector3 spawnPosition = new Vector3(
-                basePosition.x + randomOffset.x,
-                basePosition.y,
-                basePosition.z + randomOffset.y
+                target.position.x + randomOffset.x,
+                target.position.y,
+                target.position.z + randomOffset.y
             );
 
-            float indicatorDuration = 1f + (i * 0.33f);
+            float indicatorDuration = .5f + (i * 0.25f);
             float size = 2f + (i * 0.75f);
 
             RockFallAtTargetPos(indicatorDuration, size, spawnPosition);

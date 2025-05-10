@@ -7,6 +7,7 @@ public class PlayerSpeedPerk : PerkEffect
     {
         PlayerMovement playerMovement = PerksManager.Instance.player.GetComponent<PlayerMovement>();
 
-        playerMovement.PlayerSpeed += 10f;
+        playerMovement.IncreasePlayerMaxMovespeed(10);
+        playerMovement.CurrentPlayerSpeed = playerMovement.PlayerSpeed;
     }
 }

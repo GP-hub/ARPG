@@ -190,7 +190,7 @@ public class AttackAndPowerCasting : MonoBehaviour
     public void MoveSpeedPlayerOnAttack()
     {
         // Speed of the player when casting attack
-        playerMovement.PlayerSpeed -= attackPlayerMovementSpeedPercent;
+        playerMovement.CurrentPlayerSpeed = playerMovement.PlayerSpeed * (1f - (attackPlayerMovementSpeedPercent / 100f));
 
         // Animation speed when using attacking
         animator.SetFloat("AttackSpeed", attackSpeedMultiplier);
@@ -212,7 +212,7 @@ public class AttackAndPowerCasting : MonoBehaviour
     public void MoveSpeedPlayerOnPower()
     {
         // Speed of the player when casting power
-        playerMovement.PlayerSpeed -= powerPlayerMovementSpeedPercent;
+        playerMovement.CurrentPlayerSpeed = playerMovement.PlayerSpeed * (1f - (powerPlayerMovementSpeedPercent / 100f));
 
         // IF spellCount is 0 THEN powerSpeed is 1, ELSE powerSpeed is equal to spellCount
         powerSpeedMultiplier = (SpellCharge.SpellCount == 0) ? 1 : SpellCharge.SpellCount;
@@ -299,42 +299,8 @@ public class AttackAndPowerCasting : MonoBehaviour
     public void CastFireball()
     {
         // We return the player speed to its original value
-        playerMovement.PlayerSpeed += attackPlayerMovementSpeedPercent;
+        //playerMovement.CurrentPlayerSpeed = playerMovement.PlayerSpeed;
 
-        #region previous method
-        //////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        ///////////////////////////////////////      OLD WAY      ////////////////////////////////////////////////////
-        //////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-        //// Define the plane at the current height of the projectile above ground
-        //Plane aimingPlane = new Plane(Vector3.up, new Vector3(0, exitPoint.transform.position.y, 0));
-
-        //// Raycast from camera to mouse cursor on that plane
-        //Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
-
-        //if (aimingPlane.Raycast(ray, out float distance))
-        //{
-        //    // Get the cursor position on that plane, keeping the Y value fixed to the projectile's height
-        //    Vector3 targetPoint = ray.GetPoint(distance);
-        //    targetPoint.y = exitPoint.transform.position.y;  // Fix height to projectile's current hover height
-
-        //    // Calculate the direction towards the target point on the plane
-        //    Vector3 direction = (targetPoint - exitPoint.transform.position).normalized;
-
-        //    // Spawn the projectile and set its direction
-        //    GameObject newObject = PoolingManagerSingleton.Instance.GetObjectFromPool(attackPrefabName, exitPoint.transform.position);
-
-        //    if (newObject != null)
-        //    {
-        //        newObject.transform.rotation = Quaternion.LookRotation(direction);
-        //        Debug.DrawLine(exitPoint.transform.position, targetPoint, Color.magenta, 2f); // Visualize the direction
-        //    }
-        //}
-
-        //////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        //////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        //////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        #endregion previous method
 
         float yRotation = lineDecal.transform.eulerAngles.y;
  
@@ -357,7 +323,7 @@ public class AttackAndPowerCasting : MonoBehaviour
     // Called by Player Power Animation Keyframe
     public void CastMeteor()
     {
-        playerMovement.PlayerSpeed += powerPlayerMovementSpeedPercent;
+        playerMovement.CurrentPlayerSpeed = playerMovement.PlayerSpeed;
 
         Ray cursorRay = Camera.main.ScreenPointToRay(Input.mousePosition);
 

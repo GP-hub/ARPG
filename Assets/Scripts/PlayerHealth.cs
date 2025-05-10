@@ -35,7 +35,7 @@ public class PlayerHealth : MonoBehaviour
     public void PlayerTakeDamage(int damageAmount)
     {
         health -= damageAmount;
-
+        health = Mathf.Clamp(health, 0, maxHealth);
         if (health > maxHealth) health = maxHealth;
 
         if (health <= 0) Death();
@@ -47,7 +47,7 @@ public class PlayerHealth : MonoBehaviour
     public void PlayerTakeHeal(int healAmount)
     {
         health += healAmount;
-
+        health = Mathf.Clamp(health, 0, maxHealth);
         if (health > maxHealth) health = maxHealth;
 
         if (health <= 0) Death();

@@ -55,11 +55,11 @@ public class Dash : MonoBehaviour
     {
         EventManager.Dashing(true);
 
-        twinStickMovement.PlayerSpeed += dashSpeed;
+        twinStickMovement.CurrentPlayerSpeed += dashSpeed;
 
         yield return new WaitForSeconds(dashDuration);
 
-        twinStickMovement.PlayerSpeed -= dashSpeed;
+        twinStickMovement.CurrentPlayerSpeed -= dashSpeed;
 
         EventManager.Dashing(false);
     }

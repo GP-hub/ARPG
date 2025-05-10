@@ -7977,7 +7977,7 @@ GameObject:
   - component: {fileID: 1334150708}
   - component: {fileID: 1334150707}
   - component: {fileID: 1334150706}
-  m_Layer: 3
+  m_Layer: 2
   m_Name: Collider_DoorLock
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -13753,6 +13753,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 1881322215}
     m_Modifications:
+    - target: {fileID: 33112480814712688, guid: 056cd2ef5c48bd543a8b8a967be299d2, type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 178050982910570537, guid: 056cd2ef5c48bd543a8b8a967be299d2, type: 3}
       propertyPath: m_LocalPosition.x
       value: 181.8
@@ -13835,7 +13839,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 3142904809075892329, guid: 056cd2ef5c48bd543a8b8a967be299d2, type: 3}
       propertyPath: attackDamage
-      value: 10
+      value: 2
       objectReference: {fileID: 0}
     - target: {fileID: 3142904809075892329, guid: 056cd2ef5c48bd543a8b8a967be299d2, type: 3}
       propertyPath: powerCooldownImage
@@ -13848,6 +13852,14 @@ PrefabInstance:
     - target: {fileID: 3142904809075892329, guid: 056cd2ef5c48bd543a8b8a967be299d2, type: 3}
       propertyPath: attackProjectileSpeed
       value: 50
+      objectReference: {fileID: 0}
+    - target: {fileID: 3142904809075892329, guid: 056cd2ef5c48bd543a8b8a967be299d2, type: 3}
+      propertyPath: powerPlayerMovementSpeedPercent
+      value: 70
+      objectReference: {fileID: 0}
+    - target: {fileID: 3142904809075892329, guid: 056cd2ef5c48bd543a8b8a967be299d2, type: 3}
+      propertyPath: attackPlayerMovementSpeedPercent
+      value: 70
       objectReference: {fileID: 0}
     - target: {fileID: 3254165198453713158, guid: 056cd2ef5c48bd543a8b8a967be299d2, type: 3}
       propertyPath: 'm_Materials.Array.data[0]'
@@ -13876,6 +13888,10 @@ PrefabInstance:
     - target: {fileID: 6811639953851729930, guid: 056cd2ef5c48bd543a8b8a967be299d2, type: 3}
       propertyPath: m_IsActive
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7271900941694603740, guid: 056cd2ef5c48bd543a8b8a967be299d2, type: 3}
+      propertyPath: maxHealth
+      value: 100
       objectReference: {fileID: 0}
     - target: {fileID: 7964579730226944214, guid: 056cd2ef5c48bd543a8b8a967be299d2, type: 3}
       propertyPath: m_TagString
@@ -15981,7 +15997,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!1 &4806218357414072887
 GameObject:
   m_ObjectHideFlags: 0

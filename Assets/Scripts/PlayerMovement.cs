@@ -1,10 +1,13 @@
 using UnityEngine;
 using UnityEngine.AI;
+using UnityEngine.Rendering.UI;
 
 [RequireComponent(typeof(CharacterController))]
 public class PlayerMovement : MonoBehaviour
 {
-    [SerializeField] private float playerSpeed = 5f;
+    [SerializeField] private float playerSpeed;
+    private float currentPlayerSpeed;
+
     private float gravity = -9.81f;
 
     private bool isAttackCastHeldDown;
@@ -26,8 +29,10 @@ public class PlayerMovement : MonoBehaviour
 
     private AttackAndPowerCasting attackAndPowerCasting;
 
-    public Vector3 WorldAim { get => worldAim;}
-    public float PlayerSpeed { get => playerSpeed; set => playerSpeed = value; }
+    public Vector3 WorldAim { get => worldAim; }
+    public float CurrentPlayerSpeed { get => currentPlayerSpeed; set => currentPlayerSpeed = value; }
+
+    public float PlayerSpeed { get => playerSpeed; }
 
     //
     private void Awake()
@@ -38,6 +43,10 @@ public class PlayerMovement : MonoBehaviour
         controller = GetComponent<CharacterController>();
         animator = GetComponent<Animator>();
         playerControls = new PlayerControls();
+    }
+    private void Start()
+    {
+        currentPlayerSpeed = playerSpeed;
     }
 
     private void OnEnable()
@@ -74,7 +83,7 @@ public class PlayerMovement : MonoBehaviour
     {
         Vector3 moveDirection = new Vector3(movement.x, 0, movement.y);
 
-        if (moveDirection.magnitude > 0.01f && playerSpeed != 0)
+        if (moveDirection.magnitude > 0.01f && currentPlayerSpeed != 0)
         {
 
             float angle = Vector3.SignedAngle(transform.forward, moveDirection.normalized, Vector3.up);
@@ -106,6 +115,11 @@ public class PlayerMovement : MonoBehaviour
         }
     }
 
+    public void IncreasePlayerMaxMovespeed(int speedBuff)
+    {
+        playerSpeed += speedBuff;
+    }
+
     private void HandleAnimationWeight(float targetWeight, string layerName)
     {
         // Get the current weight
@@ -124,15 +138,16 @@ public class PlayerMovement : MonoBehaviour
         aim = playerControls.Controls.Aim.ReadValue<Vector2>();
     }
 
-    //private void HandleMovement(Vector3 move)
-    //{
-    //    controller.Move(move * playerSpeed * Time.fixedDeltaTime);
-    //}
+    public void RecoverMovementSpeed()
+    {
+        CurrentPlayerSpeed = PlayerSpeed;
+    }
+
 
     private void HandleMovement()
     {
         Vector3 move = new Vector3(movement.x, 0, movement.y);
-        controller.Move(move * Time.deltaTime * playerSpeed);
+        controller.Move(move * Time.deltaTime * currentPlayerSpeed);
 
         if (!controller.isGrounded)
         {
