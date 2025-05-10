@@ -6,6 +6,7 @@ using UnityEditor.Animations;
 using UnityEngine;
 using UnityEngine.AI;
 using UnityEngine.SceneManagement;
+using Random = UnityEngine.Random;
 
 
 [RequireComponent(typeof(NavMeshAgent))]
@@ -40,6 +41,7 @@ public class Enemy : MonoBehaviour
 
     [Space(10)]
     [Header("Abilities")]
+    [SerializeField] private float accuracyPercent = 100;
     [SerializeField] private List<AbilityData> abilities;
     private List<AbilityData> offCooldownAbilities;
     private AbilityData currentAbility;
@@ -53,21 +55,20 @@ public class Enemy : MonoBehaviour
     [Space(10)]
     [Header("Power Abilities")]
     [SerializeField] private AbilityData powerAbility;
-
+    private float currentPowerCooldown;
+    private AnimatorState powerState;
 
 
     [Space(10)]
     [Header("Attack")]
     [SerializeField] private GameObject exitPoint;
     [SerializeField] private LayerMask characterLayer;
+    private AnimatorState attackState;
 
     [Space(10)]
     [Header("Attack: Melee")]
     [SerializeField] private float meleeHitboxSize;
 
-    [Space(10)]
-    [Header("Power")]
-    private float currentPowerCooldown;
 
     private NavMeshAgent agent;
 
@@ -206,11 +207,13 @@ public class Enemy : MonoBehaviour
                     // Check by name
                     if (state.state.name == "Attack") // or blendTree.name == "AttackBlendTree"
                     {
+                        attackState = state.state;
                         attackBlendTree = blendTree;
                         PopulateBlendTree(attackBlendTree);
                     }
                     else if (state.state.name == "Power") // or blendTree.name == "PowerBlendTree"
                     {
+                        powerState = state.state;
                         powerBlendTree = blendTree;
                         PopulateBlendTree(powerBlendTree); // Or a different method if needed
                     }
@@ -552,6 +555,7 @@ public class Enemy : MonoBehaviour
 
     public void PerformAttack()
     {
+
         if (currentAbility == null || string.IsNullOrEmpty(currentAbility.selectedFunctionName))
         {
             Debug.Log($"{gameObject.name} has no ability or function selected.");
@@ -605,26 +609,6 @@ public class Enemy : MonoBehaviour
         healthBar.transform.SetParent(healthPanelRect, false);
     }
 
-    //public bool CanSeeTarget(Transform target)
-    //{
-    //    // Direction from the enemy to the player
-    //    Vector3 directionToPlayer = (target.position + new Vector3(0f, 1f, 0f)) - (transform.position + new Vector3(0f, 1f, 0f));
-
-    //    // Draw a debug ray to visualize the raycast in the scene view
-    //    Debug.DrawRay(transform.position + new Vector3(0f, 1f, 0f), directionToPlayer, Color.blue);
-
-    //    //if (Physics.Raycast(transform.position + new Vector3(0f, 1f, 0f), directionToPlayer, out RaycastHit hit, 100, ~groundLayerMask))
-    //    if (Physics.Raycast(transform.position + new Vector3(0f, 1f, 0f), directionToPlayer, out RaycastHit hit, 1000, LayerMask.GetMask("Character", "Obstacle")))
-    //    {
-    //        if (hit.collider.CompareTag("Player"))
-    //        {
-    //            return true;
-    //        }
-    //    }
-
-    //    return false;
-    //}
-
     public bool CanSeeTarget(Transform target)
     {
         Vector3 capsuleStart = transform.position;
@@ -658,6 +642,22 @@ public class Enemy : MonoBehaviour
         }
 
         return closestHit.HasValue && closestHit.Value.collider.CompareTag("Player");
+    }
+
+    public Vector3 GetInaccurateTarget(Vector3 originalTarget)
+    {
+
+        // Random point in a circle (2D on XZ plane)
+        Vector2 randomOffset = Random.insideUnitCircle * (currentAbility.accuracy * (1 - accuracyPercent / 100f));
+
+        // Add the offset to the original target
+        Vector3 inaccurateTarget = new Vector3(
+            originalTarget.x + randomOffset.x,
+            originalTarget.y,
+            originalTarget.z + randomOffset.y
+        );
+
+        return inaccurateTarget;
     }
 
 
@@ -819,9 +819,6 @@ public class Enemy : MonoBehaviour
         UsePowerAbility(currentAbility);
     }
 
-    // 1 = basic attack, 2 = charge attack, 3 = jump attack, 4 = ranged attack
-    private float[] possibleValues = { 0f, 0.2f, 0.5f, 1f };
-
     private void DecideNextMoveID()
     {
         // Get a random index based on the length of the array
@@ -874,15 +871,21 @@ public class Enemy : MonoBehaviour
         // distance from the target
         float jumpDistance = 1f;
 
-        Vector3 directionToTarget = (targetPosition - transform.position).normalized;
-        Vector3 finalPosition = targetPosition - directionToTarget * jumpDistance;
+        Vector3 targetPos = GetInaccurateTarget(target.position);
+
+        Vector3 directionToTarget = (targetPos - transform.position).normalized;
+        Vector3 finalPosition = targetPos - directionToTarget * jumpDistance;
 
         StartCoroutine(JumpToLocation(finalPosition));
     }
 
     private IEnumerator JumpToLocation(Vector3 destination)
     {
-        float jumpDuration = 1f; // Adjust the duration as needed
+
+        //float jumpDuration = 1f; // Adjust the duration as needed
+
+        float jumpDuration = (currentAbility.animationClip.length / attackState.speed) * 0.27f; // Adjust the duration as needed
+        Debug.Log("Jump duration: " + jumpDuration);
         float t = 0f;
         Vector3 startPosition = transform.position;
         isCharging = true;
@@ -923,7 +926,7 @@ public class Enemy : MonoBehaviour
         transform.position = destination;
 
         // wait time before the next action, so we dont rotate towards target while ending the animation
-        yield return new WaitForSeconds(1.5f);
+        //yield return new WaitForSeconds(1.5f);
         isCharging = false;
     }
 
@@ -983,7 +986,10 @@ public class Enemy : MonoBehaviour
         // Max number of entities in the OverlapSphere
         int maxColliders = 10;
         Collider[] hitColliders = new Collider[maxColliders];
-        int numColliders = Physics.OverlapSphereNonAlloc(transform.position, meleeHitboxSize, hitColliders, characterLayer);
+
+        Vector3 targetPos = GetInaccurateTarget(target.position);
+
+        int numColliders = Physics.OverlapSphereNonAlloc(targetPos, meleeHitboxSize, hitColliders, characterLayer);
 
         for (int i = 0; i < numColliders; i++)
         {
@@ -999,7 +1005,8 @@ public class Enemy : MonoBehaviour
     public void SpawnAOE()
     {
         if (!target) return;
-        GameObject newObject = PoolingManagerSingleton.Instance.GetObjectFromPool(currentAbility.projectilePrefab.name, targetPosition + new Vector3(0, 0.2f, 0));
+        Vector3 targetPos = GetInaccurateTarget(target.position);
+        GameObject newObject = PoolingManagerSingleton.Instance.GetObjectFromPool(currentAbility.projectilePrefab.name, targetPos + new Vector3(0, 0.2f, 0));
 
         if (newObject.TryGetComponent<AbilityValues>(out AbilityValues aoeSpell))
         {

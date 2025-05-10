@@ -5,6 +5,7 @@ using UnityEngine;
 public class AbilityData : ScriptableObject
 {
     public string moveName;
+    public float accuracy;
     public float maxAttackRange;
     public float minAttackRange;
     public int damage;
