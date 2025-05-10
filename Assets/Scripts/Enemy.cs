@@ -5,6 +5,7 @@ using System.Reflection;
 using UnityEditor.Animations;
 using UnityEngine;
 using UnityEngine.AI;
+using UnityEngine.SceneManagement;
 
 
 [RequireComponent(typeof(NavMeshAgent))]
@@ -125,33 +126,17 @@ public class Enemy : MonoBehaviour
     void Start()
     {
         agent.speed = speed;
-        currentHealth = maxHealth;
+        
         GenerateEnemyHealthBar(hpBarProxyFollow);
 
         player = GameObject.Find("Player");
 
-        if (player)
-        {
-            // Pass the player as the target for now
-            //target = player.transform;
-        }
-
-        AIManager.Instance.AddUnit(this);
-
-        lastPosition = transform.position;
-
         offCooldownAbilities = new List<AbilityData>();
-        //AbilityFilteringAndSorting(0f);
 
-        ChangeState(new IdleState());
 
         StartCoroutine(CheckGroundedStatus());
 
         GetAnimatorController();
-
-        minMaxAbilityRange = MinMaxRangeAttackRange();
-
-        StartCastCooldown();
     }
 
 
@@ -162,6 +147,26 @@ public class Enemy : MonoBehaviour
         HandleStateMachine();
 
         UpdateSpellCooldowns();
+    }
+
+    private void OnEnable()
+    {
+        EventManager.onGetUnits += AddEnemyToAIManager;
+        currentHealth = maxHealth;
+        lastPosition = transform.position;
+        minMaxAbilityRange = MinMaxRangeAttackRange();
+        StartCastCooldown();
+        ChangeState(new IdleState());
+    }
+
+    private void OnDisable()
+    {
+        EventManager.onGetUnits -= AddEnemyToAIManager;
+    }
+
+    private void AddEnemyToAIManager()
+    {
+        AIManager.Instance.AddUnit(this);
     }
 
     public void StartCastCooldown()
@@ -1142,7 +1147,7 @@ public class Enemy : MonoBehaviour
     {
         Vector3 forwardDirection = transform.forward.normalized;
         Vector3 basePosition = targetPosition + new Vector3(0, 0.01f, 0);
-        float spacing = 3f;
+        float spacing = 2f;
 
         for (int i = 0; i < 3; i++)
         {
@@ -1153,7 +1158,7 @@ public class Enemy : MonoBehaviour
 
             RockFallAtTargetPos(indicatorDuration, size, spawnPosition);
 
-            yield return new WaitForSeconds(1f); // Small delay between rocks
+            yield return new WaitForSeconds(0.5f); // Small delay between rocks
         }
     }
 
@@ -1234,12 +1239,11 @@ public class Enemy : MonoBehaviour
 
     private void OnHitPlayer(Collider player)
     {
-        Debug.Log("Hit player!");
+        EventManager.PlayerTakeDamage(currentAbility.damage);
     }
 
     private void OnHitDestructibleObstacle(Collider obstacle)
     {
-        Debug.Log("Hit Destructible Obstacle!");
         obstacle.gameObject.SetActive(false);
     }
 
@@ -1248,7 +1252,7 @@ public class Enemy : MonoBehaviour
         Debug.Log("RockFallFullArena called");
         Vector3 start = BossFightManager.Instance.BottomLeftCorner.position;
         Vector3 end = BossFightManager.Instance.TopRightCorner.position;
-        float spacing = BossFightManager.Instance.Spacing;
+        float spacing = 3; // spacing between the rocks
 
         List<Vector3> positions = new List<Vector3>();
 
@@ -1274,8 +1278,8 @@ public class Enemy : MonoBehaviour
         int size = UnityEngine.Random.Range(3, 7);
 
         // Add random offset to position
-        float offsetX = UnityEngine.Random.Range(-1f, 1f);
-        float offsetZ = UnityEngine.Random.Range(-1f, 1f);
+        float offsetX = UnityEngine.Random.Range(-2f, 2f);
+        float offsetZ = UnityEngine.Random.Range(-2f, 2f);
 
         Vector3 randomizedPos = new Vector3(pos.x + offsetX, pos.y, pos.z + offsetZ);
 

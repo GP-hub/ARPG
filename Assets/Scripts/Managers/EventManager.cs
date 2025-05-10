@@ -124,6 +124,15 @@ public static class EventManager/* : Singleton<EventManager>*/
         }
     }
 
+    public static event Action onGetUnits;
+    public static void GetUnits()
+    {
+        if (onGetUnits != null)
+        {
+            onGetUnits();
+        }
+    }
+
     public static event Action<int> onBossRockFall;
     public static void BossRockFall(int numberOfRocks)
     {

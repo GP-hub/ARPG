@@ -15,8 +15,8 @@ MonoBehaviour:
   moveName: Rock Fall Front
   maxAttackRange: 60
   minAttackRange: 1
-  damage: 50
-  cooldown: 2
+  damage: 20
+  cooldown: 10
   projectilePrefab: {fileID: 0}
   animationClip: {fileID: 7400000, guid: f28badfc73ba8e347a4f7265f8b83017, type: 2}
   selectedFunctionName: TripleRockFallFront

@@ -88,6 +88,18 @@ public class AttackAndPowerCasting : MonoBehaviour
         EventManager.onDashing += Dashing;
     }
 
+    private void OnDestroy()
+    {
+        EventManager.onEnemyTakeDamage -= DoDamage;
+        EventManager.onEnemyGetCC -= ApplyCCDuration;
+        EventManager.onDashing -= Dashing;
+    }
+
+    private void OnDisable()
+    {
+        EventManager.onDashing -= Dashing;
+    }
+
     private void Update()
     {
         HandlingCasting();

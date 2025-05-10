@@ -12,11 +12,9 @@ public class BossFightManager : Singleton<BossFightManager>
 
     [SerializeField] private Transform bottomLeftCorner;
     [SerializeField] private Transform topRightCorner;
-    [SerializeField] private float spacing;
 
     public Transform BottomLeftCorner { get => bottomLeftCorner; }
     public Transform TopRightCorner { get => topRightCorner; }
-    public float Spacing { get => spacing; }
 
     protected override void Awake()
     {

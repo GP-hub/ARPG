@@ -29,17 +29,6 @@ public class PoolingManagerSingleton : Singleton<PoolingManagerSingleton>
         {
             InitializeObjectPools();
         }
-        //else
-        //{
-        //    foreach (ObjectPool pool in objectPools)
-        //    {
-        //        pool.objects = new List<GameObject>();
-        //        for (int i = 0; i < pool.poolSize; i++)
-        //        {
-        //            pool.objects = null;
-        //        }
-        //    }
-        //}
     }
 
     void InitializeObjectPools()
