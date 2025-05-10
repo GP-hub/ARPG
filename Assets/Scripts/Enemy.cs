@@ -865,7 +865,7 @@ public class Enemy : MonoBehaviour
     private IEnumerator JumpToLocation(Vector3 destination)
     {
         float jumpDuration = (currentAbility.animationClip.length / attackState.speed) * 0.27f; // Adjust the duration as needed
-        Debug.Log("Jump duration: " + jumpDuration);
+
         float t = 0f;
         Vector3 startPosition = transform.position;
         isCharging = true;

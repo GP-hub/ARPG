@@ -14,7 +14,7 @@ GameObject:
   - component: {fileID: 2015357623483641822}
   - component: {fileID: 4360155179406731337}
   - component: {fileID: 4682597826410924397}
-  m_Layer: 0
+  m_Layer: 2
   m_Name: Firewall
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -61,6 +61,9 @@ MeshRenderer:
   m_ReflectionProbeUsage: 1
   m_RayTracingMode: 2
   m_RayTraceProcedural: 0
+  m_RayTracingAccelStructBuildFlagsOverride: 0
+  m_RayTracingAccelStructBuildFlags: 1
+  m_SmallMeshCulling: 1
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:

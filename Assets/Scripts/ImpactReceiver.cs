@@ -18,6 +18,7 @@ public class ImpactReceiver : MonoBehaviour
     //
     void Update()
     {
+        if (!character.enabled || !gameObject.activeInHierarchy) return;
         if (!character.isGrounded)
         {
             playerVelocity.y += gravity * Time.deltaTime;
