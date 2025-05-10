@@ -12,11 +12,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: bf59774016b20b6448aa62df6df3e087, type: 3}
   m_Name: FrontRockFall
   m_EditorClassIdentifier: 
-  moveName: Rock Fall Front
+  accuracy: 1
   maxAttackRange: 60
   minAttackRange: 1
   damage: 20
-  cooldown: 10
+  cooldown: 5
   projectilePrefab: {fileID: 0}
   animationClip: {fileID: 7400000, guid: f28badfc73ba8e347a4f7265f8b83017, type: 2}
   selectedFunctionName: TripleRockFallFront

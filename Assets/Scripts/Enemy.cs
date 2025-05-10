@@ -1,7 +1,9 @@
 using System;
+using System.Buffers.Text;
 using System.Collections;
 using System.Collections.Generic;
 using System.Reflection;
+using Unity.VisualScripting;
 using UnityEditor.Animations;
 using UnityEngine;
 using UnityEngine.AI;
@@ -702,11 +704,6 @@ public class Enemy : MonoBehaviour
         }
     }
 
-    //void OnDrawGizmosSelected()
-    //{
-    //    Gizmos.color = Color.red;
-    //    Gizmos.DrawWireSphere(transform.position, searchTargetRadius);
-    //}
 
     public void SetBoolSingle(string triggerName)
     {
@@ -871,10 +868,10 @@ public class Enemy : MonoBehaviour
         // distance from the target
         float jumpDistance = 1f;
 
-        Vector3 targetPos = GetInaccurateTarget(target.position);
+        //Vector3 targetPos = GetInaccurateTarget(target.position);
 
-        Vector3 directionToTarget = (targetPos - transform.position).normalized;
-        Vector3 finalPosition = targetPos - directionToTarget * jumpDistance;
+        Vector3 directionToTarget = (TargetPosition - transform.position).normalized;
+        Vector3 finalPosition = TargetPosition - directionToTarget * jumpDistance;
 
         StartCoroutine(JumpToLocation(finalPosition));
     }
@@ -957,7 +954,7 @@ public class Enemy : MonoBehaviour
                 if (collider.CompareTag("Player"))
                 {
                     //Debug.Log("Collided with a character: " + collider.name);
-
+                    EventManager.PlayerTakeDamage(currentAbility.damage);
                     // Handle collision with 'Player' here
                 }
             }
@@ -987,17 +984,25 @@ public class Enemy : MonoBehaviour
         int maxColliders = 10;
         Collider[] hitColliders = new Collider[maxColliders];
 
-        Vector3 targetPos = GetInaccurateTarget(target.position);
-
-        int numColliders = Physics.OverlapSphereNonAlloc(targetPos, meleeHitboxSize, hitColliders, characterLayer);
+        int numColliders = Physics.OverlapSphereNonAlloc(TargetPosition, meleeHitboxSize, hitColliders, characterLayer);
 
         for (int i = 0; i < numColliders; i++)
         {
             if (hitColliders[i].CompareTag("Player"))
             {
+                hitColliders[i].GetComponent<ImpactReceiver>()?.AddImpact(hitColliders[i].transform.position - transform.position, 50);
                 EventManager.PlayerTakeDamage(currentAbility.damage);
             }
         }
+    }
+
+
+
+    private void OnDrawGizmosSelected()
+    {
+        if (target == null) return;
+        Gizmos.color = Color.red;
+        Gizmos.DrawWireSphere(TargetPosition, meleeHitboxSize);
     }
 
     // Triggered via SpawnAoe Attack Animation
@@ -1005,8 +1010,8 @@ public class Enemy : MonoBehaviour
     public void SpawnAOE()
     {
         if (!target) return;
-        Vector3 targetPos = GetInaccurateTarget(target.position);
-        GameObject newObject = PoolingManagerSingleton.Instance.GetObjectFromPool(currentAbility.projectilePrefab.name, targetPos + new Vector3(0, 0.2f, 0));
+        //Vector3 targetPos = GetInaccurateTarget(target.position);
+        GameObject newObject = PoolingManagerSingleton.Instance.GetObjectFromPool(currentAbility.projectilePrefab.name, TargetPosition + new Vector3(0, 0.2f, 0));
 
         if (newObject.TryGetComponent<AbilityValues>(out AbilityValues aoeSpell))
         {
@@ -1019,9 +1024,9 @@ public class Enemy : MonoBehaviour
     [AttackMethod]
     public void RangedHit()
     {
-        if (targetPosition == Vector3.zero) return; 
-
-        Vector3 adjustedTargetPosition = targetPosition + new Vector3(0, 1f, 0);
+        if (targetPosition == Vector3.zero) return;
+        //Vector3 targetPos = GetInaccurateTarget(target.position);
+        Vector3 adjustedTargetPosition = TargetPosition + new Vector3(0, 1f, 0);
 
         Vector3 direction = (adjustedTargetPosition - exitPoint.transform.position).normalized;
 
@@ -1044,14 +1049,14 @@ public class Enemy : MonoBehaviour
     [AttackMethod]
     public void BossRockFall()
     {
-        Debug.Log("Boss Rock Fall");
         EventManager.BossRockFall(1);
     }
 
     [AttackMethod]
     public void TestSpellIndicator()
     {
-        Vector3 groundTargetPosition = targetPosition + new Vector3(0, 0.01f, 0);
+        //Vector3 targetPos = GetInaccurateTarget(target.position);
+        Vector3 groundTargetPosition = TargetPosition + new Vector3(0, 0.01f, 0);
         RockFallAtTargetPos(2f, 3f, groundTargetPosition);
     }
 
@@ -1107,6 +1112,7 @@ public class Enemy : MonoBehaviour
         {
             if (hitColliders[i].CompareTag("Player"))
             {
+                hitColliders[i].GetComponent<ImpactReceiver>()?.AddImpact(hitColliders[i].transform.position - newObject.transform.position, 50);
                 EventManager.PlayerTakeDamage(currentAbility.damage);
             }
         }
@@ -1124,25 +1130,10 @@ public class Enemy : MonoBehaviour
             }
         }
 
-
-        debugSpherePos = newObject.transform.position;
-        debugSphereRadius = size/2;
-
         yield return new WaitForSeconds(2f);
-        debugSpherePos = null;
 
     }
-    private Vector3? debugSpherePos = null;
-    private float debugSphereRadius = 0f;
 
-    private void OnDrawGizmos()
-    {
-        if (debugSpherePos.HasValue)
-        {
-            Gizmos.color = UnityEngine.Color.red;
-            Gizmos.DrawWireSphere(debugSpherePos.Value, debugSphereRadius);
-        }
-    }
 
     [AttackMethod]
     public void TripleRockFallFront()
@@ -1152,16 +1143,25 @@ public class Enemy : MonoBehaviour
 
     private IEnumerator TripleRockFallRoutine()
     {
-        Vector3 forwardDirection = transform.forward.normalized;
-        Vector3 basePosition = targetPosition + new Vector3(0, 0.01f, 0);
-        float spacing = 2f;
+        float spacing = 1f;
 
         for (int i = 0; i < 3; i++)
         {
-            Vector3 spawnPosition = basePosition + forwardDirection * (i * spacing);
+            //Vector3 targetPos = GetInaccurateTarget(target.position);
+            Vector3 basePosition = TargetPosition + new Vector3(0, 0.01f, 0);
 
-            float indicatorDuration = 1.25f + (i * 0.33f);
-            float size = 3f + (i * 0.65f);
+            // Generate a random offset in 2D space (XZ plane)
+            Vector2 randomOffset = Random.insideUnitCircle * spacing;
+
+            // Apply the offset to the base position
+            Vector3 spawnPosition = new Vector3(
+                basePosition.x + randomOffset.x,
+                basePosition.y,
+                basePosition.z + randomOffset.y
+            );
+
+            float indicatorDuration = 1f + (i * 0.33f);
+            float size = 2f + (i * 0.75f);
 
             RockFallAtTargetPos(indicatorDuration, size, spawnPosition);
 
@@ -1173,8 +1173,8 @@ public class Enemy : MonoBehaviour
     public void ChargingUntilObstacleStart()
     {
         if (target == null) return;
-
-        Vector3 chargeDirection = (targetPosition - transform.position).normalized;
+        //Vector3 targetPos = GetInaccurateTarget(target.position);
+        Vector3 chargeDirection = (TargetPosition - transform.position).normalized;
         StartCoroutine(ChargeUntilObstacleCoroutine(chargeDirection));
     }
 
@@ -1278,15 +1278,15 @@ public class Enemy : MonoBehaviour
     }
     private IEnumerator DelayedRockFall(Vector3 pos)
     {
-        int delay = UnityEngine.Random.Range(0, 3);
+        int delay = Random.Range(0, 3);
         yield return new WaitForSeconds(delay);
 
-        int duration = UnityEngine.Random.Range(3, 7);
-        int size = UnityEngine.Random.Range(3, 7);
+        int duration = Random.Range(3, 7);
+        int size = Random.Range(3, 7);
 
         // Add random offset to position
-        float offsetX = UnityEngine.Random.Range(-2f, 2f);
-        float offsetZ = UnityEngine.Random.Range(-2f, 2f);
+        float offsetX = Random.Range(-2f, 2f);
+        float offsetZ = Random.Range(-2f, 2f);
 
         Vector3 randomizedPos = new Vector3(pos.x + offsetX, pos.y, pos.z + offsetZ);
 

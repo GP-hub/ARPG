@@ -13,6 +13,7 @@ MonoBehaviour:
   m_Name: BossCharge3rdPhase
   m_EditorClassIdentifier: 
   moveName: Boss Charge
+  accuracy: 0
   maxAttackRange: 500
   minAttackRange: 10
   damage: 100
@@ -21,4 +22,4 @@ MonoBehaviour:
   animationClip: {fileID: 7400000, guid: f951e9a812fdba94dbd0547e0d3cc749, type: 2}
   selectedFunctionName: ChargingUntilObstacleStart
   conditions:
-  - {fileID: 11400000, guid: e1c9bcc5f47fa8247aebb02f58cc2e25, type: 2}
+  - {fileID: 11400000, guid: 8b4f8624c8b0a8b43a336b3c9ed8ba4e, type: 2}

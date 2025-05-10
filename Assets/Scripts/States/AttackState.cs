@@ -8,9 +8,9 @@ class AttackState : IState
     void IState.Enter(Enemy enemy)
     {
         this.enemy = enemy;
-        enemy.TargetPosition = enemy.Target.position;
         enemy.DecideNextAbility();
         enemy.SetBoolSingle("TriggerAttack");
+        enemy.TargetPosition = enemy.GetInaccurateTarget(enemy.Target.position);
         if (enemy.Agent.isOnNavMesh && enemy.Agent.enabled) enemy.Stop();
         enemy.Animator.SetFloat("AttackTree", enemy.BlendTreeThreshold());
 
@@ -32,6 +32,7 @@ class AttackState : IState
             enemy.ChangeState(new IdleState());
         }
         if (enemy.isCharging) return;
+
         Utility.RotateTowardsTarget(enemy.transform, enemy.TargetPosition, enemy.RotationSpeed);
 
         //Utility.RotateTowardsTarget(enemy.transform, enemy.Target, enemy.RotationSpeed);

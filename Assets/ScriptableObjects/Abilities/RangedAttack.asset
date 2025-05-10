@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: bf59774016b20b6448aa62df6df3e087, type: 3}
   m_Name: RangedAttack
   m_EditorClassIdentifier: 
-  moveName: 
+  accuracy: 10
   maxAttackRange: 80
   minAttackRange: 2
   damage: 2

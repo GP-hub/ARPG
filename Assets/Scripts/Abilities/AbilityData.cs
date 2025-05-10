@@ -4,7 +4,6 @@ using UnityEngine;
 [CreateAssetMenu(fileName = "NewAbilityData", menuName = "AbilityData")]
 public class AbilityData : ScriptableObject
 {
-    public string moveName;
     public float accuracy;
     public float maxAttackRange;
     public float minAttackRange;
