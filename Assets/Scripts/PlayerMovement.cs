@@ -1,3 +1,4 @@
+using System.Collections;
 using UnityEngine;
 using UnityEngine.AI;
 using UnityEngine.Rendering.UI;
@@ -140,7 +141,23 @@ public class PlayerMovement : MonoBehaviour
 
     public void RecoverMovementSpeed()
     {
-        CurrentPlayerSpeed = PlayerSpeed;
+        //CurrentPlayerSpeed = PlayerSpeed;
+        StartCoroutine(RestoreSpeedCoroutine(.2f, playerSpeed, currentPlayerSpeed));
+    }
+
+    public IEnumerator RestoreSpeedCoroutine(float duration, float targetSpeed, float currentSpeed)
+    {
+        float startSpeed = currentSpeed;
+        float elapsed = 0f;
+
+        while (elapsed < duration)
+        {
+            elapsed += Time.deltaTime;
+            CurrentPlayerSpeed = Mathf.Lerp(startSpeed, targetSpeed, elapsed / duration);
+            yield return null;
+        }
+
+        CurrentPlayerSpeed = targetSpeed;
     }
 
 

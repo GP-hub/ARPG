@@ -189,10 +189,9 @@ public class AttackAndPowerCasting : MonoBehaviour
     // Trigger by first keyframe of Attack animation
     public void MoveSpeedPlayerOnAttack()
     {
-        // Speed of the player when casting attack
-        playerMovement.CurrentPlayerSpeed = playerMovement.PlayerSpeed * (1f - (attackPlayerMovementSpeedPercent / 100f));
+        float targetSpeed = playerMovement.PlayerSpeed * (1f - (attackPlayerMovementSpeedPercent / 100f));
+        StartCoroutine(playerMovement.RestoreSpeedCoroutine(.2f, targetSpeed, playerMovement.CurrentPlayerSpeed));
 
-        // Animation speed when using attacking
         animator.SetFloat("AttackSpeed", attackSpeedMultiplier);
     }
 
@@ -211,13 +210,12 @@ public class AttackAndPowerCasting : MonoBehaviour
     // Trigger by first keyframe of Power animation
     public void MoveSpeedPlayerOnPower()
     {
-        // Speed of the player when casting power
-        playerMovement.CurrentPlayerSpeed = playerMovement.PlayerSpeed * (1f - (powerPlayerMovementSpeedPercent / 100f));
+        float targetSpeed = playerMovement.PlayerSpeed * (1f - (powerPlayerMovementSpeedPercent / 100f));
+        StartCoroutine(playerMovement.RestoreSpeedCoroutine(.2f, targetSpeed, playerMovement.CurrentPlayerSpeed));
 
         // IF spellCount is 0 THEN powerSpeed is 1, ELSE powerSpeed is equal to spellCount
         powerSpeedMultiplier = (SpellCharge.SpellCount == 0) ? 1 : SpellCharge.SpellCount;
 
-        // Animation speed when using power
         animator.SetFloat("PowerSpeed", powerSpeedMultiplier);
     }
 
@@ -298,10 +296,6 @@ public class AttackAndPowerCasting : MonoBehaviour
 
     public void CastFireball()
     {
-        // We return the player speed to its original value
-        //playerMovement.CurrentPlayerSpeed = playerMovement.PlayerSpeed;
-
-
         float yRotation = lineDecal.transform.eulerAngles.y;
  
         Vector3 direction = Quaternion.Euler(0, yRotation + 90, 0) * Vector3.forward;
