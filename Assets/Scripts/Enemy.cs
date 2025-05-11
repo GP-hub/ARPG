@@ -1168,7 +1168,7 @@ public class Enemy : MonoBehaviour
 
         while (true)
         {
-            agent.Move(chargeDirection * speed * 5f * Time.deltaTime);
+            agent.Move(chargeDirection * speed * 3f * Time.deltaTime);
 
             float characterHeight = 2.25f;
             float radius = 1f;
@@ -1182,11 +1182,13 @@ public class Enemy : MonoBehaviour
             {
                 if (hit.CompareTag("Player") && !alreadyHitPlayers.Contains(hit))
                 {
+                    Debug.Log("Hit Player");
                     alreadyHitPlayers.Add(hit);
                     OnHitPlayer(hit);
                 }
                 else if (hit.CompareTag("Destructible"))
                 {
+                    Debug.Log("Hit Destructible obstacle");
                     OnHitDestructibleObstacle(hit);
                     cCDuration += 2.5f;
                     yield return BreakCharge();
@@ -1194,6 +1196,7 @@ public class Enemy : MonoBehaviour
                 }
                 else if (hit.CompareTag("Indestructible"))
                 {
+                    Debug.Log("Hit Indestructible obstacle");
                     OnHitIndestructibleObstacle(hit);
                     cCDuration += 2.5f;
                     yield return BreakCharge();
@@ -1232,7 +1235,6 @@ public class Enemy : MonoBehaviour
 
     private void OnHitIndestructibleObstacle(Collider obstacle)
     {
-        Debug.Log("RockFallFullArena called");
         Vector3 start = BossFightManager.Instance.BottomLeftCorner.position;
         Vector3 end = BossFightManager.Instance.TopRightCorner.position;
         float spacing = 3; // spacing between the rocks

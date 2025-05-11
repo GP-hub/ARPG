@@ -15,16 +15,13 @@ public class Combustion : MonoBehaviour
 
     private int fireballProcChance;
 
-
     private bool isUltimateOnCooldown;
     private bool isCasting = false;
 
-    private PlayerMovement twinStickMovement;
     private PlayerInput playerInput;
 
     private void Awake()
     {
-        twinStickMovement = GetComponent<PlayerMovement>();
         playerInput = GetComponent<PlayerInput>();
 
         playerInput.actions.FindAction("Ultimate").performed += OnUltimate;
@@ -37,6 +34,10 @@ public class Combustion : MonoBehaviour
     {
         EventManager.onCasting += Casting;
     }
+    private void OnDisable()
+    {
+        EventManager.onCasting -= Casting;
+    }   
 
     private void Casting(bool ultimate)
     {
@@ -61,12 +62,12 @@ public class Combustion : MonoBehaviour
     {
         EventManager.Ultimate(true);
 
-        PlayerStats.AddBonusProbability(100);
+        SpellCharge.AddBonusProbability(100);
 
         // Modification to player stats
         yield return new WaitForSeconds(ultimateDuration);
 
-        PlayerStats.RemoveBonusProbability(100);
+        SpellCharge.RemoveBonusProbability(100);
 
         EventManager.Ultimate(false);
     }

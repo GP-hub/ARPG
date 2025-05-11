@@ -15,14 +15,15 @@ public class Healthbar : MonoBehaviour
     private void Start()
     {
 
-        if (objectToFollow.name.ToLower().Contains("player"))
-        {
-            isPlayerBar = true;
-        }
+    }
 
-        if (isPlayerBar) EventManager.onFireChargeCountChange += UpdateFireChargeBarUI;
+    private void OnEnable()
+    {
 
-        EventManager.FireChargeCountChange(SpellCharge.SpellCount);
+    }
+    private void OnDisable()
+    {
+        if (isPlayerBar) EventManager.onFireChargeCountChange -= UpdateFireChargeBarUI;
     }
     void OnDestroy()
     {
@@ -34,10 +35,17 @@ public class Healthbar : MonoBehaviour
         if (objectToFollow != null)
         {
             RepositionHealthBar(objectToFollow);
-        }     
+        }
     }
     private void FixedUpdate()
     {
+
+    }
+
+    public void SubscribeToFireChargeChange()
+    {
+        isPlayerBar = true;
+        EventManager.onFireChargeCountChange += UpdateFireChargeBarUI;
     }
 
     public void SetHealthBarData(Transform target, RectTransform healthBarPanel)

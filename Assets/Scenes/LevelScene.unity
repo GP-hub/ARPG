@@ -14108,7 +14108,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 3142904809075892329, guid: 056cd2ef5c48bd543a8b8a967be299d2, type: 3}
       propertyPath: attackDamage
-      value: 2
+      value: 10
       objectReference: {fileID: 0}
     - target: {fileID: 3142904809075892329, guid: 056cd2ef5c48bd543a8b8a967be299d2, type: 3}
       propertyPath: powerCooldownImage

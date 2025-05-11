@@ -16,12 +16,12 @@ public class Dash : MonoBehaviour
     private bool isDashOnCooldown;
     private bool isCasting = false;
 
-    private PlayerMovement twinStickMovement;
+    private PlayerMovement playerMovement;
     private PlayerInput playerInput;
 
     private void Awake()
     {
-        twinStickMovement = GetComponent<PlayerMovement>();
+        playerMovement = GetComponent<PlayerMovement>();
         playerInput = GetComponent<PlayerInput>();
 
         playerInput.actions.FindAction("Dash").performed += OnDash;
@@ -55,11 +55,11 @@ public class Dash : MonoBehaviour
     {
         EventManager.Dashing(true);
 
-        twinStickMovement.CurrentPlayerSpeed += dashSpeed;
+        playerMovement.CurrentPlayerSpeed += dashSpeed;
 
         yield return new WaitForSeconds(dashDuration);
 
-        twinStickMovement.CurrentPlayerSpeed -= dashSpeed;
+        playerMovement.CurrentPlayerSpeed -= dashSpeed;
 
         EventManager.Dashing(false);
     }

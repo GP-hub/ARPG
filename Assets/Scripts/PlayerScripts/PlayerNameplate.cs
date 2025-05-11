@@ -14,13 +14,19 @@ public class PlayerNameplate : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
+    }
+
+    private void OnEnable()
+    {
         GeneratePlayerHealthBar(hpBarProxyFollow);
+        
     }
 
     private void GeneratePlayerHealthBar(Transform hpBarProxy)
     {
         GameObject healthBarGo = Instantiate(healthBarPrefab);
         healthBar = healthBarGo.GetComponent<Healthbar>();
+        healthBar.SubscribeToFireChargeChange();
         healthBar.SetHealthBarData(hpBarProxy, healthPanelRect);
         healthBar.transform.SetParent(healthPanelRect, false);
     }

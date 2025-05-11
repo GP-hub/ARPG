@@ -10,7 +10,6 @@ public class AttackAndPowerCasting : MonoBehaviour
     [SerializeField] private GameObject exitPoint;
     [SerializeField] private LayerMask groundLayer;
 
-
     [Space(10)]
     [Header("Attack")]
     [SerializeField] private DecalProjector attackSpellIndicator;
@@ -81,6 +80,7 @@ public class AttackAndPowerCasting : MonoBehaviour
     {
         EventManager.onEnemyTakeDamage += DoDamage;
         EventManager.onEnemyGetCC += ApplyCCDuration;
+        SpellCharge.InitializeSpellCharge();
     }
 
     private void OnEnable()

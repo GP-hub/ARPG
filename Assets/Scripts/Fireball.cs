@@ -48,14 +48,14 @@ public class Fireball : MonoBehaviour
 
     private void OnEnable()
     {
-        procChance = PlayerStats.CalculateTotalChance();
+        procChance = SpellCharge.CalculateTotalChance();
         // Start the coroutine when the projectile is enabled
         StartCoroutine(DisableFireballObjectAfterTime(this.gameObject, timeProjectileLifeTime, timeExplosionFadeOut));
     }
 
     private void OnDisable()
     {
-        procChance = PlayerStats.fireballBaseProcChance;
+        procChance = SpellCharge.fireballBaseProcChance;
         // Make sure to stop the coroutine when the projectile is disabled or removed
         StopAllCoroutines();
     }
