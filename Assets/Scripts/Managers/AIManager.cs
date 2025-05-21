@@ -42,7 +42,7 @@ public class AIManager : Singleton<AIManager>
             Debug.Log("No enemy units");
             return;
         }
-        if (Units.Count==1)
+        if (Units.Count == 1)
         {
             if (Units[0].currentState.GetStateName() == "FollowState")
             {
@@ -59,5 +59,34 @@ public class AIManager : Singleton<AIManager>
                 }
             }
         }
+    }
+
+    public bool MoveUnitsToPosition(Vector3 position)
+    {
+        if (Units.Count == 0)
+        {
+            return true;
+        }
+
+        bool allArrived = true;
+
+        foreach (Enemy unit in Units)
+        {
+            if (unit == null || !unit.Agent.enabled || !unit.Agent.isOnNavMesh) continue;
+
+            // Command movement only if not already very close
+            float distance = Vector3.Distance(unit.transform.position, position);
+            if (distance >= 0.1f)
+            {
+                unit.MoveAIUnit(position);
+                allArrived = false;
+            }
+            else
+            {
+                unit.Stop(); // Optional: stop them once they’re close enough
+            }
+        }
+
+        return allArrived;
     }
 }
