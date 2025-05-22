@@ -10,7 +10,7 @@ GameObject:
   m_Component:
   - component: {fileID: 635448857638281529}
   - component: {fileID: 5993520809803571427}
-  m_Layer: 0
+  m_Layer: 2
   m_Name: Rock_Cylinder
   m_TagString: Destructible
   m_Icon: {fileID: 0}
@@ -46,7 +46,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   rockRenderer: {fileID: 8257167631066539006}
-  fadeMaterial: {fileID: 0}
 --- !u!1 &6303953515636218419
 GameObject:
   m_ObjectHideFlags: 0
@@ -58,7 +57,7 @@ GameObject:
   - component: {fileID: 1787211681824302407}
   - component: {fileID: 1114650337403541645}
   - component: {fileID: 8257167631066539006}
-  m_Layer: 0
+  m_Layer: 2
   m_Name: Cylinder
   m_TagString: Untagged
   m_Icon: {fileID: 0}

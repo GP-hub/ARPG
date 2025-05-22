@@ -22,7 +22,6 @@ public class Enemy : MonoBehaviour
     private int currentPhase = 1;
     private int previousPhase = 1;
     public bool hasPhaseJustChanged;
-    private Coroutine _phaseResetCoroutine;
 
     public float RotationSpeed { get => rotationSpeed; }
     [SerializeField] private float currentHealth, maxHealth = 30;
@@ -153,13 +152,8 @@ public class Enemy : MonoBehaviour
         HandleStateMachine();
 
         UpdateSpellCooldowns();
-        Debug.Log("HasPhaseJustChanged: " + hasPhaseJustChanged);
-    }
 
-    //private void LateUpdate()
-    //{
-    //    hasPhaseJustChanged = false;
-    //}
+    }
 
 
     private void OnEnable()
@@ -364,21 +358,13 @@ public class Enemy : MonoBehaviour
         if (oldPhase != currentPhase)
         {
             hasPhaseJustChanged = true;
-
-            // kickoff a “clear next frame” coroutine
-            if (_phaseResetCoroutine != null)
-                StopCoroutine(_phaseResetCoroutine);
-            _phaseResetCoroutine = StartCoroutine(ClearPhaseFlagNextFrame());
         }
     }
 
-    private IEnumerator ClearPhaseFlagNextFrame()
+    private void ConsumePhaseChanged()
     {
-        yield return null;            // wait until the next Update/LateUpdate
         hasPhaseJustChanged = false;  // auto-clear
     }
-
-
 
 
     private void Death()
@@ -887,6 +873,7 @@ public class Enemy : MonoBehaviour
     public void MoveToPosition()
     {
         ChangeState(new MoveToState(new Vector3(206, 0, -28)));
+        ConsumePhaseChanged();
     }
 
 

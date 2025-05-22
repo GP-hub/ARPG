@@ -3,6 +3,7 @@ using UnityEngine;
 [RequireComponent(typeof(CharacterController))]
 public class ImpactReceiver : MonoBehaviour
 {
+    [SerializeField] bool canBeMoved = true;
     private float gravity = -9.81f;
     private Vector3 playerVelocity;
     float mass = 3.0F; // defines the character mass
@@ -33,6 +34,8 @@ public class ImpactReceiver : MonoBehaviour
     // call this function to add an impact force:
     public void AddImpact(Vector3 dir, float force)
     {
+        Debug.Log("AddImpact: " + dir + " " + force);
+        if (!canBeMoved) return;
         dir.Normalize();
         dir.y = 0;
         if (dir.y < 0) dir.y = -dir.y; // reflect down force on the ground

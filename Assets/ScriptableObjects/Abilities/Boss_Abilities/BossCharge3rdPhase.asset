@@ -16,7 +16,7 @@ MonoBehaviour:
   maxAttackRange: 500
   minAttackRange: 0
   damage: 3
-  cooldown: 10000
+  cooldown: 900
   projectilePrefab: {fileID: 0}
   animationClip: {fileID: 7400000, guid: f951e9a812fdba94dbd0547e0d3cc749, type: 2}
   selectedFunctionName: ChargingUntilObstacleStart
