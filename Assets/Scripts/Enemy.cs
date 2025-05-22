@@ -339,6 +339,9 @@ public class Enemy : MonoBehaviour
         }
         healthBar.OnHealthChanged(currentHealth / maxHealth);
         UpdateCurrentPhase();
+
+        DamageNumberPool.Instance.ShowDamage(new Vector3(this.transform.position.x, this.transform.position.y + 2, this.transform.position.z), Mathf.CeilToInt(damageAmount).ToString(), Color.white);
+
         //Debug.Log("Enemy hp: " + health);
     }
 
