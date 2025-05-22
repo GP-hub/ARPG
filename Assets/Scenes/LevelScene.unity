@@ -14031,10 +14031,6 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 1881322215}
     m_Modifications:
-    - target: {fileID: 33112480814712688, guid: 056cd2ef5c48bd543a8b8a967be299d2, type: 3}
-      propertyPath: m_IsActive
-      value: 1
-      objectReference: {fileID: 0}
     - target: {fileID: 178050982910570537, guid: 056cd2ef5c48bd543a8b8a967be299d2, type: 3}
       propertyPath: m_LocalPosition.x
       value: 186.96
@@ -14080,65 +14076,9 @@ PrefabInstance:
       value: Player
       objectReference: {fileID: 0}
     - target: {fileID: 1663891721698648187, guid: 056cd2ef5c48bd543a8b8a967be299d2, type: 3}
-      propertyPath: dashSpeed
-      value: 100
-      objectReference: {fileID: 0}
-    - target: {fileID: 1663891721698648187, guid: 056cd2ef5c48bd543a8b8a967be299d2, type: 3}
-      propertyPath: dashCooldown
-      value: 7
-      objectReference: {fileID: 0}
-    - target: {fileID: 1663891721698648187, guid: 056cd2ef5c48bd543a8b8a967be299d2, type: 3}
-      propertyPath: dashDuration
-      value: 0.35
-      objectReference: {fileID: 0}
-    - target: {fileID: 1663891721698648187, guid: 056cd2ef5c48bd543a8b8a967be299d2, type: 3}
-      propertyPath: dashSpeedPercent
-      value: 100
-      objectReference: {fileID: 0}
-    - target: {fileID: 1663891721698648187, guid: 056cd2ef5c48bd543a8b8a967be299d2, type: 3}
       propertyPath: dashCooldownImage
       value: 
       objectReference: {fileID: 1733174547}
-    - target: {fileID: 1912814388282026946, guid: 056cd2ef5c48bd543a8b8a967be299d2, type: 3}
-      propertyPath: surfaceLayer.m_Bits
-      value: 8
-      objectReference: {fileID: 0}
-    - target: {fileID: 2356516993354989031, guid: 056cd2ef5c48bd543a8b8a967be299d2, type: 3}
-      propertyPath: m_LocalPosition.y
-      value: 0.1
-      objectReference: {fileID: 0}
-    - target: {fileID: 2356516993354989031, guid: 056cd2ef5c48bd543a8b8a967be299d2, type: 3}
-      propertyPath: m_LocalRotation.w
-      value: 0.7071068
-      objectReference: {fileID: 0}
-    - target: {fileID: 2356516993354989031, guid: 056cd2ef5c48bd543a8b8a967be299d2, type: 3}
-      propertyPath: m_LocalRotation.x
-      value: 0.7071068
-      objectReference: {fileID: 0}
-    - target: {fileID: 2356516993354989031, guid: 056cd2ef5c48bd543a8b8a967be299d2, type: 3}
-      propertyPath: m_LocalRotation.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 2356516993354989031, guid: 056cd2ef5c48bd543a8b8a967be299d2, type: 3}
-      propertyPath: m_LocalRotation.z
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 2356516993354989031, guid: 056cd2ef5c48bd543a8b8a967be299d2, type: 3}
-      propertyPath: m_LocalEulerAnglesHint.x
-      value: 90
-      objectReference: {fileID: 0}
-    - target: {fileID: 2356516993354989031, guid: 056cd2ef5c48bd543a8b8a967be299d2, type: 3}
-      propertyPath: m_LocalEulerAnglesHint.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 2740951673079534500, guid: 056cd2ef5c48bd543a8b8a967be299d2, type: 3}
-      propertyPath: m_IsActive
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 3142904809075892329, guid: 056cd2ef5c48bd543a8b8a967be299d2, type: 3}
-      propertyPath: attackDamage
-      value: 10
-      objectReference: {fileID: 0}
     - target: {fileID: 3142904809075892329, guid: 056cd2ef5c48bd543a8b8a967be299d2, type: 3}
       propertyPath: powerCooldownImage
       value: 
@@ -14147,64 +14087,15 @@ PrefabInstance:
       propertyPath: attackCooldownImage
       value: 
       objectReference: {fileID: 1312029674}
-    - target: {fileID: 3142904809075892329, guid: 056cd2ef5c48bd543a8b8a967be299d2, type: 3}
-      propertyPath: attackProjectileSpeed
-      value: 50
-      objectReference: {fileID: 0}
-    - target: {fileID: 3142904809075892329, guid: 056cd2ef5c48bd543a8b8a967be299d2, type: 3}
-      propertyPath: powerPlayerMovementSpeedPercent
-      value: -80
-      objectReference: {fileID: 0}
-    - target: {fileID: 3142904809075892329, guid: 056cd2ef5c48bd543a8b8a967be299d2, type: 3}
-      propertyPath: attackPlayerMovementSpeedPercent
-      value: -65
-      objectReference: {fileID: 0}
-    - target: {fileID: 3254165198453713158, guid: 056cd2ef5c48bd543a8b8a967be299d2, type: 3}
-      propertyPath: 'm_Materials.Array.data[0]'
-      value: 
-      objectReference: {fileID: 2100000, guid: 4d90d6718d2dff5498bc6467187a49b3, type: 2}
-    - target: {fileID: 4164652428348068059, guid: 056cd2ef5c48bd543a8b8a967be299d2, type: 3}
-      propertyPath: m_IsActive
-      value: 0
-      objectReference: {fileID: 0}
     - target: {fileID: 4490511338154228046, guid: 056cd2ef5c48bd543a8b8a967be299d2, type: 3}
       propertyPath: ultimateCooldownImage
       value: 
       objectReference: {fileID: 474089946}
-    - target: {fileID: 4727415649089755015, guid: 056cd2ef5c48bd543a8b8a967be299d2, type: 3}
-      propertyPath: m_FadeFactor
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 5236445889759510849, guid: 056cd2ef5c48bd543a8b8a967be299d2, type: 3}
-      propertyPath: m_IsActive
-      value: 1
-      objectReference: {fileID: 0}
     - target: {fileID: 5402577145949455183, guid: 056cd2ef5c48bd543a8b8a967be299d2, type: 3}
       propertyPath: healthPanelRect
       value: 
       objectReference: {fileID: 1913881814}
-    - target: {fileID: 5984747309346691757, guid: 056cd2ef5c48bd543a8b8a967be299d2, type: 3}
-      propertyPath: playerSpeed
-      value: 5
-      objectReference: {fileID: 0}
-    - target: {fileID: 6811639953851729930, guid: 056cd2ef5c48bd543a8b8a967be299d2, type: 3}
-      propertyPath: m_IsActive
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 7271900941694603740, guid: 056cd2ef5c48bd543a8b8a967be299d2, type: 3}
-      propertyPath: maxHealth
-      value: 100
-      objectReference: {fileID: 0}
-    - target: {fileID: 7604483440182165713, guid: 056cd2ef5c48bd543a8b8a967be299d2, type: 3}
-      propertyPath: m_Enabled
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 7964579730226944214, guid: 056cd2ef5c48bd543a8b8a967be299d2, type: 3}
-      propertyPath: m_TagString
-      value: Player
-      objectReference: {fileID: 0}
-    m_RemovedComponents:
-    - {fileID: 303204773917927659, guid: 056cd2ef5c48bd543a8b8a967be299d2, type: 3}
+    m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
     m_AddedComponents: []
@@ -16482,6 +16373,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 284055648679671866, guid: 1f2cecd6e34bbce4482753db5ba91d9f, type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 458990086159048967, guid: 1f2cecd6e34bbce4482753db5ba91d9f, type: 3}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Target
       value: 
@@ -16530,10 +16425,30 @@ PrefabInstance:
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Target
       value: 
       objectReference: {fileID: 1269496527}
+    - target: {fileID: 4208743779651655801, guid: 1f2cecd6e34bbce4482753db5ba91d9f, type: 3}
+      propertyPath: m_Sprite
+      value: 
+      objectReference: {fileID: 21300000, guid: 38e4bf9210f961a4981844a569abe725, type: 3}
+    - target: {fileID: 4996924530099468679, guid: 1f2cecd6e34bbce4482753db5ba91d9f, type: 3}
+      propertyPath: m_Sprite
+      value: 
+      objectReference: {fileID: 21300000, guid: 14fbc93a05c698e4f9291ad01bcab9a4, type: 3}
+    - target: {fileID: 6828415701005275285, guid: 1f2cecd6e34bbce4482753db5ba91d9f, type: 3}
+      propertyPath: m_Sprite
+      value: 
+      objectReference: {fileID: 21300000, guid: b5350db444e391c4bb1a07123158c859, type: 3}
+    - target: {fileID: 6828415701005275285, guid: 1f2cecd6e34bbce4482753db5ba91d9f, type: 3}
+      propertyPath: m_Enabled
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 7327281287024145605, guid: 1f2cecd6e34bbce4482753db5ba91d9f, type: 3}
       propertyPath: m_Name
       value: UICanvas
       objectReference: {fileID: 0}
+    - target: {fileID: 7374835493775887412, guid: 1f2cecd6e34bbce4482753db5ba91d9f, type: 3}
+      propertyPath: m_Sprite
+      value: 
+      objectReference: {fileID: 21300000, guid: 4d47a6fcac7684344a2e414fe05ef10b, type: 3}
     - target: {fileID: 8770177733296948164, guid: 1f2cecd6e34bbce4482753db5ba91d9f, type: 3}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Target
       value: 
