@@ -12,12 +12,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: bf59774016b20b6448aa62df6df3e087, type: 3}
   m_Name: BossCharge3rdPhase
   m_EditorClassIdentifier: 
-  moveName: Boss Charge
   accuracy: 0
   maxAttackRange: 500
-  minAttackRange: 10
+  minAttackRange: 0
   damage: 100
-  cooldown: 25
+  cooldown: 900
   projectilePrefab: {fileID: 0}
   animationClip: {fileID: 7400000, guid: f951e9a812fdba94dbd0547e0d3cc749, type: 2}
   selectedFunctionName: ChargingUntilObstacleStart

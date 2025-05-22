@@ -3,7 +3,7 @@ using UnityEngine;
 [CreateAssetMenu(menuName = "AbilityCondition/PhaseCheckCondition")]
 public class PhaseCheckCondition : ScriptableAbilityCondition
 {
-    public int phaseNbr = 1;
+    public int phaseNbr;
 
     public override bool IsMet(Enemy enemy)
     {

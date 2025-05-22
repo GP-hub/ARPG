@@ -5,7 +5,7 @@ using UnityEngine.UI;
 
 public class Dash : MonoBehaviour
 {
-    [SerializeField] private int dashSpeed;
+    [SerializeField] private int dashSpeedPercent;
     [SerializeField] private float dashDuration;
     [SerializeField] private float dashCooldown;
     [SerializeField] private Image dashCooldownImage;
@@ -55,11 +55,13 @@ public class Dash : MonoBehaviour
     {
         EventManager.Dashing(true);
 
-        playerMovement.CurrentPlayerSpeed += dashSpeed;
+        //playerMovement.CurrentPlayerSpeed += dashSpeed;
+        playerMovement.AddSpeedModifier("Dash", dashSpeedPercent);
 
         yield return new WaitForSeconds(dashDuration);
 
-        playerMovement.CurrentPlayerSpeed -= dashSpeed;
+        //playerMovement.CurrentPlayerSpeed -= dashSpeed;
+        playerMovement.RemoveSpeedModifier("Dash");
 
         EventManager.Dashing(false);
     }

@@ -1,13 +1,9 @@
-using System;
-using System.Buffers.Text;
 using System.Collections;
 using System.Collections.Generic;
 using System.Reflection;
-using Unity.VisualScripting;
 using UnityEditor.Animations;
 using UnityEngine;
 using UnityEngine.AI;
-using UnityEngine.SceneManagement;
 using Random = UnityEngine.Random;
 
 
@@ -21,7 +17,12 @@ public class Enemy : MonoBehaviour
     [SerializeField] private float rotationSpeed = 25f;
     private BlendTree attackBlendTree;
     private BlendTree powerBlendTree;
+
+    // Phase handling
     private int currentPhase = 1;
+    private int previousPhase = 1;
+    public bool hasPhaseJustChanged;
+
     public float RotationSpeed { get => rotationSpeed; }
     [SerializeField] private float currentHealth, maxHealth = 30;
     [Tooltip("Animator issue when speed is below 2")]
@@ -93,10 +94,11 @@ public class Enemy : MonoBehaviour
     private bool isGrounded = true;
     private bool isAttacking;
     private bool isPowering = false;
-    private bool isMoving;
+    public bool isMoving;
     private bool isIdle;
     private bool isAlive = true;
     private bool isCC;
+
 
     private bool isLookingForTarget;
 
@@ -150,7 +152,9 @@ public class Enemy : MonoBehaviour
         HandleStateMachine();
 
         UpdateSpellCooldowns();
+
     }
+
 
     private void OnEnable()
     {
@@ -340,15 +344,28 @@ public class Enemy : MonoBehaviour
 
     private void UpdateCurrentPhase()
     {
+        int oldPhase = currentPhase;
+
         if (currentHealth <= 0.66f * maxHealth && currentPhase == 1)
         {
             currentPhase = 2;
         }
-        if (currentHealth <= 0.33f * maxHealth && currentPhase == 2)
+        else if (currentHealth <= 0.33f * maxHealth && currentPhase == 2)
         {
             currentPhase = 3;
         }
+
+        if (oldPhase != currentPhase)
+        {
+            hasPhaseJustChanged = true;
+        }
     }
+
+    private void ConsumePhaseChanged()
+    {
+        hasPhaseJustChanged = false;  // auto-clear
+    }
+
 
     private void Death()
     {
@@ -396,6 +413,10 @@ public class Enemy : MonoBehaviour
 
         if (/*CanSeeTarget(target) && */target.tag != "Dead")
         {
+            if (isMoving)
+            {
+                return;
+            }
 
             if (!CanCastAbility)
             {
@@ -407,7 +428,7 @@ public class Enemy : MonoBehaviour
             float distanceToTarget = (transform.position - target.position).sqrMagnitude;
 
             if (isPowering || isAttacking) return;
-            if (CanPower(distanceToTarget))
+            if (CanPower(distanceToTarget) && AreConditionsMet(powerAbility))
             {
 
                 ChangeState(new PowerState());
@@ -848,6 +869,13 @@ public class Enemy : MonoBehaviour
         return Utility.GetClipThreshold(attackBlendTree, currentAbility.animationClip);
     }
 
+    [AttackMethod]
+    public void MoveToPosition()
+    {
+        ChangeState(new MoveToState(new Vector3(206, 0, -28)));
+        ConsumePhaseChanged();
+    }
+
 
     [AttackMethod]
     public void JumpAttack()
@@ -1219,6 +1247,7 @@ public class Enemy : MonoBehaviour
         agent.updateRotation = true;
 
         agent.Move(Vector3.zero);
+
         yield return null;
     }
 

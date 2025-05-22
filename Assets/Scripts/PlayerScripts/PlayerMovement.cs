@@ -1,13 +1,14 @@
 using System.Collections;
+using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.AI;
-using UnityEngine.Rendering.UI;
 
 [RequireComponent(typeof(CharacterController))]
 public class PlayerMovement : MonoBehaviour
 {
     [SerializeField] private float playerSpeed;
-    private float currentPlayerSpeed;
+    //private float currentPlayerSpeed;
+    private Dictionary<string, float> speedModifiers = new();
 
     private float gravity = -9.81f;
 
@@ -30,10 +31,8 @@ public class PlayerMovement : MonoBehaviour
 
     private AttackAndPowerCasting attackAndPowerCasting;
 
-    public Vector3 WorldAim { get => worldAim; }
-    public float CurrentPlayerSpeed { get => currentPlayerSpeed; set => currentPlayerSpeed = value; }
+    //public float CurrentPlayerSpeed { get => currentPlayerSpeed; set => currentPlayerSpeed = value; }
 
-    public float PlayerSpeed { get => playerSpeed; }
 
     //
     private void Awake()
@@ -47,7 +46,7 @@ public class PlayerMovement : MonoBehaviour
     }
     private void Start()
     {
-        currentPlayerSpeed = playerSpeed;
+        //currentPlayerSpeed = playerSpeed;
     }
 
     private void OnEnable()
@@ -65,6 +64,9 @@ public class PlayerMovement : MonoBehaviour
     void Update()
     {
         if (!playerHealth.IsAlive) return;
+
+        //playerSpeed = Mathf.Max(0f, playerSpeed);
+        //currentPlayerSpeed = Mathf.Clamp(currentPlayerSpeed, 0f, playerSpeed);
 
         HandleInput();
         HandleRotation();
@@ -114,12 +116,48 @@ public class PlayerMovement : MonoBehaviour
         {
             HandleAnimationWeight(0, "Aiming");
         }
+        animator.SetFloat("MoveSpeed", currentPlayerSpeed / playerSpeed);
+
     }
 
-    public void IncreasePlayerMaxMovespeed(int speedBuff)
+    //public void IncreasePlayerMaxMovespeed(int speedBuff)
+    //{
+    //    playerSpeed += speedBuff;
+    //}
+
+    public float currentPlayerSpeed
     {
-        playerSpeed += speedBuff;
+        get
+        {
+            float totalModifier = 0f;
+            foreach (float modifier in speedModifiers.Values)
+            {
+                totalModifier += modifier;
+            }
+
+            float finalSpeed = playerSpeed * (1f + totalModifier / 100f);
+            return Mathf.Max(0f, finalSpeed); // Prevent negative speed
+        }
     }
+
+
+    public void AddSpeedModifier(string source, float multiplier)
+    {
+        if (!speedModifiers.ContainsKey(source))
+            speedModifiers.Add(source, multiplier);
+    }
+
+    public void RemoveSpeedModifier(string source)
+    {
+        if (speedModifiers.ContainsKey(source))
+            speedModifiers.Remove(source);
+    }
+
+    public void SetSpeedModifier(string source, float multiplier)
+    {
+        speedModifiers[source] = multiplier; // Add or overwrite
+    }
+
 
     private void HandleAnimationWeight(float targetWeight, string layerName)
     {
@@ -142,23 +180,25 @@ public class PlayerMovement : MonoBehaviour
     public void RecoverMovementSpeed()
     {
         //CurrentPlayerSpeed = PlayerSpeed;
-        StartCoroutine(RestoreSpeedCoroutine(.2f, playerSpeed, currentPlayerSpeed));
+        //StartCoroutine(RestoreSpeedCoroutine(.2f, playerSpeed, currentPlayerSpeed));
     }
 
-    public IEnumerator RestoreSpeedCoroutine(float duration, float targetSpeed, float currentSpeed)
-    {
-        float startSpeed = currentSpeed;
-        float elapsed = 0f;
+    //public IEnumerator RestoreSpeedCoroutine(float duration, float targetSpeed, float currentSpeed)
+    //{
+    //    float startSpeed = currentSpeed;
+    //    float elapsed = 0f;
 
-        while (elapsed < duration)
-        {
-            elapsed += Time.deltaTime;
-            CurrentPlayerSpeed = Mathf.Lerp(startSpeed, targetSpeed, elapsed / duration);
-            yield return null;
-        }
+    //    while (elapsed < duration)
+    //    {
+    //        elapsed += Time.deltaTime;
+    //        currentPlayerSpeed = Mathf.Lerp(startSpeed, targetSpeed, elapsed / duration);
+    //        yield return null;
+    //    }
 
-        CurrentPlayerSpeed = targetSpeed;
-    }
+    //    currentPlayerSpeed = targetSpeed;
+    //}
+
+
 
 
     private void HandleMovement()

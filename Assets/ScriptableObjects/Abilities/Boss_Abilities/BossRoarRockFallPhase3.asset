@@ -12,10 +12,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: bf59774016b20b6448aa62df6df3e087, type: 3}
   m_Name: BossRoarRockFallPhase3
   m_EditorClassIdentifier: 
-  moveName: 
+  accuracy: 0
   maxAttackRange: 1000
   minAttackRange: 1
-  damage: 1
+  damage: 5
   cooldown: 999
   projectilePrefab: {fileID: 0}
   animationClip: {fileID: 7400000, guid: 09b049ffd9dd6b748aff4a78c21099ac, type: 2}
