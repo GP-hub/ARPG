@@ -34,7 +34,6 @@ public class ImpactReceiver : MonoBehaviour
     // call this function to add an impact force:
     public void AddImpact(Vector3 dir, float force)
     {
-        Debug.Log("AddImpact: " + dir + " " + force);
         if (!canBeMoved) return;
         dir.Normalize();
         dir.y = 0;

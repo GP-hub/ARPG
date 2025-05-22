@@ -11401,14 +11401,14 @@ GameObject:
   - component: {fileID: 1839900447}
   - component: {fileID: 1839900446}
   - component: {fileID: 1839900445}
-  - component: {fileID: 1839900444}
+  - component: {fileID: 1839900449}
   m_Layer: 6
   m_Name: Boss (2)
   m_TagString: Enemy
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!4 &1839900443
 Transform:
   m_ObjectHideFlags: 0
@@ -11431,18 +11431,6 @@ Transform:
   - {fileID: 617684690}
   m_Father: {fileID: 1881322215}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &1839900444
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1839900442}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 9c18389bd7ccb55408949813ac67ac64, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!195 &1839900445
 NavMeshAgent:
   m_ObjectHideFlags: 0
@@ -11553,6 +11541,19 @@ Animator:
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorStateOnDisable: 0
   m_WriteDefaultValuesOnDisable: 0
+--- !u!114 &1839900449
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1839900442}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9c18389bd7ccb55408949813ac67ac64, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  canBeMoved: 0
 --- !u!1001 &1844902867
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -14079,6 +14080,22 @@ PrefabInstance:
       value: Player
       objectReference: {fileID: 0}
     - target: {fileID: 1663891721698648187, guid: 056cd2ef5c48bd543a8b8a967be299d2, type: 3}
+      propertyPath: dashSpeed
+      value: 100
+      objectReference: {fileID: 0}
+    - target: {fileID: 1663891721698648187, guid: 056cd2ef5c48bd543a8b8a967be299d2, type: 3}
+      propertyPath: dashCooldown
+      value: 7
+      objectReference: {fileID: 0}
+    - target: {fileID: 1663891721698648187, guid: 056cd2ef5c48bd543a8b8a967be299d2, type: 3}
+      propertyPath: dashDuration
+      value: 0.35
+      objectReference: {fileID: 0}
+    - target: {fileID: 1663891721698648187, guid: 056cd2ef5c48bd543a8b8a967be299d2, type: 3}
+      propertyPath: dashSpeedPercent
+      value: 100
+      objectReference: {fileID: 0}
+    - target: {fileID: 1663891721698648187, guid: 056cd2ef5c48bd543a8b8a967be299d2, type: 3}
       propertyPath: dashCooldownImage
       value: 
       objectReference: {fileID: 1733174547}
@@ -14136,11 +14153,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 3142904809075892329, guid: 056cd2ef5c48bd543a8b8a967be299d2, type: 3}
       propertyPath: powerPlayerMovementSpeedPercent
-      value: 75
+      value: -80
       objectReference: {fileID: 0}
     - target: {fileID: 3142904809075892329, guid: 056cd2ef5c48bd543a8b8a967be299d2, type: 3}
       propertyPath: attackPlayerMovementSpeedPercent
-      value: 50
+      value: -65
       objectReference: {fileID: 0}
     - target: {fileID: 3254165198453713158, guid: 056cd2ef5c48bd543a8b8a967be299d2, type: 3}
       propertyPath: 'm_Materials.Array.data[0]'
@@ -14166,6 +14183,10 @@ PrefabInstance:
       propertyPath: healthPanelRect
       value: 
       objectReference: {fileID: 1913881814}
+    - target: {fileID: 5984747309346691757, guid: 056cd2ef5c48bd543a8b8a967be299d2, type: 3}
+      propertyPath: playerSpeed
+      value: 5
+      objectReference: {fileID: 0}
     - target: {fileID: 6811639953851729930, guid: 056cd2ef5c48bd543a8b8a967be299d2, type: 3}
       propertyPath: m_IsActive
       value: 0
@@ -14173,6 +14194,10 @@ PrefabInstance:
     - target: {fileID: 7271900941694603740, guid: 056cd2ef5c48bd543a8b8a967be299d2, type: 3}
       propertyPath: maxHealth
       value: 100
+      objectReference: {fileID: 0}
+    - target: {fileID: 7604483440182165713, guid: 056cd2ef5c48bd543a8b8a967be299d2, type: 3}
+      propertyPath: m_Enabled
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 7964579730226944214, guid: 056cd2ef5c48bd543a8b8a967be299d2, type: 3}
       propertyPath: m_TagString
@@ -17128,6 +17153,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9c18389bd7ccb55408949813ac67ac64, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  canBeMoved: 1
 --- !u!1 &6289857764794638694
 GameObject:
   m_ObjectHideFlags: 0

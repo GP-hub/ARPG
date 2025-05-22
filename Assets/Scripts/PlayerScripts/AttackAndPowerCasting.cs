@@ -19,7 +19,7 @@ public class AttackAndPowerCasting : MonoBehaviour
     // the player attack projectile which is the fireball, has its speed dictated by the fireball prefab itself
     //[SerializeField] private float attackProjectileSpeed = 10f;
     [SerializeField] private float attackCooldownTime = 1f;
-    [SerializeField] private float attackPlayerMovementSpeedPercent = 2;
+    [SerializeField] private float attackPlayerMovementSpeedPercent;
     [SerializeField] private float attackSpeedMultiplier = 1;
     [SerializeField] private Image attackCooldownImage;
 
@@ -30,7 +30,7 @@ public class AttackAndPowerCasting : MonoBehaviour
     [SerializeField] private float powerDamage = 5f;
     [SerializeField] private float powerCCDuration = 5f;
     [SerializeField] private float powerCooldownTime = 5f;
-    [SerializeField] private float powerPlayerMovementSpeedPercent = 5;
+    [SerializeField] private float powerPlayerMovementSpeedPercent;
     [SerializeField] private float powerSpeedMultiplier = 1;
     [SerializeField] private Image powerCooldownImage;
 
@@ -184,13 +184,15 @@ public class AttackAndPowerCasting : MonoBehaviour
         EventManager.Casting(false);
         isCasting = false;
         animator.ResetTrigger("Attack");
+        playerMovement.RemoveSpeedModifier("Attack");
     }
 
     // Trigger by first keyframe of Attack animation
     public void MoveSpeedPlayerOnAttack()
     {
-        float targetSpeed = playerMovement.PlayerSpeed * (1f - (attackPlayerMovementSpeedPercent / 100f));
-        StartCoroutine(playerMovement.RestoreSpeedCoroutine(.2f, targetSpeed, playerMovement.CurrentPlayerSpeed));
+        //float targetSpeed = playerMovement.PlayerSpeed * (1f - (attackPlayerMovementSpeedPercent / 100f));
+        //StartCoroutine(playerMovement.RestoreSpeedCoroutine(.2f, targetSpeed, playerMovement.CurrentPlayerSpeed));
+        playerMovement.AddSpeedModifier("Attack", attackPlayerMovementSpeedPercent);
 
         animator.SetFloat("AttackSpeed", attackSpeedMultiplier);
     }
@@ -210,8 +212,9 @@ public class AttackAndPowerCasting : MonoBehaviour
     // Trigger by first keyframe of Power animation
     public void MoveSpeedPlayerOnPower()
     {
-        float targetSpeed = playerMovement.PlayerSpeed * (1f - (powerPlayerMovementSpeedPercent / 100f));
-        StartCoroutine(playerMovement.RestoreSpeedCoroutine(.2f, targetSpeed, playerMovement.CurrentPlayerSpeed));
+        //float targetSpeed = playerMovement.PlayerSpeed * (1f - (powerPlayerMovementSpeedPercent / 100f));
+        //StartCoroutine(playerMovement.RestoreSpeedCoroutine(.2f, targetSpeed, playerMovement.CurrentPlayerSpeed));
+        playerMovement.AddSpeedModifier("Power", powerPlayerMovementSpeedPercent);
 
         // IF spellCount is 0 THEN powerSpeed is 1, ELSE powerSpeed is equal to spellCount
         powerSpeedMultiplier = (SpellCharge.SpellCount == 0) ? 1 : SpellCharge.SpellCount;
@@ -317,7 +320,7 @@ public class AttackAndPowerCasting : MonoBehaviour
     // Called by Player Power Animation Keyframe
     public void CastMeteor()
     {
-        playerMovement.CurrentPlayerSpeed = playerMovement.PlayerSpeed;
+        //playerMovement.CurrentPlayerSpeed = playerMovement.PlayerSpeed;
 
         Ray cursorRay = Camera.main.ScreenPointToRay(Input.mousePosition);
 
@@ -340,6 +343,7 @@ public class AttackAndPowerCasting : MonoBehaviour
         isCasting = false;
         animator.ResetTrigger("Power");
         powerSpellIndicator.fadeFactor = 0;
+        playerMovement.RemoveSpeedModifier("Power");
     }
 
 
