@@ -13,7 +13,7 @@ public class DamageNumber : MonoBehaviour
 
     public void OnAnimationEnd()
     {
-        gameObject.SetActive(false); // Return to pool
+        DamageNumberPool.Instance.ReturnToPool(transform.parent.gameObject);
     }
 
     public void ResetLocalPosition()

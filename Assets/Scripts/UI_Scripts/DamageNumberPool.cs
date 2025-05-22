@@ -34,15 +34,20 @@ public class DamageNumberPool : MonoBehaviour
 
     private GameObject GetFromPool()
     {
-        if (pool.Count == 0)
+        // Search for an inactive object in the pool
+        while (pool.Count > 0)
         {
-            GameObject newOne = Instantiate(damageNumberAnchorPrefab, transform);
-            newOne.SetActive(false);
-            pool.Enqueue(newOne);
+            GameObject obj = pool.Dequeue();
+            if (!obj.activeInHierarchy)
+                return obj;
         }
 
-        return pool.Dequeue();
+        // If all objects are in use, instantiate a new one
+        GameObject newOne = Instantiate(damageNumberAnchorPrefab, transform);
+        newOne.SetActive(false);
+        return newOne;
     }
+
 
     public void ReturnToPool(GameObject anchor)
     {
