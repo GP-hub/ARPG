@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Splines;
 
 public class PlayerHealth : MonoBehaviour
 {
@@ -42,6 +43,8 @@ public class PlayerHealth : MonoBehaviour
 
         playerNameplate.UpdateHealthUI(health, maxHealth);
         EventManager.PlayerUpdateHealthUI(health, maxHealth);
+
+        DamageNumberPool.Instance.ShowDamage(new Vector3(this.transform.position.x, this.transform.position.y+2, this.transform.position.z), "-" + Mathf.CeilToInt(damageAmount).ToString(), Color.red);
     }
 
     public void PlayerTakeHeal(int healAmount)
@@ -54,6 +57,8 @@ public class PlayerHealth : MonoBehaviour
 
         playerNameplate.UpdateHealthUI(health, maxHealth);
         EventManager.PlayerUpdateHealthUI(health, maxHealth);
+        DamageNumberPool.Instance.ShowDamage(new Vector3(this.transform.position.x, this.transform.position.y + 2, this.transform.position.z), "+"+ Mathf.CeilToInt(healAmount).ToString(), Color.green);
+
     }
 
     private void Death()

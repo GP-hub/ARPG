@@ -48,6 +48,9 @@ TagManager:
   - name: DecalReceivers
     uniqueID: 4198802015
     locked: 0
+  - name: UIOverlay
+    uniqueID: 520849193
+    locked: 0
   m_RenderingLayers:
   - Default
   - DecalReceivers
