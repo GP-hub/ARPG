@@ -19055,10 +19055,26 @@ PrefabInstance:
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Target
       value: 
       objectReference: {fileID: 1269496527}
+    - target: {fileID: 4208743779651655801, guid: 1f2cecd6e34bbce4482753db5ba91d9f, type: 3}
+      propertyPath: m_Sprite
+      value: 
+      objectReference: {fileID: 21300000, guid: 7b0fb200ad6a5c34195d5e4089a086eb, type: 3}
+    - target: {fileID: 4996924530099468679, guid: 1f2cecd6e34bbce4482753db5ba91d9f, type: 3}
+      propertyPath: m_Sprite
+      value: 
+      objectReference: {fileID: 21300000, guid: dda94ec0823cc324989d8b2496b806d4, type: 3}
+    - target: {fileID: 6828415701005275285, guid: 1f2cecd6e34bbce4482753db5ba91d9f, type: 3}
+      propertyPath: m_Sprite
+      value: 
+      objectReference: {fileID: 21300000, guid: 4cc4d0392cbaafa46a3761a08ee30b76, type: 3}
     - target: {fileID: 7327281287024145605, guid: 1f2cecd6e34bbce4482753db5ba91d9f, type: 3}
       propertyPath: m_Name
       value: UICanvas
       objectReference: {fileID: 0}
+    - target: {fileID: 7374835493775887412, guid: 1f2cecd6e34bbce4482753db5ba91d9f, type: 3}
+      propertyPath: m_Sprite
+      value: 
+      objectReference: {fileID: 21300000, guid: 6ab03ed3660fef144a18d69d74761b36, type: 3}
     - target: {fileID: 8770177733296948164, guid: 1f2cecd6e34bbce4482753db5ba91d9f, type: 3}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Target
       value: 
