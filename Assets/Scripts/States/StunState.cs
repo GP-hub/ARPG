@@ -21,6 +21,7 @@ public class StunState : IState
         enemy.IsCC = false;
         if (enemy.Agent.isOnNavMesh && enemy.Agent.enabled) enemy.Agent.isStopped = false;
         enemy.ResetSingleBool("TriggerStun");
+        enemy.StartCastCooldown();
     }
     void IState.Update()
     {

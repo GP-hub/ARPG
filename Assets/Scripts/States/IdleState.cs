@@ -7,8 +7,7 @@ class IdleState : IState
     void IState.Enter(Enemy enemy)
     {
         this.enemy = enemy;
-
-        //this.enemy.Target = null;
+        Debug.Log("Entering Idle State");
         if (enemy.Agent.isOnNavMesh && enemy.Agent.enabled) enemy.Stop();
         enemy.SetBoolSingle("TriggerIdle");
         enemy.ResetAttackingAndPowering();

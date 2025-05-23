@@ -14,9 +14,18 @@ public class Firewall : MonoBehaviour
 
     private Coroutine firewallCoroutine;
 
-    private void Start()
+    private void OnEnable()
     {
         EventManager.onDashing += StartCoroutineFirewall;
+    }
+    private void OnDisable()
+    {
+        EventManager.onDashing -= StartCoroutineFirewall;
+    }
+
+    private void OnDestroy()
+    {
+        EventManager.onDashing -= StartCoroutineFirewall;
     }
 
 
