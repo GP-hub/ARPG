@@ -1,12 +1,28 @@
+using TMPro;
 using UnityEditor;
 using UnityEngine;
 using UnityEngine.InputSystem;
+using UnityEngine.SceneManagement;
 
 public class PauseMenu : MonoBehaviour
 {
     public static bool isGamePaused;
     private GameObject pauseMenu;
+    [SerializeField] private GameObject gameStateScreen;
+    [SerializeField] private TextMeshProUGUI gameStateText;
     [SerializeField] private InputActionAsset inputActionAsset;
+
+    private void OnEnable()
+    {
+        EventManager.onPlayerDeath += ShowGameOverScreen;
+        EventManager.onBossDeath += ShowVictoryScreen;
+    }
+
+    private void OnDisable()
+    {
+        EventManager.onPlayerDeath -= ShowGameOverScreen;
+        EventManager.onBossDeath -= ShowVictoryScreen;
+    }
 
 
     private void Update()
@@ -68,4 +84,24 @@ public class PauseMenu : MonoBehaviour
         EditorApplication.isPlaying = false;
         Application.Quit();
     }
+
+    public void RestartScene()
+    {
+        Scene currentScene = SceneManager.GetActiveScene();
+        SceneManager.LoadScene(currentScene.name);
+    }
+
+    public void ShowGameOverScreen()
+    {
+        gameStateScreen.SetActive(true);
+        gameStateText.text = "You died";
+    }
+
+    public void ShowVictoryScreen()
+    {
+        gameStateScreen.SetActive(true);
+        gameStateText.text = "Victory";
+    }
+
+
 }

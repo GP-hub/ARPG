@@ -12,6 +12,8 @@ public class AoeEnemySpell : MonoBehaviour
 
     void OnEnable()
     {
+        transform.localScale = new Vector3(radius * 2, transform.localScale.y, radius * 2);
+
         // Max number of entities in the OverlapSphere
         int maxColliders = 10;
         Collider[] hitColliders = new Collider[maxColliders];
@@ -30,5 +32,9 @@ public class AoeEnemySpell : MonoBehaviour
     {
           abilityValues.DoDamage(damage);
     }
-
+    private void OnDrawGizmos()
+    {
+        Gizmos.color = Color.red;
+        Gizmos.DrawWireSphere(transform.position, radius);
+    }
 }

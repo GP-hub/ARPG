@@ -66,5 +66,6 @@ public class PlayerHealth : MonoBehaviour
         this.gameObject.tag = "Dead";
         isAlive = false;
         animator.SetTrigger("Death");
+        EventManager.PlayerDeath();
     }
 }

@@ -37,7 +37,12 @@ public class Combustion : MonoBehaviour
     private void OnDisable()
     {
         EventManager.onCasting -= Casting;
-    }   
+
+        if (playerInput != null)
+        {
+            playerInput.actions.FindAction("Ultimate").performed -= OnUltimate;
+        }
+    }
 
     private void Casting(bool ultimate)
     {
