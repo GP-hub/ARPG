@@ -1002,7 +1002,7 @@ public class Enemy : MonoBehaviour
         {
             if (hitColliders[i].CompareTag("Player"))
             {
-                hitColliders[i].GetComponent<ImpactReceiver>()?.AddImpact(hitColliders[i].transform.position - transform.position, 50);
+                hitColliders[i].GetComponent<ImpactReceiver>()?.AddImpact(hitColliders[i].transform.position - transform.position, 15);
                 EventManager.PlayerTakeDamage(currentAbility.damage);
             }
         }
