@@ -82,7 +82,7 @@ public class Fireball : MonoBehaviour
 
         SpellCharge.IncreaseSpellCount(Mathf.Clamp(procChance, 0, 100));
 
-        PoolingManagerSingleton.Instance.GetObjectFromPool("placeholder_puff", this.transform.position);
+        PoolingManagerSingleton.Instance.GetObjectFromPool("Hit_fire", this.transform.position);
 
         gameObject.SetActive(false);
     }
@@ -91,7 +91,7 @@ public class Fireball : MonoBehaviour
     {
         yield return new WaitForSeconds(timeProjectileExpire);
 
-        PoolingManagerSingleton.Instance.GetObjectFromPool("placeholder_puff", objectToDisable.transform.position);
+        PoolingManagerSingleton.Instance.GetObjectFromPool("Hit_fire", objectToDisable.transform.position);
 
         objectToDisable.SetActive(false);
     }

@@ -327,8 +327,8 @@ public class AttackAndPowerCasting : MonoBehaviour
         if (Physics.Raycast(cursorRay, out RaycastHit hit, 100f, groundLayer))
         {
             Vector3 targetPosition = hit.point;
-
-            GameObject newObject = PoolingManagerSingleton.Instance.GetObjectFromPool(powerPrefabName, targetPosition);
+            Vector3 spawnPosition = targetPosition + new Vector3(0, 0.1f, 0); //Offset slightly above the ground
+            GameObject newObject = PoolingManagerSingleton.Instance.GetObjectFromPool(powerPrefabName, spawnPosition);
 
             if (newObject != null)
             {
