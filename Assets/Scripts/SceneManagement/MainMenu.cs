@@ -1,25 +1,27 @@
 using System;
-using System.Collections;
-using System.Collections.Generic;
-using System.Reflection;
+using TMPro;
 using UnityEditor;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class MainMenu : MonoBehaviour
 {
-    [SerializeField]private GameObject characterSelectScreen;
-    [SerializeField]private GameObject startScreen;
+    [SerializeField] private GameObject characterSelectScreen;
+    [SerializeField] private GameObject startScreen;
 
     [SerializeField] private GameObject[] availableCharacters;
     [SerializeField] private GameObject[] displayedCharacters;
     [SerializeField] private GameObject[] charactersAbilities;
     private GameObject characterSelected;
 
+    [SerializeField] private TMP_Text characterSelectButtonText;
+    [SerializeField] private Button characterSelectButton;
+
     public void Load()
     {
         LoaderManager.Load(LoaderManager.Scene.LevelScene);
 
-        // HERE LOAD THE CORRECT SELECTED CHARACTER
+        // HERE LOAD THE CORRECT SELECTED CHARACTER (actually its done in the envent manager for now ?)
     }
     public void Quit()
     {
@@ -37,10 +39,16 @@ public class MainMenu : MonoBehaviour
 
     public void SelectCharacter(int i)
     {
+        characterSelectButtonText.text = (i != 0) ? "Locked" : "Start";
+        characterSelectButtonText.raycastTarget = (i == 0);
+        characterSelectButton.interactable = (i == 0);
+
         try
         {
             characterSelected = availableCharacters[i];
             ChangeDisplayedCharacterAndAbilities(i);
+            UpdateDisplayCharacterAnimator(i);
+
             EventManager.character = i;
         }
         catch (Exception)
@@ -60,6 +68,19 @@ public class MainMenu : MonoBehaviour
                 displayedCharacters[i].SetActive(i == index);
                 charactersAbilities[i].SetActive(i == index);
             }
+        }
+    }
+
+    public void UpdateDisplayCharacterAnimator(int index)
+    {
+        Animator animator = displayedCharacters[index].GetComponent<Animator>();
+        if (animator != null)
+        {
+            animator.SetFloat("CharNumber", index);
+        }
+        else
+        {
+            Debug.LogWarning("Animator not found on character display at index " + index);
         }
     }
 
