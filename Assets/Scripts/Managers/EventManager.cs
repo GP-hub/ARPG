@@ -1,6 +1,4 @@
-using UnityEngine;
 using System;
-using Unity.VisualScripting;
 
 public static class EventManager/* : Singleton<EventManager>*/
 {
@@ -112,6 +110,24 @@ public static class EventManager/* : Singleton<EventManager>*/
         if (onEnemyDeath != null)
         {
             onEnemyDeath(xp);
+        }
+    }
+
+    public static event Action onPlayerDeath;
+    public static void PlayerDeath()
+    {
+        if (onPlayerDeath != null)
+        {
+            onPlayerDeath();
+        }
+    }
+
+    public static event Action onBossDeath;
+    public static void BossDeath()
+    {
+        if (onBossDeath != null)
+        {
+            onBossDeath();
         }
     }
 

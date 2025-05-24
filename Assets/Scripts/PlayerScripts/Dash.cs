@@ -32,6 +32,16 @@ public class Dash : MonoBehaviour
         EventManager.onCasting += Casting;
     }
 
+    private void OnDisable()
+    {
+        EventManager.onCasting -= Casting;
+
+        if (playerInput != null)
+        {
+            playerInput.actions.FindAction("Dash").performed -= OnDash;
+        }
+    }
+
     private void Casting(bool dashing)
     {
         isCasting = dashing;

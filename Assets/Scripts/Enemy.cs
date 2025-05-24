@@ -377,6 +377,9 @@ public class Enemy : MonoBehaviour
         Debug.Log(this.name + " is dead.");
         animator.SetTrigger("TriggerDeath");
         EventManager.EnemyDeath(xp);
+
+        if (isBoss) EventManager.BossDeath();
+
         StopAllCoroutines();
     }
 
