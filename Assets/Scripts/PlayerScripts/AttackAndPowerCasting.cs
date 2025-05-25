@@ -14,24 +14,24 @@ public class AttackAndPowerCasting : MonoBehaviour
     [Header("Attack")]
     [SerializeField] private DecalProjector attackSpellIndicator;
     [SerializeField] private string attackPrefabName;
-    [SerializeField] private float attackDamage = 10f;
-    [SerializeField] private float attackCCDuration = 3f;
+    [SerializeField] private float attackDamage;
+    [SerializeField] private float attackCCDuration;
     // the player attack projectile which is the fireball, has its speed dictated by the fireball prefab itself
     //[SerializeField] private float attackProjectileSpeed = 10f;
-    [SerializeField] private float attackCooldownTime = 1f;
+    [SerializeField] private float attackCooldownTime;
     [SerializeField] private float attackPlayerMovementSpeedPercent;
-    [SerializeField] private float attackSpeedMultiplier = 1;
+    [SerializeField] private float attackSpeedMultiplier;
     [SerializeField] private Image attackCooldownImage;
 
     [Space(10)]
     [Header("Power")]
     [SerializeField] private DecalProjector powerSpellIndicator;
     [SerializeField] private string powerPrefabName;
-    [SerializeField] private float powerDamage = 5f;
-    [SerializeField] private float powerCCDuration = 5f;
-    [SerializeField] private float powerCooldownTime = 5f;
+    [SerializeField] private float powerDamage;
+    [SerializeField] private float powerCCDuration;
+    [SerializeField] private float powerCooldownTime;
     [SerializeField] private float powerPlayerMovementSpeedPercent;
-    [SerializeField] private float powerSpeedMultiplier = 1;
+    [SerializeField] private float powerSpeedMultiplier;
     [SerializeField] private Image powerCooldownImage;
 
 

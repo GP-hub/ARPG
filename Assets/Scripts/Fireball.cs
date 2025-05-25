@@ -9,7 +9,7 @@ public class Fireball : MonoBehaviour
     [SerializeField] private float explosionRadius;
     //[SerializeField] private int damageAmount = 5;
     [SerializeField] private float timeProjectileLifeTime = 5f;
-    [SerializeField] private float timeExplosionFadeOut = 2f;
+    //[SerializeField] private float timeExplosionFadeOut = 2f;
     [SerializeField] private LayerMask characterLayer;
     [SerializeField] private LayerMask allowedLayersToCollideWith;
     [SerializeField] private float projectileSpeed;
@@ -21,6 +21,14 @@ public class Fireball : MonoBehaviour
     [SerializeField] private LayerMask checkingLayer;
     [SerializeField] private float hoverHeight = 1f;
     [SerializeField] private float raycastDistance = 10f;
+
+    private TrailRenderer[] trailRenderers;
+
+    private void Awake()
+    {
+        trailRenderers = GetComponentsInChildren<TrailRenderer>(true);
+    }
+
 
 
     private void Update()
@@ -48,9 +56,11 @@ public class Fireball : MonoBehaviour
 
     private void OnEnable()
     {
+        ResetTrails();
         procChance = SpellCharge.CalculateTotalChance();
+
         // Start the coroutine when the projectile is enabled
-        StartCoroutine(DisableFireballObjectAfterTime(this.gameObject, timeProjectileLifeTime, timeExplosionFadeOut));
+        StartCoroutine(DisableFireballObjectAfterTime(this.gameObject, timeProjectileLifeTime));
     }
 
     private void OnDisable()
@@ -87,13 +97,22 @@ public class Fireball : MonoBehaviour
         gameObject.SetActive(false);
     }
 
-    private IEnumerator DisableFireballObjectAfterTime(GameObject objectToDisable, float timeProjectileExpire, float timeExplosionExpire)
+    private IEnumerator DisableFireballObjectAfterTime(GameObject objectToDisable, float timeProjectileExpire)
     {
         yield return new WaitForSeconds(timeProjectileExpire);
-
-        PoolingManagerSingleton.Instance.GetObjectFromPool("Hit_fire", objectToDisable.transform.position);
+        Explosion();
+        //PoolingManagerSingleton.Instance.GetObjectFromPool("Hit_fire", objectToDisable.transform.position);
 
         objectToDisable.SetActive(false);
+    }
+    private void ResetTrails()
+    {
+        foreach (TrailRenderer trail in trailRenderers)
+        {
+            trail.Clear();
+            trail.emitting = false;
+            trail.emitting = true;
+        }
     }
 
 }

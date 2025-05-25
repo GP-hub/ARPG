@@ -35,8 +35,8 @@ public class TelegraphIndicator : MonoBehaviour
 
     public void ActivateTelegraph()
     {
-        staticDecal.fadeFactor = .9f;
-        growingDecal.fadeFactor = .75f;
+        staticDecal.fadeFactor = .75f;
+        growingDecal.fadeFactor = .5f;
 
         staticDecal.size = new Vector3(AoESize, AoESize, AoESize);
         growingDecal.size = Vector3.zero;
