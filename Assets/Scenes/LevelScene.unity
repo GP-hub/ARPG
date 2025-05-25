@@ -4464,7 +4464,7 @@ Transform:
   m_GameObject: {fileID: 963194225}
   serializedVersion: 2
   m_LocalRotation: {x: 0.5847103, y: 0, z: 0, w: 0.8112422}
-  m_LocalPosition: {x: 185.22, y: 9, z: -30.39}
+  m_LocalPosition: {x: 183.89, y: 9, z: -30.39}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -4775,6 +4775,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   rotationSpeed: 5
+  moveStateSpeed: 1.5
+  attackStateSpeed: 2.5
+  baseController: {fileID: 9100000, guid: a8277e05608b67541aad32942915a99e, type: 2}
   hasPhaseJustChanged: 0
   currentHealth: 0
   maxHealth: 1000
@@ -5810,6 +5813,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   rotationSpeed: 5
+  moveStateSpeed: 0
+  attackStateSpeed: 0
+  baseController: {fileID: 0}
   hasPhaseJustChanged: 0
   currentHealth: 0
   maxHealth: 1000
@@ -8547,6 +8553,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   rotationSpeed: 5
+  moveStateSpeed: 1.5
+  attackStateSpeed: 2.5
+  baseController: {fileID: 0}
   hasPhaseJustChanged: 0
   currentHealth: 0
   maxHealth: 1000
@@ -9612,7 +9621,7 @@ Transform:
   m_GameObject: {fileID: 2055046826}
   serializedVersion: 2
   m_LocalRotation: {x: 0.5847103, y: 0, z: 0, w: 0.8112422}
-  m_LocalPosition: {x: 185.22, y: 9, z: -30.39}
+  m_LocalPosition: {x: 183.89, y: 9, z: -30.39}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -10246,7 +10255,7 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 178050982910570537, guid: 056cd2ef5c48bd543a8b8a967be299d2, type: 3}
       propertyPath: m_LocalPosition.x
-      value: 185.22
+      value: 183.89
       objectReference: {fileID: 0}
     - target: {fileID: 178050982910570537, guid: 056cd2ef5c48bd543a8b8a967be299d2, type: 3}
       propertyPath: m_LocalPosition.y
@@ -11352,6 +11361,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   rotationSpeed: 5
+  moveStateSpeed: 0
+  attackStateSpeed: 0
+  baseController: {fileID: 0}
   hasPhaseJustChanged: 0
   currentHealth: 0
   maxHealth: 100

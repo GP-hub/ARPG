@@ -1,7 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Reflection;
-using UnityEditor.Animations;
+//using UnityEditor.Animations;
 using UnityEngine;
 using UnityEngine.AI;
 using Random = UnityEngine.Random;
@@ -15,8 +15,15 @@ public class Enemy : MonoBehaviour
     [Space(10)]
     [Header("Miscellaneous")]
     [SerializeField] private float rotationSpeed = 25f;
-    private BlendTree attackBlendTree;
-    private BlendTree powerBlendTree;
+    [SerializeField] private float moveStateSpeed;
+    [SerializeField] private float attackStateSpeed;
+
+    //[SerializeField] private AnimatorOverrideController baseOverrideController;
+    [SerializeField] private RuntimeAnimatorController baseController;
+    private AnimatorOverrideController runtimeOverride;
+
+    //private BlendTree attackBlendTree;
+    //private BlendTree powerBlendTree;
 
     // Phase handling
     private int currentPhase = 1;
@@ -59,14 +66,14 @@ public class Enemy : MonoBehaviour
     [Header("Power Abilities")]
     [SerializeField] private AbilityData powerAbility;
     private float currentPowerCooldown;
-    private AnimatorState powerState;
+    //private AnimatorState powerState;
 
 
     [Space(10)]
     [Header("Attack")]
     [SerializeField] private GameObject exitPoint;
     [SerializeField] private LayerMask characterLayer;
-    private AnimatorState attackState;
+    //private AnimatorState attackState;
 
     [Space(10)]
     [Header("Attack: Melee")]
@@ -125,6 +132,7 @@ public class Enemy : MonoBehaviour
         animator = GetComponent<Animator>();
         controller = GetComponent<CharacterController>();
         agent = GetComponent<NavMeshAgent>();
+        GetAnimatorOverrideController();
     }
 
     // 
@@ -141,7 +149,7 @@ public class Enemy : MonoBehaviour
 
         StartCoroutine(CheckGroundedStatus());
 
-        GetAnimatorController();
+        //GetAnimatorController();
     }
 
 
@@ -159,6 +167,8 @@ public class Enemy : MonoBehaviour
     private void OnEnable()
     {
         EventManager.onGetUnits += AddEnemyToAIManager;
+        this.animator.SetFloat("MoveStateSpeed", moveStateSpeed); // Reset the attack tree to 0 on enable
+        this.animator.SetFloat("AttackStateSpeed", attackStateSpeed); // Reset the attack tree to 0 on enable
         currentHealth = maxHealth;
         lastPosition = transform.position;
         minMaxAbilityRange = MinMaxRangeAttackRange();
@@ -199,118 +209,149 @@ public class Enemy : MonoBehaviour
 
 
 
-    private void GetAnimatorController()
+    //private void GetAnimatorController()
+    //{
+    //    AnimatorController animatorController = animator.runtimeAnimatorController as AnimatorController;
+    //    if (animatorController == null) return;
+
+    //    foreach (AnimatorControllerLayer layer in animatorController.layers)
+    //    {
+    //        foreach (ChildAnimatorState state in layer.stateMachine.states)
+    //        {
+    //            if (state.state.motion is BlendTree blendTree)
+    //            {
+    //                // Check by name
+    //                if (state.state.name == "Attack") // or blendTree.name == "AttackBlendTree"
+    //                {
+    //                    attackState = state.state;
+    //                    attackBlendTree = blendTree;
+    //                    PopulateBlendTree(attackBlendTree);
+    //                }
+    //                else if (state.state.name == "Power") // or blendTree.name == "PowerBlendTree"
+    //                {
+    //                    powerState = state.state;
+    //                    powerBlendTree = blendTree;
+    //                    PopulateBlendTree(powerBlendTree); // Or a different method if needed
+    //                }
+
+    //                // Exit early if both are found
+    //                if (attackBlendTree != null && powerBlendTree != null)
+    //                    return;
+    //            }
+    //        }
+    //    }
+    //}
+
+    private void GetAnimatorOverrideController()
     {
-        AnimatorController animatorController = animator.runtimeAnimatorController as AnimatorController;
-        if (animatorController == null) return;
+        runtimeOverride = new AnimatorOverrideController(baseController);
+        animator.runtimeAnimatorController = runtimeOverride;
 
-        foreach (AnimatorControllerLayer layer in animatorController.layers)
+        for (int i = 0; i < abilities.Count; i++)
         {
-            foreach (ChildAnimatorState state in layer.stateMachine.states)
-            {
-                if (state.state.motion is BlendTree blendTree)
-                {
-                    // Check by name
-                    if (state.state.name == "Attack") // or blendTree.name == "AttackBlendTree"
-                    {
-                        attackState = state.state;
-                        attackBlendTree = blendTree;
-                        PopulateBlendTree(attackBlendTree);
-                    }
-                    else if (state.state.name == "Power") // or blendTree.name == "PowerBlendTree"
-                    {
-                        powerState = state.state;
-                        powerBlendTree = blendTree;
-                        PopulateBlendTree(powerBlendTree); // Or a different method if needed
-                    }
+            string dummyClipName = $"Attack_{i}";
+            AnimationClip realClip = abilities[i].animationClip;
 
-                    // Exit early if both are found
-                    if (attackBlendTree != null && powerBlendTree != null)
-                        return;
-                }
+            if (realClip != null)
+            {
+                runtimeOverride[dummyClipName] = realClip;
+            }
+            else
+            {
+                Debug.LogWarning($"Real clip missing for ability index {i}");
             }
         }
     }
 
-
-    private void OverrideSpecificAnimationByStateName(string targetStateName, AnimationClip newClip)
+    private AnimationClip FindClipByName(AnimatorOverrideController controller, string clipName)
     {
-        if (animator == null || newClip == null)
+        foreach (var pair in controller.animationClips)
         {
-            Debug.Log("Animator or Animation Clip is missing.");
-            return;
+            if (pair.name == clipName)
+                return pair;
         }
-
-        // Create an override controller
-        AnimatorOverrideController overrideController = new AnimatorOverrideController(animator.runtimeAnimatorController);
-
-        // Loop through the layers in the AnimatorController
-        foreach (AnimatorControllerLayer layer in ((AnimatorController)animator.runtimeAnimatorController).layers)
-        {
-            // Loop through the states in each state machine
-            foreach (ChildAnimatorState state in layer.stateMachine.states)
-            {
-                if (state.state.name == targetStateName)
-                {
-                    // Ensure we're replacing the clip, not the BlendTree or other motion types
-                    if (state.state.motion is AnimationClip currentClip)
-                    {
-                        // Replace the animation clip in the target state
-                        Debug.Log($"Replacing animation clip for state '{targetStateName}' with '{newClip.name}'");
-                        overrideController[currentClip] = newClip;
-                        animator.runtimeAnimatorController = overrideController; // Apply the override controller
-                        return; // Exit once we find the state and update it
-                    }
-                    else
-                    {
-                        Debug.Log($"State '{targetStateName}' does not use an AnimationClip, skipping.");
-                    }
-                }
-            }
-        }
-
-        Debug.Log($"State '{targetStateName}' not found.");
+        return null;
     }
 
 
+    //private void OverrideSpecificAnimationByStateName(string targetStateName, AnimationClip newClip)
+    //{
+    //    if (animator == null || newClip == null)
+    //    {
+    //        Debug.Log("Animator or Animation Clip is missing.");
+    //        return;
+    //    }
 
-    private void PopulateBlendTree(BlendTree blendTree)
-    {
-        if (blendTree == null) return;
-        if (blendTree.name == "AttackBlendTree")
-        {
-            if (abilities == null || abilities.Count == 0) return;
+    //    // Create an override controller
+    //    AnimatorOverrideController overrideController = new AnimatorOverrideController(animator.runtimeAnimatorController);
 
-            ChildMotion[] newChildren = new ChildMotion[abilities.Count];
+    //    // Loop through the layers in the AnimatorController
+    //    foreach (AnimatorControllerLayer layer in ((AnimatorController)animator.runtimeAnimatorController).layers)
+    //    {
+    //        // Loop through the states in each state machine
+    //        foreach (ChildAnimatorState state in layer.stateMachine.states)
+    //        {
+    //            if (state.state.name == targetStateName)
+    //            {
+    //                // Ensure we're replacing the clip, not the BlendTree or other motion types
+    //                if (state.state.motion is AnimationClip currentClip)
+    //                {
+    //                    // Replace the animation clip in the target state
+    //                    Debug.Log($"Replacing animation clip for state '{targetStateName}' with '{newClip.name}'");
+    //                    overrideController[currentClip] = newClip;
+    //                    animator.runtimeAnimatorController = overrideController; // Apply the override controller
+    //                    return; // Exit once we find the state and update it
+    //                }
+    //                else
+    //                {
+    //                    Debug.Log($"State '{targetStateName}' does not use an AnimationClip, skipping.");
+    //                }
+    //            }
+    //        }
+    //    }
 
-            for (int i = 0; i < abilities.Count; i++)
-            {
-                newChildren[i] = new ChildMotion
-                {
-                    motion = abilities[i].animationClip,
-                    threshold = i,
-                    timeScale = 1f // Set the speed of the animation to 1
-                };
-            }
+    //    Debug.Log($"State '{targetStateName}' not found.");
+    //}
 
-            blendTree.children = newChildren;
-        }
-        if (blendTree.name == "PowerBlendTree")
-        {
-            if (powerAbility == null) return;
 
-            blendTree.children = new ChildMotion[]
-            {
-                new ChildMotion
-                {
-                    motion = powerAbility.animationClip,
-                    threshold = 0f, // You can use any number here, depending on your blend parameter
-                    timeScale = 1f
-                }
-            };
-        }
 
-    }
+    //private void PopulateBlendTree(BlendTree blendTree)
+    //{
+    //    if (blendTree == null) return;
+    //    if (blendTree.name == "AttackBlendTree")
+    //    {
+    //        if (abilities == null || abilities.Count == 0) return;
+
+    //        ChildMotion[] newChildren = new ChildMotion[abilities.Count];
+
+    //        for (int i = 0; i < abilities.Count; i++)
+    //        {
+    //            newChildren[i] = new ChildMotion
+    //            {
+    //                motion = abilities[i].animationClip,
+    //                threshold = i,
+    //                timeScale = 1f // Set the speed of the animation to 1
+    //            };
+    //        }
+
+    //        blendTree.children = newChildren;
+    //    }
+    //    if (blendTree.name == "PowerBlendTree")
+    //    {
+    //        if (powerAbility == null) return;
+
+    //        blendTree.children = new ChildMotion[]
+    //        {
+    //            new ChildMotion
+    //            {
+    //                motion = powerAbility.animationClip,
+    //                threshold = 0f, // You can use any number here, depending on your blend parameter
+    //                timeScale = 1f
+    //            }
+    //        };
+    //    }
+
+    //}
 
 
 
@@ -870,9 +911,13 @@ public class Enemy : MonoBehaviour
         UseAbility(currentAbility);
     }
 
-    public float BlendTreeThreshold()
+    //public float BlendTreeThreshold()
+    //{
+    //    return Utility.GetClipThreshold(attackBlendTree, currentAbility.animationClip);
+    //}
+    public float GetCurrentAbilityIndex()
     {
-        return Utility.GetClipThreshold(attackBlendTree, currentAbility.animationClip);
+        return abilities.IndexOf(currentAbility);
     }
 
     [AttackMethod]
@@ -898,7 +943,7 @@ public class Enemy : MonoBehaviour
 
     private IEnumerator JumpToLocation(Vector3 destination)
     {
-        float jumpDuration = (currentAbility.animationClip.length / attackState.speed) * 0.27f; // Adjust the duration as needed
+        float jumpDuration = (currentAbility.animationClip.length / attackStateSpeed) * 0.27f; // Adjust the duration as needed
 
         float t = 0f;
         Vector3 startPosition = transform.position;

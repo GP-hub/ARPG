@@ -12,7 +12,7 @@ class AttackState : IState
         enemy.SetBoolSingle("TriggerAttack");
         enemy.TargetPosition = enemy.GetInaccurateTarget(enemy.Target.position);
         if (enemy.Agent.isOnNavMesh && enemy.Agent.enabled) enemy.Stop();
-        enemy.Animator.SetFloat("AttackTree", enemy.BlendTreeThreshold());
+        enemy.Animator.SetFloat("AttackTree", enemy.GetCurrentAbilityIndex());
 
         //enemy.StartCoroutine(enemy.DelayedAttackEnter());
     }
