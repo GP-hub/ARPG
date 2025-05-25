@@ -14,7 +14,8 @@ public class AttackAndPowerCasting : MonoBehaviour
     [Header("Attack")]
     [SerializeField] private DecalProjector attackSpellIndicator;
     [SerializeField] private string attackPrefabName;
-    [SerializeField] private float attackDamage;
+    [SerializeField] private float baseAttackDamage;
+    private float currentAttackDamage;
     [SerializeField] private float attackCCDuration;
     // the player attack projectile which is the fireball, has its speed dictated by the fireball prefab itself
     //[SerializeField] private float attackProjectileSpeed = 10f;
@@ -27,7 +28,8 @@ public class AttackAndPowerCasting : MonoBehaviour
     [Header("Power")]
     [SerializeField] private DecalProjector powerSpellIndicator;
     [SerializeField] private string powerPrefabName;
-    [SerializeField] private float powerDamage;
+    [SerializeField] private float basePowerDamage;
+    private float currentPowerDamage;
     [SerializeField] private float powerCCDuration;
     [SerializeField] private float powerCooldownTime;
     [SerializeField] private float powerPlayerMovementSpeedPercent;
@@ -58,8 +60,8 @@ public class AttackAndPowerCasting : MonoBehaviour
     [SerializeField] private Transform lineDecal;
 
     public bool IsCasting { get => isCasting; }
-    public float AttackDamage { get => attackDamage; set => attackDamage = value; }
-    public float PowerDamage { get => powerDamage; set => powerDamage = value; }
+    public float AttackDamage { get => baseAttackDamage; set => baseAttackDamage = value; }
+    public float PowerDamage { get => basePowerDamage; set => basePowerDamage = value; }
     public string FireballPrefabName { get => attackPrefabName; set => attackPrefabName = value; }
 
     private void Awake()
@@ -303,6 +305,7 @@ public class AttackAndPowerCasting : MonoBehaviour
  
         Vector3 direction = Quaternion.Euler(0, yRotation + 90, 0) * Vector3.forward;
         //Vector3 direction = Quaternion.Euler(0, this.transform.eulerAngles.y, 0) * Vector3.forward;
+        currentAttackDamage = (SpellCharge.SpellCount == 0) ? baseAttackDamage : (SpellCharge.SpellCount * baseAttackDamage) + baseAttackDamage;
 
         GameObject newObject = PoolingManagerSingleton.Instance.GetObjectFromPool(attackPrefabName, exitPoint.transform.position);
 
@@ -320,8 +323,6 @@ public class AttackAndPowerCasting : MonoBehaviour
     // Called by Player Power Animation Keyframe
     public void CastMeteor()
     {
-        //playerMovement.CurrentPlayerSpeed = playerMovement.PlayerSpeed;
-
         Ray cursorRay = Camera.main.ScreenPointToRay(Input.mousePosition);
 
         if (Physics.Raycast(cursorRay, out RaycastHit hit, 100f, groundLayer))
@@ -332,10 +333,11 @@ public class AttackAndPowerCasting : MonoBehaviour
 
             if (newObject != null)
             {
-                SpellCharge.ResetSpellCount();
+                currentPowerDamage = (SpellCharge.SpellCount == 0) ? basePowerDamage : (SpellCharge.SpellCount * basePowerDamage) + basePowerDamage;
 
-                // Trying to make the meteor explode when we cast them
-                newObject.GetComponent<Blackhole>().Explode();
+                SpellCharge.ResetSpellCount();
+                StartCoroutine(DelayedMeteorExplosion(newObject, .825f));
+                //newObject.GetComponent<Meteor>().Explode();
             }
         }
 
@@ -346,16 +348,23 @@ public class AttackAndPowerCasting : MonoBehaviour
         playerMovement.RemoveSpeedModifier("Power");
     }
 
+    private IEnumerator DelayedMeteorExplosion(GameObject meteorObject, float delay)
+    {
+        yield return new WaitForSeconds(delay);
+
+        meteorObject.GetComponent<Meteor>().Explode();
+    }
+
 
     private void DoDamage(Enemy enemy, string skill)
     {
         if (skill.ToLower().Contains(attackPrefabName.ToLower()))
         {
-            enemy.TakeDamage(attackDamage);
+            enemy.TakeDamage(currentAttackDamage);
         }
         else if (skill.ToLower().Contains(powerPrefabName.ToLower()))
         {
-            enemy.TakeDamage(powerDamage);
+            enemy.TakeDamage(currentPowerDamage);
         }
     }
 

@@ -397,7 +397,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   health: 0
-  maxHealth: 10000
+  maxHealth: 100
 --- !u!114 &5984747309346691757
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -445,7 +445,7 @@ MonoBehaviour:
     m_Bits: 136
   attackSpellIndicator: {fileID: 7331111412944048092}
   attackPrefabName: Projectiles_fire
-  attackDamage: 100
+  baseAttackDamage: 5
   attackCCDuration: 1
   attackCooldownTime: 1
   attackPlayerMovementSpeedPercent: -65
@@ -453,7 +453,7 @@ MonoBehaviour:
   attackCooldownImage: {fileID: 0}
   powerSpellIndicator: {fileID: 4727415649089755015}
   powerPrefabName: Meteor_fire
-  powerDamage: 20
+  basePowerDamage: 100
   powerCCDuration: 5
   powerCooldownTime: 5
   powerPlayerMovementSpeedPercent: -80

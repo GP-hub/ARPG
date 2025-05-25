@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Blackhole : MonoBehaviour
+public class Meteor : MonoBehaviour
 {
 
     [SerializeField] private LayerMask characterLayer;
