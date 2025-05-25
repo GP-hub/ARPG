@@ -5,7 +5,7 @@ using UnityEngine.UI;
 
 public class Combustion : MonoBehaviour
 {
-    [SerializeField] private int ultimateSpeed;
+    //[SerializeField] private int ultimateSpeed;
 
     [SerializeField] private float ultimateDuration;
     [SerializeField] private float ultimateCooldown;
@@ -71,15 +71,15 @@ public class Combustion : MonoBehaviour
 
 
         SpellCharge.AddBonusProbability(100);
-        dashScript.IncreaseFireDashDuration(3f);
+        dashScript.BuffByUltimate();
         attackAndPowerCastingScript.BuffByUltimate();
 
         yield return new WaitForSeconds(ultimateDuration);
 
 
-        attackAndPowerCastingScript.RemoveUltimateBuff();
         SpellCharge.RemoveBonusProbability(100);
-        dashScript.DecreaseFireDashDuration(3f);
+        dashScript.RemoveUltimateBuff();
+        attackAndPowerCastingScript.RemoveUltimateBuff();
 
         EventManager.Ultimate(false);
     }

@@ -9,6 +9,11 @@ public class DisableAfterTime : MonoBehaviour
         StartCoroutine(DisableAfterDelay(disableTime));
     }
 
+    private void OnDisable()
+    {
+        StopAllCoroutines();
+    }
+
     IEnumerator DisableAfterDelay(float disableTime)
     {
         // Wait for the specified time
@@ -18,3 +23,4 @@ public class DisableAfterTime : MonoBehaviour
         this.gameObject.SetActive(false);
     }
 }
+

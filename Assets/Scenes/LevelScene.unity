@@ -2272,8 +2272,7 @@ MonoBehaviour:
   healthPanelRect: {fileID: 1913881814}
   hpBarProxyFollow: {fileID: 1410360780}
   accuracyPercent: 100
-  abilities:
-  - {fileID: 11400000, guid: 8044c79b1f759d549924415e11626b1b, type: 2}
+  abilities: []
   powerAbility: {fileID: 11400000, guid: 5aa9d16bc12f51f4a864a0ab1a29f9a5, type: 2}
   exitPoint: {fileID: 304431719}
   characterLayer:
@@ -6833,6 +6832,9 @@ MonoBehaviour:
     poolSize: 5
     objects: []
   - prefab: {fileID: 1703367692747339382, guid: 3c7f2d7e4b488bc459945dc2dfdab296, type: 3}
+    poolSize: 5
+    objects: []
+  - prefab: {fileID: 131454, guid: 495b63906f5f3bb40bf58baeb0848011, type: 3}
     poolSize: 5
     objects: []
 --- !u!114 &1269496527

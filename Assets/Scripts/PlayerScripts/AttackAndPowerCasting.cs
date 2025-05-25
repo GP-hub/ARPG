@@ -9,7 +9,8 @@ public class AttackAndPowerCasting : MonoBehaviour
     [Header("Spells")]
     [SerializeField] private GameObject exitPoint;
     [SerializeField] private LayerMask groundLayer;
-    private bool isBuffedUltimate = false;
+    private int ultimateBuffCount = 0;
+    public bool isBuffedUltimate => ultimateBuffCount > 0;
 
     [Space(10)]
     [Header("Attack")]
@@ -30,6 +31,7 @@ public class AttackAndPowerCasting : MonoBehaviour
     [SerializeField] private DecalProjector powerSpellIndicator;
     [SerializeField] private string powerPrefabName;
     [SerializeField] private string firePoolName;
+    [SerializeField] private float firePoolDamage;
     [SerializeField] private float basePowerDamage;
     private float currentPowerDamage;
     [SerializeField] private float powerCCDuration;
@@ -203,11 +205,11 @@ public class AttackAndPowerCasting : MonoBehaviour
 
     public void BuffByUltimate()
     {
-        isBuffedUltimate = true;
+        ultimateBuffCount++;
     }
     public void RemoveUltimateBuff()
     {
-        isBuffedUltimate = false;
+        ultimateBuffCount = Mathf.Max(0, ultimateBuffCount - 1);
     }
 
 
@@ -363,9 +365,10 @@ public class AttackAndPowerCasting : MonoBehaviour
     {
         yield return new WaitForSeconds(delay);
         meteorObject.GetComponent<Meteor>().Explode();
-
+        Debug.Log("Meteor Exploded: " + isBuffedUltimate);
         if (isBuffedUltimate)
         {
+            Debug.Log("Patch fire");
             GameObject newObject = PoolingManagerSingleton.Instance.GetObjectFromPool(firePoolName, spawnPosition);
         }
     }
@@ -380,6 +383,10 @@ public class AttackAndPowerCasting : MonoBehaviour
         else if (skill.ToLower().Contains(powerPrefabName.ToLower()))
         {
             enemy.TakeDamage(currentPowerDamage);
+        }
+        else if (skill.ToLower().Contains(firePoolName.ToLower()))
+        {
+            enemy.TakeDamage(firePoolDamage);
         }
     }
 
