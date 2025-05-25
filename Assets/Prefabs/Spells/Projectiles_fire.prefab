@@ -19620,8 +19620,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   explosionRadius: 2
-  timeProjectileLifeTime: 2
-  timeExplosionFadeOut: 1
+  timeProjectileLifeTime: 5
+  timeExplosionFadeOut: 2
   characterLayer:
     serializedVersion: 2
     m_Bits: 64
