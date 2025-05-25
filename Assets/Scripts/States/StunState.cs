@@ -3,9 +3,7 @@ using UnityEngine;
 public class StunState : IState
 {
     private Enemy enemy;
-
-    private float countdownDuration;
-    private float countdownTimer;
+    private GameObject stunEffect;
 
     void IState.Enter(Enemy enemy)
     {
@@ -14,6 +12,9 @@ public class StunState : IState
         if (enemy.Agent.isOnNavMesh && enemy.Agent.enabled) enemy.Stop();
         enemy.SetBoolSingle("TriggerStun");
         enemy.ResetAttackingAndPowering();
+
+        Vector3 enemyTopPosition = enemy.transform.position + Vector3.up * (enemy.transform.localScale.y + 0.75f);
+        stunEffect = PoolingManagerSingleton.Instance.GetObjectFromPool("Stun_loop", enemyTopPosition);
     }
 
     void IState.Exit()
@@ -35,6 +36,7 @@ public class StunState : IState
         // If CCduration reaches zero or below, exit the state
         if (enemy.CCDuration <= 0)
         {
+            stunEffect.SetActive(false);
             enemy.ChangeState(new IdleState());
         }
     }

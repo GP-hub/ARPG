@@ -446,14 +446,14 @@ MonoBehaviour:
   attackSpellIndicator: {fileID: 7331111412944048092}
   attackPrefabName: Projectiles_fire
   baseAttackDamage: 5
-  attackCCDuration: 1
+  attackCCDuration: 0.5
   attackCooldownTime: 1
   attackPlayerMovementSpeedPercent: -65
   attackSpeedMultiplier: 1
   attackCooldownImage: {fileID: 0}
   powerSpellIndicator: {fileID: 4727415649089755015}
   powerPrefabName: Meteor_fire
-  basePowerDamage: 100
+  basePowerDamage: 75
   powerCCDuration: 5
   powerCooldownTime: 5
   powerPlayerMovementSpeedPercent: -80
