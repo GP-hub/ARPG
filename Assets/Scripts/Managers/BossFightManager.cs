@@ -1,48 +1,37 @@
 using System.Collections.Generic;
+using Unity.VisualScripting;
 using UnityEngine;
 
 public class BossFightManager : Singleton<BossFightManager>
 {
-    [SerializeField] private GameObject[] rockTransformArea1;
-    [SerializeField] private GameObject[] rockTransformArea2;
-    [SerializeField] private GameObject[] rockTransformArea3;
-    [SerializeField] private GameObject[] rockTransformArea4;
-
     private GameObject[][] rockAreas;
+    private Transform bottomLeftCorner;
+    private Transform topRightCorner;
 
-    [SerializeField] private Transform bottomLeftCorner;
-    [SerializeField] private Transform topRightCorner;
-
-    public Transform BottomLeftCorner { get => bottomLeftCorner; }
-    public Transform TopRightCorner { get => topRightCorner; }
+    public Transform BottomLeftCorner => bottomLeftCorner;
+    public Transform TopRightCorner => topRightCorner;
 
     protected override void Awake()
     {
-        base.Awake(); 
-
-        rockAreas = new GameObject[][]
-        {
-        rockTransformArea1,
-        rockTransformArea2,
-        rockTransformArea3,
-        rockTransformArea4
-        };
-
+        base.Awake();
     }
 
 
     void OnEnable()
     {
         EventManager.onBossRockFall += SpawnRocks;
+        EventManager.onSceneLoad += FetchBossArenaRocks;
     }
 
     void OnDisable()
     {
         EventManager.onBossRockFall -= SpawnRocks;
+        EventManager.onSceneLoad -= FetchBossArenaRocks;
     }
 
     private void SpawnRocks(int numberOfRocks)
     {
+        if (rockAreas == null) return;
         foreach (GameObject[] area in rockAreas)
         {
             EnableRandomRocks(area, numberOfRocks);
@@ -66,6 +55,23 @@ public class BossFightManager : Singleton<BossFightManager>
             if (rocksArray[i] != null)
                 rocksArray[i].SetActive(true);
         }
+    }
+
+    private void FetchBossArenaRocks(string sceneName)
+    {
+        if (string.IsNullOrEmpty(sceneName)) return;
+        if (!sceneName.Contains("LevelScene")) return;
+
+        BossArenaReferences arena = FindFirstObjectByType<BossArenaReferences>();
+        if (arena == null)
+        {
+            Debug.Log("BossArenaReferences not found in scene.");
+            return;
+        }
+
+        rockAreas = arena.RockAreas;
+        bottomLeftCorner = arena.BottomLeftCorner;
+        topRightCorner = arena.TopRightCorner;
     }
 
 }

@@ -16,7 +16,7 @@ MonoBehaviour:
   maxAttackRange: 200
   minAttackRange: 10
   damage: 20
-  cooldown: 3
+  cooldown: 6
   projectilePrefab: {fileID: 0}
   animationClip: {fileID: 7400000, guid: ebecde7db6c91cb42b5ab7e9077ddd6d, type: 2}
   selectedFunctionName: JumpAttack

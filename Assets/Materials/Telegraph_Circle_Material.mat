@@ -20,12 +20,12 @@ Material:
   stringTagMap: {}
   disabledShaderPasses:
   - MOTIONVECTORS
-  m_LockedProperties: 
+  m_LockedProperties: Normal_Blend
   m_SavedProperties:
     serializedVersion: 3
     m_TexEnvs:
     - Base_Map:
-        m_Texture: {fileID: 2800000, guid: ab26e4f068520e44e86d6ccdd627664b, type: 3}
+        m_Texture: {fileID: 2800000, guid: afe5c6add6a315d41bce8fd551c16334, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - Normal_Map:
