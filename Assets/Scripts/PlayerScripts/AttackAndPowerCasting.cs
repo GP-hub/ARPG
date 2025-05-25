@@ -9,6 +9,7 @@ public class AttackAndPowerCasting : MonoBehaviour
     [Header("Spells")]
     [SerializeField] private GameObject exitPoint;
     [SerializeField] private LayerMask groundLayer;
+    private bool isBuffedUltimate = false;
 
     [Space(10)]
     [Header("Attack")]
@@ -28,6 +29,7 @@ public class AttackAndPowerCasting : MonoBehaviour
     [Header("Power")]
     [SerializeField] private DecalProjector powerSpellIndicator;
     [SerializeField] private string powerPrefabName;
+    [SerializeField] private string firePoolName;
     [SerializeField] private float basePowerDamage;
     private float currentPowerDamage;
     [SerializeField] private float powerCCDuration;
@@ -199,6 +201,16 @@ public class AttackAndPowerCasting : MonoBehaviour
         animator.SetFloat("AttackSpeed", attackSpeedMultiplier);
     }
 
+    public void BuffByUltimate()
+    {
+        isBuffedUltimate = true;
+    }
+    public void RemoveUltimateBuff()
+    {
+        isBuffedUltimate = false;
+    }
+
+
     private void CastPower()
     {
         EventManager.Casting(true);
@@ -336,8 +348,7 @@ public class AttackAndPowerCasting : MonoBehaviour
                 currentPowerDamage = (SpellCharge.SpellCount == 0) ? basePowerDamage : (SpellCharge.SpellCount * basePowerDamage) + basePowerDamage;
 
                 SpellCharge.ResetSpellCount();
-                StartCoroutine(DelayedMeteorExplosion(newObject, .825f));
-                //newObject.GetComponent<Meteor>().Explode();
+                StartCoroutine(DelayedMeteorExplosion(newObject, .825f, spawnPosition));
             }
         }
 
@@ -348,11 +359,15 @@ public class AttackAndPowerCasting : MonoBehaviour
         playerMovement.RemoveSpeedModifier("Power");
     }
 
-    private IEnumerator DelayedMeteorExplosion(GameObject meteorObject, float delay)
+    private IEnumerator DelayedMeteorExplosion(GameObject meteorObject, float delay, Vector3 spawnPosition)
     {
         yield return new WaitForSeconds(delay);
-
         meteorObject.GetComponent<Meteor>().Explode();
+
+        if (isBuffedUltimate)
+        {
+            GameObject newObject = PoolingManagerSingleton.Instance.GetObjectFromPool(firePoolName, spawnPosition);
+        }
     }
 
 

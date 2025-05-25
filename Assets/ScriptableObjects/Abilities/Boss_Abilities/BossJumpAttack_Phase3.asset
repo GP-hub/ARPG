@@ -12,14 +12,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: bf59774016b20b6448aa62df6df3e087, type: 3}
   m_Name: BossJumpAttack_Phase3
   m_EditorClassIdentifier: 
-  moveName: bossjumpattack
   accuracy: 2
   maxAttackRange: 100
   minAttackRange: 1
-  damage: 100
-  cooldown: 5
+  damage: 1
+  cooldown: 2
   projectilePrefab: {fileID: 0}
   animationClip: {fileID: 7400000, guid: ebecde7db6c91cb42b5ab7e9077ddd6d, type: 2}
   selectedFunctionName: JumpAttack
-  conditions:
-  - {fileID: 11400000, guid: 8b4f8624c8b0a8b43a336b3c9ed8ba4e, type: 2}
+  conditions: []

@@ -91,6 +91,15 @@ public class Dash : MonoBehaviour
         dashCooldownImage.fillAmount = 0;
         isDashOnCooldown = false;
     }
+    public void IncreaseFireDashDuration(float bonusDuration)
+    {
+        dashDuration += bonusDuration;
+    }
 
-  
+    public void DecreaseFireDashDuration(float bonusDuration)
+    {
+        dashDuration -= bonusDuration;
+    }
+
+
 }

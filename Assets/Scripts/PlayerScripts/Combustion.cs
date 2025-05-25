@@ -12,8 +12,9 @@ public class Combustion : MonoBehaviour
     [SerializeField] private Image ultimateCooldownImage;
 
     private float ultimateCooldownTimeElapsed;
+    private Dash dashScript;
+    private AttackAndPowerCasting attackAndPowerCastingScript;
 
-    private int fireballProcChance;
 
     private bool isUltimateOnCooldown;
     private bool isCasting = false;
@@ -23,7 +24,8 @@ public class Combustion : MonoBehaviour
     private void Awake()
     {
         playerInput = GetComponent<PlayerInput>();
-
+        dashScript = GetComponent<Dash>();
+        attackAndPowerCastingScript = GetComponent<AttackAndPowerCasting>();
         playerInput.actions.FindAction("Ultimate").performed += OnUltimate;
 
         //fireballProcChance = this.transform.GetComponent<AttackAndPowerCasting>().fireballPrefab.GetComponent<Fireball>().currentProcChance;
@@ -67,12 +69,17 @@ public class Combustion : MonoBehaviour
     {
         EventManager.Ultimate(true);
 
-        SpellCharge.AddBonusProbability(100);
 
-        // Modification to player stats
+        SpellCharge.AddBonusProbability(100);
+        dashScript.IncreaseFireDashDuration(3f);
+        attackAndPowerCastingScript.BuffByUltimate();
+
         yield return new WaitForSeconds(ultimateDuration);
 
+
+        attackAndPowerCastingScript.RemoveUltimateBuff();
         SpellCharge.RemoveBonusProbability(100);
+        dashScript.DecreaseFireDashDuration(3f);
 
         EventManager.Ultimate(false);
     }
