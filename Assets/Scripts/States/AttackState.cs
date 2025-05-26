@@ -13,8 +13,6 @@ class AttackState : IState
         enemy.TargetPosition = enemy.GetInaccurateTarget(enemy.Target.position);
         if (enemy.Agent.isOnNavMesh && enemy.Agent.enabled) enemy.Stop();
         enemy.Animator.SetFloat("AttackTree", enemy.GetCurrentAbilityIndex());
-
-        //enemy.StartCoroutine(enemy.DelayedAttackEnter());
     }
 
     void IState.Exit()
@@ -34,8 +32,6 @@ class AttackState : IState
         if (enemy.isCharging) return;
 
         Utility.RotateTowardsTarget(enemy.transform, enemy.TargetPosition, enemy.RotationSpeed);
-
-        //Utility.RotateTowardsTarget(enemy.transform, enemy.Target, enemy.RotationSpeed);
     }
 
     string IState.GetStateName()

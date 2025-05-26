@@ -10,11 +10,11 @@ class PowerState : IState
         this.enemy = enemy;
         enemy.TargetPosition = enemy.Target.position;
 
-        enemy.SetBoolSingle("TriggerPower");
         enemy.DecideNextPowerAbility();
+        enemy.SetBoolSingle("TriggerPower");
+        enemy.TargetPosition = enemy.GetInaccurateTarget(enemy.Target.position);
         if (enemy.Agent.isOnNavMesh && enemy.Agent.enabled) enemy.Stop();
-
-        //enemy.StartCoroutine(enemy.DelayedPowerEnter());
+        enemy.Animator.SetFloat("PowerTree", enemy.GetCurrentPowerAbilityIndex());
     }
 
     void IState.Exit()

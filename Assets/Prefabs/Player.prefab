@@ -426,6 +426,7 @@ MonoBehaviour:
   dashSpeedPercent: 100
   dashDuration: 0.35
   dashCooldown: 7
+  bonusDashPercentDurationFromUltimate: 100
   dashCooldownImage: {fileID: 0}
 --- !u!114 &3142904809075892329
 MonoBehaviour:

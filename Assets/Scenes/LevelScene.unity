@@ -2186,7 +2186,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &487057122
 Transform:
   m_ObjectHideFlags: 0
@@ -2273,7 +2273,7 @@ MonoBehaviour:
   hpBarProxyFollow: {fileID: 1410360780}
   accuracyPercent: 100
   abilities: []
-  powerAbility: {fileID: 11400000, guid: 5aa9d16bc12f51f4a864a0ab1a29f9a5, type: 2}
+  powerAbility: {fileID: 11400000, guid: 43e2815c328dfc947adb8afa01198ea6, type: 2}
   exitPoint: {fileID: 304431719}
   characterLayer:
     serializedVersion: 2
@@ -5322,7 +5322,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!4 &980304516
 Transform:
   m_ObjectHideFlags: 0
@@ -5460,7 +5460,7 @@ Animator:
   m_GameObject: {fileID: 980304515}
   m_Enabled: 1
   m_Avatar: {fileID: 9000000, guid: a50cd06a0668d1a418d586a2944e3ed5, type: 3}
-  m_Controller: {fileID: 9100000, guid: a8277e05608b67541aad32942915a99e, type: 2}
+  m_Controller: {fileID: 0}
   m_CullingMode: 1
   m_UpdateMode: 0
   m_ApplyRootMotion: 0

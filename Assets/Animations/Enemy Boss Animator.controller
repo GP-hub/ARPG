@@ -476,6 +476,12 @@ AnimatorController:
     m_DefaultInt: 0
     m_DefaultBool: 0
     m_Controller: {fileID: 9100000}
+  - m_Name: PowerTree
+    m_Type: 1
+    m_DefaultFloat: 0
+    m_DefaultInt: 0
+    m_DefaultBool: 0
+    m_Controller: {fileID: 9100000}
   - m_Name: TriggerWalk
     m_Type: 4
     m_DefaultFloat: 0
@@ -817,14 +823,14 @@ BlendTree:
   m_Name: PowerBlendTree
   m_Childs:
   - serializedVersion: 2
-    m_Motion: {fileID: 7400000, guid: 915d45f9ac31d5e4c8d017b1ef95f6b9, type: 2}
+    m_Motion: {fileID: 7400000, guid: a768b5ccffe5f9b4791f7a4addb0c2c0, type: 2}
     m_Threshold: 0
     m_Position: {x: 0, y: 0}
     m_TimeScale: 1
     m_CycleOffset: 0
     m_DirectBlendParameter: 
     m_Mirror: 0
-  m_BlendParameter: AttackTree
+  m_BlendParameter: PowerTree
   m_BlendParameterY: AttackTree
   m_MinThreshold: 0
   m_MaxThreshold: 1
