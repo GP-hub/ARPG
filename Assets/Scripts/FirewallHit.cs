@@ -4,10 +4,16 @@ using UnityEngine;
 
 public class FirewallHit : MonoBehaviour
 {
+    private string playerFireballName;
+
+    public void Initialize(string attackName)
+    {
+        playerFireballName = attackName.ToLower(); // cache as lowercase if needed
+    }
 
     private void OnTriggerEnter(Collider other)
     {
-        if (other.transform.name.ToLower().Contains("fireball"))
+        if (other.transform.name.ToLower().Contains(playerFireballName))
         {
             if (!other.transform.name.ToLower().Contains("enemy"))
             {

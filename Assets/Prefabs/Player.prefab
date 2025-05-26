@@ -426,6 +426,7 @@ MonoBehaviour:
   dashSpeedPercent: 100
   dashDuration: 0.35
   dashCooldown: 7
+  bonusDashPercentDurationFromUltimate: 100
   dashCooldownImage: {fileID: 0}
 --- !u!114 &3142904809075892329
 MonoBehaviour:
@@ -453,6 +454,8 @@ MonoBehaviour:
   attackCooldownImage: {fileID: 0}
   powerSpellIndicator: {fileID: 4727415649089755015}
   powerPrefabName: Meteor_fire
+  firePoolName: AuraRingFire
+  firePoolDamage: 10
   basePowerDamage: 75
   powerCCDuration: 5
   powerCooldownTime: 5
@@ -485,9 +488,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 198fc6fec9c228847a5ac53e32453e92, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  ultimateSpeed: 20
-  ultimateDuration: 5
-  ultimateCooldown: 6
+  ultimateDuration: 10
+  ultimateCooldown: 5
   ultimateCooldownImage: {fileID: 0}
 --- !u!114 &1542463247616801883
 MonoBehaviour:

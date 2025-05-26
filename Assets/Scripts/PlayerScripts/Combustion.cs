@@ -5,15 +5,16 @@ using UnityEngine.UI;
 
 public class Combustion : MonoBehaviour
 {
-    [SerializeField] private int ultimateSpeed;
+    //[SerializeField] private int ultimateSpeed;
 
     [SerializeField] private float ultimateDuration;
     [SerializeField] private float ultimateCooldown;
     [SerializeField] private Image ultimateCooldownImage;
 
     private float ultimateCooldownTimeElapsed;
+    private Dash dashScript;
+    private AttackAndPowerCasting attackAndPowerCastingScript;
 
-    private int fireballProcChance;
 
     private bool isUltimateOnCooldown;
     private bool isCasting = false;
@@ -23,7 +24,8 @@ public class Combustion : MonoBehaviour
     private void Awake()
     {
         playerInput = GetComponent<PlayerInput>();
-
+        dashScript = GetComponent<Dash>();
+        attackAndPowerCastingScript = GetComponent<AttackAndPowerCasting>();
         playerInput.actions.FindAction("Ultimate").performed += OnUltimate;
 
         //fireballProcChance = this.transform.GetComponent<AttackAndPowerCasting>().fireballPrefab.GetComponent<Fireball>().currentProcChance;
@@ -67,12 +69,17 @@ public class Combustion : MonoBehaviour
     {
         EventManager.Ultimate(true);
 
-        SpellCharge.AddBonusProbability(100);
 
-        // Modification to player stats
+        SpellCharge.AddBonusProbability(100);
+        dashScript.BuffByUltimate();
+        attackAndPowerCastingScript.BuffByUltimate();
+
         yield return new WaitForSeconds(ultimateDuration);
 
+
         SpellCharge.RemoveBonusProbability(100);
+        dashScript.RemoveUltimateBuff();
+        attackAndPowerCastingScript.RemoveUltimateBuff();
 
         EventManager.Ultimate(false);
     }

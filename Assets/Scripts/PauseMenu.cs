@@ -78,11 +78,15 @@ public class PauseMenu : MonoBehaviour
         LoaderManager.Load(LoaderManager.Scene.MainMenuScene);
     }
 
-    public void QuitGame()
+    public void Quit()
     {
         Debug.Log("Quit!");
-        EditorApplication.isPlaying = false;
-        Application.Quit();
+
+#if UNITY_EDITOR
+        UnityEditor.EditorApplication.isPlaying = false;
+#else
+    Application.Quit();
+#endif
     }
 
     public void RestartScene()

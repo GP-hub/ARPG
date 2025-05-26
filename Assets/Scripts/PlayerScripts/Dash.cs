@@ -8,9 +8,13 @@ public class Dash : MonoBehaviour
     [SerializeField] private int dashSpeedPercent;
     [SerializeField] private float dashDuration;
     [SerializeField] private float dashCooldown;
+    [SerializeField] private float bonusDashPercentDurationFromUltimate;
     [SerializeField] private Image dashCooldownImage;
 
     private float dashCooldownTimeElapsed;
+
+    private int ultimateBuffCount = 0;
+    public bool isBuffedUltimate => ultimateBuffCount > 0;
 
 
     private bool isDashOnCooldown;
@@ -67,8 +71,14 @@ public class Dash : MonoBehaviour
 
         //playerMovement.CurrentPlayerSpeed += dashSpeed;
         playerMovement.AddSpeedModifier("Dash", dashSpeedPercent);
+        float currentDashDuration = dashDuration;
 
-        yield return new WaitForSeconds(dashDuration);
+        if (isBuffedUltimate)
+        {
+            currentDashDuration = dashDuration * (1f + bonusDashPercentDurationFromUltimate / 100f);
+        }
+
+        yield return new WaitForSeconds(currentDashDuration);
 
         //playerMovement.CurrentPlayerSpeed -= dashSpeed;
         playerMovement.RemoveSpeedModifier("Dash");
@@ -92,5 +102,13 @@ public class Dash : MonoBehaviour
         isDashOnCooldown = false;
     }
 
-  
+    public void BuffByUltimate()
+    {
+        ultimateBuffCount++;
+    }
+    public void RemoveUltimateBuff()
+    {
+        ultimateBuffCount = Mathf.Max(0, ultimateBuffCount - 1);
+    }
+
 }

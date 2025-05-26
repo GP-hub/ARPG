@@ -1,7 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Reflection;
-using UnityEditor.Animations;
 using UnityEngine;
 using UnityEngine.AI;
 using Random = UnityEngine.Random;
@@ -15,8 +14,11 @@ public class Enemy : MonoBehaviour
     [Space(10)]
     [Header("Miscellaneous")]
     [SerializeField] private float rotationSpeed = 25f;
-    private BlendTree attackBlendTree;
-    private BlendTree powerBlendTree;
+    [SerializeField] private float moveStateSpeed;
+    [SerializeField] private float attackStateSpeed;
+
+    [SerializeField] private RuntimeAnimatorController baseController;
+    private AnimatorOverrideController runtimeOverride;
 
     // Phase handling
     private int currentPhase = 1;
@@ -31,8 +33,6 @@ public class Enemy : MonoBehaviour
     [SerializeField] private int searchTargetRadius = 25;
 
     [SerializeField] private bool isBoss;
-    //private bool isPhaseTwo = false;
-    //private bool isPhaseTree = false;
 
     private float cCDuration;
 
@@ -59,14 +59,12 @@ public class Enemy : MonoBehaviour
     [Header("Power Abilities")]
     [SerializeField] private AbilityData powerAbility;
     private float currentPowerCooldown;
-    private AnimatorState powerState;
 
 
     [Space(10)]
     [Header("Attack")]
     [SerializeField] private GameObject exitPoint;
     [SerializeField] private LayerMask characterLayer;
-    private AnimatorState attackState;
 
     [Space(10)]
     [Header("Attack: Melee")]
@@ -125,6 +123,7 @@ public class Enemy : MonoBehaviour
         animator = GetComponent<Animator>();
         controller = GetComponent<CharacterController>();
         agent = GetComponent<NavMeshAgent>();
+        GetAnimatorOverrideController();
     }
 
     // 
@@ -138,10 +137,7 @@ public class Enemy : MonoBehaviour
 
         offCooldownAbilities = new List<AbilityData>();
 
-
         StartCoroutine(CheckGroundedStatus());
-
-        GetAnimatorController();
     }
 
 
@@ -159,6 +155,8 @@ public class Enemy : MonoBehaviour
     private void OnEnable()
     {
         EventManager.onGetUnits += AddEnemyToAIManager;
+        this.animator.SetFloat("MoveStateSpeed", moveStateSpeed); // Reset the attack tree to 0 on enable
+        this.animator.SetFloat("AttackStateSpeed", attackStateSpeed); // Reset the attack tree to 0 on enable
         currentHealth = maxHealth;
         lastPosition = transform.position;
         minMaxAbilityRange = MinMaxRangeAttackRange();
@@ -197,121 +195,41 @@ public class Enemy : MonoBehaviour
         currentPowerCooldown = ability.cooldown;
     }
 
-
-
-    private void GetAnimatorController()
+    private void GetAnimatorOverrideController()
     {
-        AnimatorController animatorController = animator.runtimeAnimatorController as AnimatorController;
-        if (animatorController == null) return;
+        runtimeOverride = new AnimatorOverrideController(baseController);
+        animator.runtimeAnimatorController = runtimeOverride;
 
-        foreach (AnimatorControllerLayer layer in animatorController.layers)
+        for (int i = 0; i < abilities.Count; i++)
         {
-            foreach (ChildAnimatorState state in layer.stateMachine.states)
-            {
-                if (state.state.motion is BlendTree blendTree)
-                {
-                    // Check by name
-                    if (state.state.name == "Attack") // or blendTree.name == "AttackBlendTree"
-                    {
-                        attackState = state.state;
-                        attackBlendTree = blendTree;
-                        PopulateBlendTree(attackBlendTree);
-                    }
-                    else if (state.state.name == "Power") // or blendTree.name == "PowerBlendTree"
-                    {
-                        powerState = state.state;
-                        powerBlendTree = blendTree;
-                        PopulateBlendTree(powerBlendTree); // Or a different method if needed
-                    }
+            string dummyClipName = $"Attack_{i}";
+            AnimationClip realClip = abilities[i].animationClip;
 
-                    // Exit early if both are found
-                    if (attackBlendTree != null && powerBlendTree != null)
-                        return;
-                }
+            if (realClip != null)
+            {
+                runtimeOverride[dummyClipName] = realClip;
             }
-        }
-    }
-
-
-    private void OverrideSpecificAnimationByStateName(string targetStateName, AnimationClip newClip)
-    {
-        if (animator == null || newClip == null)
-        {
-            Debug.Log("Animator or Animation Clip is missing.");
-            return;
-        }
-
-        // Create an override controller
-        AnimatorOverrideController overrideController = new AnimatorOverrideController(animator.runtimeAnimatorController);
-
-        // Loop through the layers in the AnimatorController
-        foreach (AnimatorControllerLayer layer in ((AnimatorController)animator.runtimeAnimatorController).layers)
-        {
-            // Loop through the states in each state machine
-            foreach (ChildAnimatorState state in layer.stateMachine.states)
+            else
             {
-                if (state.state.name == targetStateName)
-                {
-                    // Ensure we're replacing the clip, not the BlendTree or other motion types
-                    if (state.state.motion is AnimationClip currentClip)
-                    {
-                        // Replace the animation clip in the target state
-                        Debug.Log($"Replacing animation clip for state '{targetStateName}' with '{newClip.name}'");
-                        overrideController[currentClip] = newClip;
-                        animator.runtimeAnimatorController = overrideController; // Apply the override controller
-                        return; // Exit once we find the state and update it
-                    }
-                    else
-                    {
-                        Debug.Log($"State '{targetStateName}' does not use an AnimationClip, skipping.");
-                    }
-                }
+                Debug.LogWarning($"Real clip missing for ability index {i}");
             }
         }
 
-        Debug.Log($"State '{targetStateName}' not found.");
-    }
-
-
-
-    private void PopulateBlendTree(BlendTree blendTree)
-    {
-        if (blendTree == null) return;
-        if (blendTree.name == "AttackBlendTree")
+        if (powerAbility!= null)
         {
-            if (abilities == null || abilities.Count == 0) return;
+            string dummyClipName = "Power_0";
+            AnimationClip realClip = powerAbility.animationClip;
 
-            ChildMotion[] newChildren = new ChildMotion[abilities.Count];
-
-            for (int i = 0; i < abilities.Count; i++)
+            if (realClip != null)
             {
-                newChildren[i] = new ChildMotion
-                {
-                    motion = abilities[i].animationClip,
-                    threshold = i,
-                    timeScale = 1f // Set the speed of the animation to 1
-                };
+                runtimeOverride[dummyClipName] = realClip;
             }
-
-            blendTree.children = newChildren;
-        }
-        if (blendTree.name == "PowerBlendTree")
-        {
-            if (powerAbility == null) return;
-
-            blendTree.children = new ChildMotion[]
+            else
             {
-                new ChildMotion
-                {
-                    motion = powerAbility.animationClip,
-                    threshold = 0f, // You can use any number here, depending on your blend parameter
-                    timeScale = 1f
-                }
-            };
+                Debug.LogWarning($"Real clip missing for power ability index");
+            }
         }
-
     }
-
 
 
     private IEnumerator CheckGroundedStatus()
@@ -834,45 +752,25 @@ public class Enemy : MonoBehaviour
 
     private void DecideNextMoveID()
     {
-        // Get a random index based on the length of the array
-        //int randomIndex = UnityEngine.Random.Range(0, possibleValues.Length);
-        //Debug.Log("Attack: " + possibleValues[randomIndex]);
-
-        //if (currentHealth <= 0.5f * maxHealth)
-        //{
-        //    Debug.Log("below 50% hp");
-        //    currentAbility = abilities[0];
-        //}
-        //else
-        //{
-        //    Debug.Log("higher than 50% hp");
-        //    currentAbility = abilities[1];
-        //}
         currentAbility = offCooldownAbilities[0];
         UseAbility(currentAbility);
     }
 
     private void DecideNextBossMoveID()
     {
-        //// If we are not already in phase 2 => WE ENTER PHASE 2 and we play ONCE the phase 2 ability 
-        //if (currentHealth <= 0.75f * maxHealth && !isPhaseTwo)
-        //{
-        //    isPhaseTwo = true;
-        //}
-        //// If we are not already in phase 3 => WE ENTER PHASE 3 and we play ONCE the phase 3 ability 
-        //if (currentHealth <= 0.50f * maxHealth && !isPhaseTree)
-        //{
-        //    isPhaseTree = true;
-        //}
-
         currentAbility = offCooldownAbilities[0];
 
         UseAbility(currentAbility);
     }
 
-    public float BlendTreeThreshold()
+    public float GetCurrentAbilityIndex()
     {
-        return Utility.GetClipThreshold(attackBlendTree, currentAbility.animationClip);
+        return abilities.IndexOf(currentAbility);
+    }
+    public float GetCurrentPowerAbilityIndex()
+    {
+        // Because right now we have only one power ability, we return 0
+        return 0;
     }
 
     [AttackMethod]
@@ -898,7 +796,7 @@ public class Enemy : MonoBehaviour
 
     private IEnumerator JumpToLocation(Vector3 destination)
     {
-        float jumpDuration = (currentAbility.animationClip.length / attackState.speed) * 0.27f; // Adjust the duration as needed
+        float jumpDuration = (currentAbility.animationClip.length / attackStateSpeed) * 0.5f; // Adjust the duration as needed
 
         float t = 0f;
         Vector3 startPosition = transform.position;

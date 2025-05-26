@@ -86,6 +86,12 @@ public class Firewall : MonoBehaviour
             // Rotate the box to point from pointA to pointB
             Vector3 direction = pointB - pointA;
             newObject.transform.rotation = Quaternion.LookRotation(direction) * Quaternion.Euler(0, 90, 0);
+
+            FirewallHit firewallHit = newObject.GetComponent<FirewallHit>();
+            if (firewallHit != null)
+            {
+                firewallHit.Initialize(this.GetComponent<AttackAndPowerCasting>().FireballPrefabName); // This caches the name
+            }
         }
 
     }
