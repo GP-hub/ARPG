@@ -12,7 +12,7 @@ GameObject:
   - component: {fileID: 19856952}
   - component: {fileID: 19936102}
   m_Layer: 0
-  m_Name: FireWall
+  m_Name: FireWall_VFX
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

@@ -86,11 +86,13 @@ public class Fireball : MonoBehaviour
                 {
                     EventManager.EnemyTakeDamage(enemy, this.name);
                     EventManager.EnemyGetCC(enemy, this.gameObject.name);
+
+                    // Increase the spell charge count based on the proc chance if we hit an enemy
+                    SpellCharge.IncreaseSpellCount(Mathf.Clamp(procChance, 0, 100));
                 }
             }
         }
 
-        SpellCharge.IncreaseSpellCount(Mathf.Clamp(procChance, 0, 100));
 
         PoolingManagerSingleton.Instance.GetObjectFromPool("Hit_fire", this.transform.position);
 
