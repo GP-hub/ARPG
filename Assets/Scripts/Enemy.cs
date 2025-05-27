@@ -13,7 +13,7 @@ public class Enemy : MonoBehaviour
 
     [Space(10)]
     [Header("Miscellaneous")]
-    [SerializeField] private float rotationSpeed = 25f;
+    [SerializeField] private float rotationSpeed;
     [SerializeField] private float moveStateSpeed;
     [SerializeField] private float attackStateSpeed;
 
@@ -26,11 +26,11 @@ public class Enemy : MonoBehaviour
     public bool hasPhaseJustChanged;
 
     public float RotationSpeed { get => rotationSpeed; }
-    [SerializeField] private float currentHealth, maxHealth = 30;
+    [SerializeField] private float currentHealth, maxHealth;
     [Tooltip("Animator issue when speed is below 2")]
     [SerializeField] private float speed;
     [SerializeField] private int xp;
-    [SerializeField] private int searchTargetRadius = 25;
+    [SerializeField] private int searchTargetRadius;
 
     [SerializeField] private bool isBoss;
 
@@ -647,6 +647,12 @@ public class Enemy : MonoBehaviour
             // Wait for 2 seconds before performing the next SphereCast
             yield return new WaitForSeconds(2f);
         }
+    }
+
+    private void OnDrawGizmos()
+    {
+        Gizmos.color = Color.red;
+        Gizmos.DrawWireSphere(transform.position, searchTargetRadius);
     }
 
 

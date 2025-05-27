@@ -11,6 +11,8 @@ public class Combustion : MonoBehaviour
     [SerializeField] private float ultimateCooldown;
     [SerializeField] private Image ultimateCooldownImage;
 
+    private StatusEffectManager statusEffectManager;
+
     private float ultimateCooldownTimeElapsed;
     private Dash dashScript;
     private AttackAndPowerCasting attackAndPowerCastingScript;
@@ -26,6 +28,7 @@ public class Combustion : MonoBehaviour
         playerInput = GetComponent<PlayerInput>();
         dashScript = GetComponent<Dash>();
         attackAndPowerCastingScript = GetComponent<AttackAndPowerCasting>();
+        statusEffectManager = GetComponent<StatusEffectManager>();
         playerInput.actions.FindAction("Ultimate").performed += OnUltimate;
 
         //fireballProcChance = this.transform.GetComponent<AttackAndPowerCasting>().fireballPrefab.GetComponent<Fireball>().currentProcChance;
@@ -60,6 +63,8 @@ public class Combustion : MonoBehaviour
     {
         if (isUltimateOnCooldown) return;
         if (isCasting) return;
+
+        statusEffectManager?.ApplyOrRefreshEffect("Ultimate", ultimateDuration, Color.blue);
 
         StartCoroutine(CooldownUltimateCoroutine(ultimateCooldown));
         StartCoroutine(ModifyPlayerStatistics());
