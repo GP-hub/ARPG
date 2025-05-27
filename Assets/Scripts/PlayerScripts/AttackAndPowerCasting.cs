@@ -92,10 +92,12 @@ public class AttackAndPowerCasting : MonoBehaviour
     private void OnEnable()
     {
         EventManager.onDashing += Dashing;
+        EventManager.onPlayerDeath += HandleAimingLayerWeight;
     }
 
     private void OnDestroy()
     {
+        EventManager.onPlayerDeath -= HandleAimingLayerWeight;
         EventManager.onEnemyTakeDamage -= DoDamage;
         EventManager.onEnemyGetCC -= ApplyCCDuration;
         EventManager.onDashing -= Dashing;
@@ -104,6 +106,7 @@ public class AttackAndPowerCasting : MonoBehaviour
     private void OnDisable()
     {
         EventManager.onDashing -= Dashing;
+        EventManager.onPlayerDeath -= HandleAimingLayerWeight;
     }
 
     private void Update()
@@ -152,6 +155,15 @@ public class AttackAndPowerCasting : MonoBehaviour
         if (animator.GetCurrentAnimatorStateInfo(1).IsName("Attack"))
         {
             canCast = true;
+        }
+    }
+
+    private void HandleAimingLayerWeight()
+    {
+        int aimingLayerIndex = animator.GetLayerIndex("Aiming");
+        if (aimingLayerIndex >= 0)
+        {
+            animator.SetLayerWeight(aimingLayerIndex, 0f);
         }
     }
 
