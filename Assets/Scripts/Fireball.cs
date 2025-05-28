@@ -10,7 +10,7 @@ public class Fireball : MonoBehaviour
     [SerializeField] private LayerMask allowedLayersToCollideWith;
     [SerializeField] private float projectileSpeed;
 
-    [HideInInspector] public int procChance;
+    //[HideInInspector] public int procChance;
 
     [Space(10)]
     [Header("Overing Raycast")]
@@ -53,7 +53,7 @@ public class Fireball : MonoBehaviour
     private void OnEnable()
     {
         ResetTrails();
-        procChance = SpellCharge.CalculateTotalChance();
+        //procChance = SpellCharge.CalculateTotalChance();
 
         // Start the coroutine when the projectile is enabled
         StartCoroutine(DisableFireballObjectAfterTime(this.gameObject, timeProjectileLifeTime));
@@ -61,7 +61,7 @@ public class Fireball : MonoBehaviour
 
     private void OnDisable()
     {
-        procChance = SpellCharge.fireballBaseProcChance;
+        //procChance = SpellCharge.fireballBaseProcChance;
         // Make sure to stop the coroutine when the projectile is disabled or removed
         StopAllCoroutines();
     }
@@ -83,8 +83,7 @@ public class Fireball : MonoBehaviour
                     EventManager.EnemyTakeDamage(enemy, this.name);
                     EventManager.EnemyGetCC(enemy, this.gameObject.name);
 
-                    // Increase the spell charge count based on the proc chance if we hit an enemy
-                    SpellCharge.IncreaseSpellCount(Mathf.Clamp(procChance, 0, 100));
+                    SpellCharge.TryGainCharge();
                 }
             }
         }

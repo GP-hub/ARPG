@@ -399,7 +399,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   health: 0
-  maxHealth: 100
+  maxHealth: 10000
 --- !u!114 &5984747309346691757
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -455,6 +455,8 @@ MonoBehaviour:
   attackSpeedMultiplier: 1
   attackCooldownImage: {fileID: 0}
   powerSpellIndicator: {fileID: 4727415649089755015}
+  secondaryIndicator: {fileID: 1318161539198529790}
+  powerAnimationClip: {fileID: 7400000, guid: 5c661d5d98d3da6438822872224dda0d, type: 2}
   powerPrefabName: Meteor_fire
   firePoolName: AreaDamageFire
   firePoolDamage: 10
@@ -462,7 +464,7 @@ MonoBehaviour:
   powerCCDuration: 5
   powerCooldownTime: 5
   powerPlayerMovementSpeedPercent: -80
-  powerSpeedMultiplier: 1
+  powerSpeedMultiplier: 0.5
   powerCooldownImage: {fileID: 0}
   lineDecal: {fileID: 5022869808712263601}
 --- !u!114 &1065860335601403785
@@ -478,6 +480,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   firewallPrefabName: Firewall
+  firewallDamagePerTick: 20
 --- !u!114 &4490511338154228046
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -11855,7 +11858,8 @@ Transform:
   m_LocalPosition: {x: -2, y: 0, z: 0.83000183}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
-  m_Children: []
+  m_Children:
+  - {fileID: 54121487380475967}
   m_Father: {fileID: 6970495007327096491}
   m_LocalEulerAnglesHint: {x: 90, y: 0, z: 0}
 --- !u!114 &4727415649089755015
@@ -12560,6 +12564,93 @@ Transform:
   - {fileID: 1093407536171062954}
   m_Father: {fileID: 497751106426954851}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &7352659770652936111
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 54121487380475967}
+  - component: {fileID: 1697702923775959345}
+  - component: {fileID: 8878267068084318474}
+  - component: {fileID: 1318161539198529790}
+  m_Layer: 0
+  m_Name: Decal AoE Projector (1)
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &54121487380475967
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7352659770652936111}
+  serializedVersion: 2
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 0, y: 0, z: 0}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 4889879242119774162}
+  m_LocalEulerAnglesHint: {x: 90, y: 0, z: 0}
+--- !u!114 &1697702923775959345
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7352659770652936111}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0777d029ed3dffa4692f417d4aba19ca, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_Material: {fileID: 2100000, guid: d41963e04f985bb46af9a451c8bf7f6e, type: 2}
+  m_DrawDistance: 1000
+  m_FadeScale: 0.9
+  m_StartAngleFade: 180
+  m_EndAngleFade: 180
+  m_UVScale: {x: 1, y: 1}
+  m_UVBias: {x: 0, y: 0}
+  m_DecalLayerMask: 4294967295
+  m_ScaleMode: 1
+  m_Offset: {x: 0, y: 0, z: 0}
+  m_Size: {x: 4.2, y: 4.2, z: 0.5}
+  m_FadeFactor: 1
+--- !u!114 &8878267068084318474
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7352659770652936111}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b4d60de611e650f4890f0f3e32b4d222, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  surfaceLayer:
+    serializedVersion: 2
+    m_Bits: 136
+  offsetDistance: 0
+--- !u!114 &1318161539198529790
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7352659770652936111}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: dfad8327bcea6a24091d7e50b3971b11, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  fadeOutDuration: 0
 --- !u!1 &7420397026528201107
 GameObject:
   m_ObjectHideFlags: 0

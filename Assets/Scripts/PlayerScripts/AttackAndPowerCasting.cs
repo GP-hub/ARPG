@@ -31,7 +31,11 @@ public class AttackAndPowerCasting : MonoBehaviour
 
     [Space(10)]
     [Header("Power")]
+
     [SerializeField] private DecalProjector powerSpellIndicator;
+    [SerializeField] private PowerIndicatorGrowth secondaryIndicator;
+    [SerializeField] private AnimationClip powerAnimationClip;
+    private float basePowerCastTime;
     [SerializeField] private string powerPrefabName;
     [SerializeField] private string firePoolName;
     [SerializeField] private float firePoolDamage;
@@ -90,6 +94,22 @@ public class AttackAndPowerCasting : MonoBehaviour
         EventManager.onEnemyTakeDamage += DoDamage;
         EventManager.onEnemyGetCC += ApplyCCDuration;
         SpellCharge.InitializeSpellCharge();
+
+        basePowerCastTime = GetLastEventTime();
+    }
+    public float GetLastEventTime()
+    {
+        if (powerAnimationClip == null || powerAnimationClip.events.Length == 0)
+            return -1f;
+
+        float maxTime = float.MinValue;
+        foreach (AnimationEvent e in powerAnimationClip.events)
+        {
+            if (e.time > maxTime)
+                maxTime = e.time;
+        }
+        Debug.Log($"Last event time in {powerAnimationClip.name}: {maxTime} seconds");
+        return maxTime;
     }
 
     private void OnEnable()
@@ -243,8 +263,17 @@ public class AttackAndPowerCasting : MonoBehaviour
         isPoweringHeldDown = true;
         animator.SetTrigger("Power");
         powerSpellIndicator.fadeFactor = 1;
+        InnerPowerSpellIndicatorGrowth();
 
         StartCoroutine(CooldownPowerCoroutine(powerCooldownTime));
+    }
+
+    private void InnerPowerSpellIndicatorGrowth()
+    {
+        powerSpeedMultiplier = (SpellCharge.SpellCount == 0) ? .5f : SpellCharge.SpellCount;
+        float castTime = basePowerCastTime / powerSpeedMultiplier;
+
+        secondaryIndicator.StartGrowth(castTime);
     }
 
     // Trigger by first keyframe of Power animation
@@ -255,7 +284,7 @@ public class AttackAndPowerCasting : MonoBehaviour
         playerMovement.AddSpeedModifier("Power", powerPlayerMovementSpeedPercent);
 
         // IF spellCount is 0 THEN powerSpeed is 1, ELSE powerSpeed is equal to spellCount
-        powerSpeedMultiplier = (SpellCharge.SpellCount == 0) ? 1 : SpellCharge.SpellCount;
+        powerSpeedMultiplier = (SpellCharge.SpellCount == 0) ? .5f : SpellCharge.SpellCount;
 
         animator.SetFloat("PowerSpeed", powerSpeedMultiplier);
     }

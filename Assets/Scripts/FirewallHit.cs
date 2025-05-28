@@ -4,13 +4,11 @@ using static Firewall;
 public class FirewallHit : MonoBehaviour
 {
     private string playerFireballName;
-    private FirewallAttackContext context;
 
     public void Initialize(string attackName, FirewallAttackContext newContext)
     {
         playerFireballName = attackName.ToLower();
         InitializeContextForDot(newContext);
-        context = newContext;
     }
 
     private void OnTriggerEnter(Collider other)
@@ -24,7 +22,7 @@ public class FirewallHit : MonoBehaviour
         {
             if (!other.transform.name.ToLower().Contains("enemy"))
             {
-                other.transform.GetComponent<Fireball>().procChance += 100;
+                SpellCharge.currentFireballProcChance += 100;
             }
         }
     }

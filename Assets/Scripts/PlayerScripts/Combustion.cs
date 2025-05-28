@@ -84,13 +84,13 @@ public class Combustion : MonoBehaviour
             combustionStatusEffectVFX.SetActive(true);
         }
 
-        SpellCharge.AddBonusProbability(100);
+        SpellCharge.BuffByUltimate();
         dashScript.BuffByUltimate();
         attackAndPowerCastingScript.BuffByUltimate();
 
         yield return new WaitForSeconds(ultimateDuration);
 
-        SpellCharge.RemoveBonusProbability(100);
+        SpellCharge.BuffByUltimate();
         dashScript.RemoveUltimateBuff();
         attackAndPowerCastingScript.RemoveUltimateBuff();
 
