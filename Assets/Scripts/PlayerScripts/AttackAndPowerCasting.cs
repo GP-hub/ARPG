@@ -108,7 +108,6 @@ public class AttackAndPowerCasting : MonoBehaviour
             if (e.time > maxTime)
                 maxTime = e.time;
         }
-        Debug.Log($"Last event time in {powerAnimationClip.name}: {maxTime} seconds");
         return maxTime;
     }
 
@@ -415,11 +414,11 @@ public class AttackAndPowerCasting : MonoBehaviour
     private IEnumerator DelayedMeteorExplosion(GameObject meteorObject, float delay, Vector3 spawnPosition)
     {
         yield return new WaitForSeconds(delay);
+
         meteorObject.GetComponent<Meteor>().Explode();
-        Debug.Log("Meteor Exploded: " + isBuffedUltimate);
+
         if (isBuffedUltimate)
         {
-            Debug.Log("Patch fire");
             GameObject newObject = PoolingManagerSingleton.Instance.GetObjectFromPool(firePoolName, spawnPosition);
         }
     }

@@ -167,6 +167,14 @@ public static class EventManager/* : Singleton<EventManager>*/
         }
     }
 
+    public static event Action<string, int> onMessageEvent;
+    public static void MessageEvent(string message, int timerDisable)
+    {
+        if (onMessageEvent != null)
+        {
+            onMessageEvent(message, timerDisable);
+        }
+    }
 
 
 }
