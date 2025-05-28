@@ -13,7 +13,7 @@ public class StunState : IState
         enemy.SetBoolSingle("TriggerStun");
         enemy.ResetAttackingAndPowering();
 
-        Vector3 enemyTopPosition = enemy.transform.position + Vector3.up * (enemy.transform.localScale.y + 0.75f);
+        Vector3 enemyTopPosition = enemy.transform.position + Vector3.up * (enemy.transform.localScale.y + 0.85f);
         stunEffect = PoolingManagerSingleton.Instance.GetObjectFromPool("Stun_loop", enemyTopPosition);
     }
 

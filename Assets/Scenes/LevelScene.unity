@@ -344,7 +344,7 @@ Transform:
   m_GameObject: {fileID: 80840108}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 1, z: 0.2}
+  m_LocalPosition: {x: 0, y: 1.265, z: 0.2}
   m_LocalScale: {x: 0.01, y: 0.01, z: 0.010000001}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -1302,7 +1302,7 @@ Transform:
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 0.8, y: 0.8, z: 0.8}
+  m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 649570357}
@@ -2042,7 +2042,7 @@ MonoBehaviour:
   m_OverrideVoxelSize: 1
   m_VoxelSize: 0.01
   m_MinRegionArea: 2
-  m_NavMeshData: {fileID: 23800000, guid: f0b9371e14012014885697780fa75030, type: 2}
+  m_NavMeshData: {fileID: 23800000, guid: 094447bb470aa78418c2da736284ce89, type: 2}
   m_BuildHeightMesh: 0
 --- !u!4 &472925240
 Transform:
@@ -2121,7 +2121,7 @@ MonoBehaviour:
   m_OverrideVoxelSize: 0
   m_VoxelSize: 0.25
   m_MinRegionArea: 2
-  m_NavMeshData: {fileID: 23800000, guid: 094447bb470aa78418c2da736284ce89, type: 2}
+  m_NavMeshData: {fileID: 23800000, guid: f0b9371e14012014885697780fa75030, type: 2}
   m_BuildHeightMesh: 0
 --- !u!114 &474089946 stripped
 MonoBehaviour:
@@ -5220,7 +5220,7 @@ Transform:
   m_GameObject: {fileID: 963194225}
   serializedVersion: 2
   m_LocalRotation: {x: 0.52573115, y: 0, z: 0, w: 0.85065085}
-  m_LocalPosition: {x: 183, y: 9, z: -31.89}
+  m_LocalPosition: {x: 182.88, y: 9, z: -31.89}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -5333,7 +5333,7 @@ Transform:
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 215.16, y: 0, z: -27.67}
-  m_LocalScale: {x: 1.25, y: 1.25, z: 1.25}
+  m_LocalScale: {x: 1.5, y: 1.5, z: 1.5}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 680526988}
@@ -5393,7 +5393,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5e24f3c77ae37aa4bb36160e81b3ce15, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  rotationSpeed: 7
+  rotationSpeed: 8
   moveStateSpeed: 1.7
   attackStateSpeed: 2.7
   baseController: {fileID: 9100000, guid: a8277e05608b67541aad32942915a99e, type: 2}
@@ -8302,7 +8302,7 @@ Transform:
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 0.8, y: 0.8, z: 0.8}
+  m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 980304516}
@@ -9688,7 +9688,7 @@ Transform:
   m_GameObject: {fileID: 2055046826}
   serializedVersion: 2
   m_LocalRotation: {x: 0.52573115, y: 0, z: 0, w: 0.85065085}
-  m_LocalPosition: {x: 183, y: 9, z: -31.89}
+  m_LocalPosition: {x: 182.88, y: 9, z: -31.89}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -10282,7 +10282,7 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 178050982910570537, guid: 056cd2ef5c48bd543a8b8a967be299d2, type: 3}
       propertyPath: m_LocalPosition.x
-      value: 183
+      value: 182.88
       objectReference: {fileID: 0}
     - target: {fileID: 178050982910570537, guid: 056cd2ef5c48bd543a8b8a967be299d2, type: 3}
       propertyPath: m_LocalPosition.y
@@ -10324,10 +10324,18 @@ PrefabInstance:
       propertyPath: m_Name
       value: Player
       objectReference: {fileID: 0}
+    - target: {fileID: 552659461661742573, guid: 056cd2ef5c48bd543a8b8a967be299d2, type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 1663891721698648187, guid: 056cd2ef5c48bd543a8b8a967be299d2, type: 3}
       propertyPath: dashCooldownImage
       value: 
       objectReference: {fileID: 1733174547}
+    - target: {fileID: 1929580366513868311, guid: 056cd2ef5c48bd543a8b8a967be299d2, type: 3}
+      propertyPath: m_Radius
+      value: 0.5
+      objectReference: {fileID: 0}
     - target: {fileID: 3142904809075892329, guid: 056cd2ef5c48bd543a8b8a967be299d2, type: 3}
       propertyPath: powerCooldownImage
       value: 
@@ -10344,6 +10352,10 @@ PrefabInstance:
       propertyPath: healthPanelRect
       value: 
       objectReference: {fileID: 1913881814}
+    - target: {fileID: 8819562689572214428, guid: 056cd2ef5c48bd543a8b8a967be299d2, type: 3}
+      propertyPath: m_Radius
+      value: 0.5
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -11512,6 +11524,12 @@ PrefabInstance:
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Target
       value: 
       objectReference: {fileID: 1269496527}
+    - target: {fileID: 864372269637989912, guid: 1f2cecd6e34bbce4482753db5ba91d9f, type: 3}
+      propertyPath: content
+      value: Ccall down a meteor, consume available FireCharges, damage is increased
+        per FireCharge spent, casting time is decreased per FireCharge spent. Leave
+        a pool of fire if Ultimate is active.
+      objectReference: {fileID: 0}
     - target: {fileID: 2496125340543479586, guid: 1f2cecd6e34bbce4482753db5ba91d9f, type: 3}
       propertyPath: m_LocalPosition.x
       value: 0
@@ -11560,14 +11578,35 @@ PrefabInstance:
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Target
       value: 
       objectReference: {fileID: 1269496527}
+    - target: {fileID: 6167776625281987855, guid: 1f2cecd6e34bbce4482753db5ba91d9f, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 7327281287024145605, guid: 1f2cecd6e34bbce4482753db5ba91d9f, type: 3}
       propertyPath: m_Name
       value: UICanvas
+      objectReference: {fileID: 0}
+    - target: {fileID: 7974179127248472602, guid: 1f2cecd6e34bbce4482753db5ba91d9f, type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 8551587739874012465, guid: 1f2cecd6e34bbce4482753db5ba91d9f, type: 3}
+      propertyPath: content
+      value: Gain a burst of speed, leaving a trail of fire dealing damage over time,
+        Fireballs going through the trail  generate a FireCharge on Hit. Duration
+        of speed buff is doubled when Ultimate is active.
       objectReference: {fileID: 0}
     - target: {fileID: 8770177733296948164, guid: 1f2cecd6e34bbce4482753db5ba91d9f, type: 3}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Target
       value: 
       objectReference: {fileID: 1269496527}
+    - target: {fileID: 8997615299411391756, guid: 1f2cecd6e34bbce4482753db5ba91d9f, type: 3}
+      propertyPath: content
+      value: Throw a fire projectile with a 12% chance to grant a FireCharge on hit,
+        if no FireCharge is gained, the chance doubles until a FireCharge is gained,
+        resets when a FireCharge is gained. +100% chance to gain a FireCharge when
+        Ultimate is active.
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -12563,6 +12602,14 @@ PrefabInstance:
     - target: {fileID: 7938957013488263564, guid: dc2bc0efb18e3014cafdd8d32305f289, type: 3}
       propertyPath: m_Name
       value: Environment
+      objectReference: {fileID: 0}
+    - target: {fileID: 8436262000069656504, guid: dc2bc0efb18e3014cafdd8d32305f289, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: -30.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 8815269534341534737, guid: dc2bc0efb18e3014cafdd8d32305f289, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: -24.5
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []

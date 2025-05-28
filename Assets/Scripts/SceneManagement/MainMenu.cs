@@ -41,6 +41,12 @@ public class MainMenu : MonoBehaviour
         SelectCharacter(0);
     }
 
+    public void BackToMainMenu()
+    {
+        characterSelectScreen.SetActive(false);
+        startScreen.SetActive(true);
+    }
+
     public void SelectCharacter(int i)
     {
         characterSelectButtonText.text = (i != 0) ? "Locked" : "Start";
