@@ -172,7 +172,7 @@ public class AttackAndPowerCasting : MonoBehaviour
 
     private void Dashing(bool dashing)
     {
-        if (string.IsNullOrEmpty(FireballPrefabName))
+        if (string.IsNullOrEmpty(firewallPrefabName))
         {
             Firewall firewall = GetComponent<Firewall>();
             firewallPrefabName = firewall.FirewallPrefabName;
@@ -398,7 +398,6 @@ public class AttackAndPowerCasting : MonoBehaviour
 
     private void DoDamage(Enemy enemy, string skill)
     {
-        //Debug.Log($"DoDamage called with skill: {skill} on enemy: {enemy.name}");
         if (skill.ToLower().Contains(attackPrefabName.ToLower()))
         {
             enemy.TakeDamage(currentAttackDamage);
@@ -413,7 +412,7 @@ public class AttackAndPowerCasting : MonoBehaviour
         }
         else if (skill.ToLower().Contains(firewallPrefabName.ToLower()))
         {
-            enemy.TakeDamage(GetComponent<Firewall>().GetFirewallDamagePerTick());
+            enemy.TakeDamage(firewallDamagePerTick);
         }
     }
 

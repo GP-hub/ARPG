@@ -1,15 +1,11 @@
 using System.Collections;
 using UnityEngine;
-using UnityEngine.EventSystems;
-using UnityEngine.UIElements;
 
 public class Fireball : MonoBehaviour
 {
 
     [SerializeField] private float explosionRadius;
-    //[SerializeField] private int damageAmount = 5;
-    [SerializeField] private float timeProjectileLifeTime = 5f;
-    //[SerializeField] private float timeExplosionFadeOut = 2f;
+    [SerializeField] private float timeProjectileLifeTime;
     [SerializeField] private LayerMask characterLayer;
     [SerializeField] private LayerMask allowedLayersToCollideWith;
     [SerializeField] private float projectileSpeed;

@@ -149,6 +149,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ecf2190ac26f7d1459914183d60c76ea, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  detectionMode: 1
   radius: 2.5
   tickRate: 1
   characterLayer:
