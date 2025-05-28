@@ -5393,16 +5393,16 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5e24f3c77ae37aa4bb36160e81b3ce15, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  rotationSpeed: 5
-  moveStateSpeed: 1.5
-  attackStateSpeed: 2.5
+  rotationSpeed: 7
+  moveStateSpeed: 1.7
+  attackStateSpeed: 2.7
   baseController: {fileID: 9100000, guid: a8277e05608b67541aad32942915a99e, type: 2}
   hasPhaseJustChanged: 0
   currentHealth: 0
-  maxHealth: 1000
-  speed: 6
+  maxHealth: 1500
+  speed: 6.5
   xp: 0
-  searchTargetRadius: 14
+  searchTargetRadius: 15
   isBoss: 1
   healthBarPrefab: {fileID: 2505273644731239485, guid: f032af557d41213499ccbdd815c15a7b, type: 3}
   healthPanelRect: {fileID: 1913881814}

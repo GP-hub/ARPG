@@ -1,8 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
-using TMPro;
 using UnityEngine;
-using UnityEngine.UIElements;
 
 public class Firewall : MonoBehaviour
 {
@@ -10,9 +8,13 @@ public class Firewall : MonoBehaviour
     private Vector3 currentPos;
 
 
-    [SerializeField] private string firewallPrefabName;
 
+    [SerializeField] private string firewallPrefabName;
+    [SerializeField] private float firewallDamagePerTick;
+    private FirewallAttackContext attackContext;
     private Coroutine firewallCoroutine;
+
+    public string FirewallPrefabName { get => firewallPrefabName; set => firewallPrefabName = value; }
 
     private void OnEnable()
     {
@@ -28,22 +30,32 @@ public class Firewall : MonoBehaviour
         EventManager.onDashing -= StartCoroutineFirewall;
     }
 
+    public float GetFirewallDamagePerTick()
+    {
+        return firewallDamagePerTick;
+    }
+
 
     private void StartCoroutineFirewall(bool isDashing)
     {
-        if (isDashing == true)
+        if (isDashing)
         {
             previousPos = this.transform.position;
-
+            attackContext = new FirewallAttackContext(); // Create context for this dash
             firewallCoroutine = StartCoroutine(TrackPosition(isDashing));
         }
-        if (isDashing == false)
+        else
         {
-            StopCoroutine(firewallCoroutine);
+            if (firewallCoroutine != null)
+            {
+                StopCoroutine(firewallCoroutine);
+                firewallCoroutine = null;
+            }
 
-            firewallCoroutine = null;
+            attackContext = null; // Reset context
         }
     }
+
 
     private IEnumerator TrackPosition(bool isDashing)
     {
@@ -66,13 +78,9 @@ public class Firewall : MonoBehaviour
         if (pointA == null || pointB == null) return;
         if (pointA == pointB) return;
 
-        // Calculate the midpoint position
         Vector3 midpoint = (pointA + pointB) / 2;
 
-        // Calculate the distance between pointA and pointB
         float distance = Vector3.Distance(pointA, pointB);
-
-        //if (distance < 1) return;
 
         GameObject newObject = PoolingManagerSingleton.Instance.GetObjectFromPool(firewallPrefabName, midpoint);
 
@@ -90,9 +98,15 @@ public class Firewall : MonoBehaviour
             FirewallHit firewallHit = newObject.GetComponent<FirewallHit>();
             if (firewallHit != null)
             {
-                firewallHit.Initialize(this.GetComponent<AttackAndPowerCasting>().FireballPrefabName); // This caches the name
+                firewallHit.Initialize(this.GetComponent<AttackAndPowerCasting>().FireballPrefabName, attackContext); // This caches the name
             }
         }
 
+    }
+
+    public class FirewallAttackContext
+    {
+        public HashSet<Collider> tickHitEnemies = new HashSet<Collider>();
+        public float lastTickTime = -999f;
     }
 }

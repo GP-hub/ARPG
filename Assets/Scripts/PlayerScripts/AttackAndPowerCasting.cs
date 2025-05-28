@@ -1,4 +1,5 @@
 using System.Collections;
+using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.Rendering.Universal;
@@ -9,6 +10,8 @@ public class AttackAndPowerCasting : MonoBehaviour
     [Header("Spells")]
     [SerializeField] private GameObject exitPoint;
     [SerializeField] private LayerMask groundLayer;
+    private string firewallPrefabName;
+    private float firewallDamagePerTick;
     private int ultimateBuffCount = 0;
     public bool isBuffedUltimate => ultimateBuffCount > 0;
 
@@ -169,6 +172,13 @@ public class AttackAndPowerCasting : MonoBehaviour
 
     private void Dashing(bool dashing)
     {
+        if (string.IsNullOrEmpty(FireballPrefabName))
+        {
+            Firewall firewall = GetComponent<Firewall>();
+            firewallPrefabName = firewall.FirewallPrefabName;
+            firewallDamagePerTick = firewall.GetFirewallDamagePerTick();
+        }
+
         isDashing = dashing;
     }
 
@@ -388,6 +398,7 @@ public class AttackAndPowerCasting : MonoBehaviour
 
     private void DoDamage(Enemy enemy, string skill)
     {
+        //Debug.Log($"DoDamage called with skill: {skill} on enemy: {enemy.name}");
         if (skill.ToLower().Contains(attackPrefabName.ToLower()))
         {
             enemy.TakeDamage(currentAttackDamage);
@@ -399,6 +410,10 @@ public class AttackAndPowerCasting : MonoBehaviour
         else if (skill.ToLower().Contains(firePoolName.ToLower()))
         {
             enemy.TakeDamage(firePoolDamage);
+        }
+        else if (skill.ToLower().Contains(firewallPrefabName.ToLower()))
+        {
+            enemy.TakeDamage(GetComponent<Firewall>().GetFirewallDamagePerTick());
         }
     }
 

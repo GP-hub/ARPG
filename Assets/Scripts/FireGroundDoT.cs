@@ -1,4 +1,5 @@
 using UnityEngine;
+using System.Collections.Generic;
 
 public class FireGroundDoT : MonoBehaviour
 {
@@ -7,10 +8,15 @@ public class FireGroundDoT : MonoBehaviour
     public LayerMask characterLayer;
 
     private float timer = 0f;
-
-    // Max number of colliders to check each tick
     private const int maxHits = 10;
     private Collider[] hits = new Collider[maxHits];
+
+    private Firewall.FirewallAttackContext context;
+
+    public void SetContext(Firewall.FirewallAttackContext ctx)
+    {
+        context = ctx;
+    }
 
     private void Update()
     {
@@ -19,19 +25,35 @@ public class FireGroundDoT : MonoBehaviour
         if (timer >= tickRate)
         {
             timer = 0f;
+
+            // Reset the tickHitEnemies *only once per tick across all segments*
+            if (context != null)
+            {
+                if (Time.time - context.lastTickTime >= tickRate)
+                {
+                    context.tickHitEnemies.Clear();
+                    context.lastTickTime = Time.time;
+                }
+            }
+
             int hitCount = Physics.OverlapSphereNonAlloc(transform.position, radius, hits, characterLayer);
 
             for (int i = 0; i < hitCount; i++)
             {
                 GameObject target = hits[i].gameObject;
+                Collider collider = hits[i];
 
-                if (target.CompareTag("Enemy"))
+                if (!target.CompareTag("Enemy"))
+                    continue;
+
+                if (context != null && context.tickHitEnemies.Contains(collider))
+                    continue;
+
+                Enemy enemy = target.GetComponent<Enemy>();
+                if (enemy != null)
                 {
-                    Enemy enemy = target.GetComponent<Enemy>();
-                    if (enemy != null)
-                    {
-                        EventManager.EnemyTakeDamage(enemy, gameObject.name);
-                    }
+                    context?.tickHitEnemies.Add(collider);
+                    EventManager.EnemyTakeDamage(enemy, gameObject.name);
                 }
             }
         }
