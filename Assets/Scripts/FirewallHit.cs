@@ -1,24 +1,38 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
+using static Firewall;
 
 public class FirewallHit : MonoBehaviour
 {
     private string playerFireballName;
 
-    public void Initialize(string attackName)
+    public void Initialize(string attackName, FirewallAttackContext newContext)
     {
-        playerFireballName = attackName.ToLower(); // cache as lowercase if needed
+        playerFireballName = attackName.ToLower();
+        InitializeContextForDot(newContext);
     }
 
     private void OnTriggerEnter(Collider other)
+    {
+        FireballProcChanceBonus(other);
+    }
+
+    private void FireballProcChanceBonus(Collider other)
     {
         if (other.transform.name.ToLower().Contains(playerFireballName))
         {
             if (!other.transform.name.ToLower().Contains("enemy"))
             {
-                other.transform.GetComponent<Fireball>().procChance += 100;
+                SpellCharge.currentFireballProcChance += 100;
             }
+        }
+    }
+
+    private void InitializeContextForDot(Firewall.FirewallAttackContext newContext)
+    {
+        FireGroundDoT dot = GetComponent<FireGroundDoT>();
+        if (dot != null)
+        {
+            dot.SetContext(newContext);
         }
     }
 }

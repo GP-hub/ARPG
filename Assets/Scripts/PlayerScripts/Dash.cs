@@ -1,4 +1,5 @@
 using System.Collections;
+using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.UI;
@@ -22,12 +23,13 @@ public class Dash : MonoBehaviour
 
     private PlayerMovement playerMovement;
     private PlayerInput playerInput;
+    private StatusEffectManager statusEffectManager;
 
     private void Awake()
     {
         playerMovement = GetComponent<PlayerMovement>();
         playerInput = GetComponent<PlayerInput>();
-
+        statusEffectManager = GetComponent<StatusEffectManager>();
         playerInput.actions.FindAction("Dash").performed += OnDash;
     }
 
@@ -61,6 +63,7 @@ public class Dash : MonoBehaviour
         if (isDashOnCooldown) return;
         if (isCasting) return;
 
+
         StartCoroutine(CooldownDashCoroutine(dashCooldown));
         StartCoroutine(ModifyPlayerMovementSpeed());
     }
@@ -71,12 +74,12 @@ public class Dash : MonoBehaviour
 
         //playerMovement.CurrentPlayerSpeed += dashSpeed;
         playerMovement.AddSpeedModifier("Dash", dashSpeedPercent);
+
         float currentDashDuration = dashDuration;
 
-        if (isBuffedUltimate)
-        {
-            currentDashDuration = dashDuration * (1f + bonusDashPercentDurationFromUltimate / 100f);
-        }
+        if (isBuffedUltimate) currentDashDuration = dashDuration * (1f + bonusDashPercentDurationFromUltimate / 100f);
+
+        statusEffectManager?.ApplyOrRefreshEffect("Firedash", currentDashDuration, Color.red);
 
         yield return new WaitForSeconds(currentDashDuration);
 

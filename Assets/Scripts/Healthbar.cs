@@ -9,7 +9,9 @@ public class Healthbar : MonoBehaviour
     [SerializeField] private RectTransform healthBar;
     [SerializeField] private Transform objectToFollow;
     [SerializeField] private Image healthbarImage;
-    [SerializeField] private Image fireChargeBarImage;
+    //[SerializeField] private Image fireChargeBarImage;
+    [SerializeField] private Image[] fireChargeImages;
+
     private bool isPlayerBar;
 
     private void Start()
@@ -72,10 +74,17 @@ public class Healthbar : MonoBehaviour
         }
     }
 
-    public void UpdateFireChargeBarUI(int fireChargeFill)
+    //public void UpdateFireChargeBarUI(int fireChargeFill)
+    //{
+    //    float normalizedValue = (float)fireChargeFill / (float)SpellCharge.maxFireCharge;
+    //    fireChargeBarImage.fillAmount = normalizedValue;
+    //}
+    public void UpdateFireChargeBarUI(int fireChargeCount)
     {
-        float normalizedValue = (float)fireChargeFill / (float)SpellCharge.maxFireCharge;
-        fireChargeBarImage.fillAmount = normalizedValue;
+        for (int i = 0; i < fireChargeImages.Length; i++)
+        {
+            fireChargeImages[i].enabled = i < fireChargeCount;
+        }
     }
 
     private void RepositionHealthBar(Transform objectToFollow)

@@ -10,10 +10,17 @@ public class Combustion : MonoBehaviour
     [SerializeField] private float ultimateDuration;
     [SerializeField] private float ultimateCooldown;
     [SerializeField] private Image ultimateCooldownImage;
+    [SerializeField] private GameObject combustionStatusEffectVFX;
+
+    private StatusEffectManager statusEffectManager;
 
     private float ultimateCooldownTimeElapsed;
     private Dash dashScript;
     private AttackAndPowerCasting attackAndPowerCastingScript;
+
+    private int activeUltimateCount = 0;
+    public bool IsUltimateActive => activeUltimateCount > 0;
+
 
 
     private bool isUltimateOnCooldown;
@@ -26,8 +33,9 @@ public class Combustion : MonoBehaviour
         playerInput = GetComponent<PlayerInput>();
         dashScript = GetComponent<Dash>();
         attackAndPowerCastingScript = GetComponent<AttackAndPowerCasting>();
+        statusEffectManager = GetComponent<StatusEffectManager>();
         playerInput.actions.FindAction("Ultimate").performed += OnUltimate;
-
+        combustionStatusEffectVFX.SetActive(false);
         //fireballProcChance = this.transform.GetComponent<AttackAndPowerCasting>().fireballPrefab.GetComponent<Fireball>().currentProcChance;
     }
 
@@ -61,28 +69,39 @@ public class Combustion : MonoBehaviour
         if (isUltimateOnCooldown) return;
         if (isCasting) return;
 
+        statusEffectManager?.ApplyOrRefreshEffect("Ultimate", ultimateDuration, Color.blue);
+
         StartCoroutine(CooldownUltimateCoroutine(ultimateCooldown));
         StartCoroutine(ModifyPlayerStatistics());
     }
 
     private IEnumerator ModifyPlayerStatistics()
     {
-        EventManager.Ultimate(true);
+        activeUltimateCount++;
+        if (activeUltimateCount == 1)
+        {
+            EventManager.Ultimate(true);
+            combustionStatusEffectVFX.SetActive(true);
+        }
 
-
-        SpellCharge.AddBonusProbability(100);
+        SpellCharge.BuffByUltimate();
         dashScript.BuffByUltimate();
         attackAndPowerCastingScript.BuffByUltimate();
 
         yield return new WaitForSeconds(ultimateDuration);
 
-
-        SpellCharge.RemoveBonusProbability(100);
+        SpellCharge.BuffByUltimate();
         dashScript.RemoveUltimateBuff();
         attackAndPowerCastingScript.RemoveUltimateBuff();
 
-        EventManager.Ultimate(false);
+        activeUltimateCount--;
+        if (activeUltimateCount == 0)
+        {
+            EventManager.Ultimate(false);
+            combustionStatusEffectVFX.SetActive(false);
+        }
     }
+
 
     private IEnumerator CooldownUltimateCoroutine(float cd)
     {
