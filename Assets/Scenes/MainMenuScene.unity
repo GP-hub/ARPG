@@ -2026,9 +2026,9 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5467670777335343812, guid: 7d65a674a2760ee4fba5080c73309d56, type: 3}
       propertyPath: m_text
-      value: Gain a short burst of movement speed, leaving a trail of fire behind
-        you. Fireball coming in contact of the firetrail gain 100% chance to gain
-        Fire charges.
+      value: Gain a burst of speed, leaving a trail of fire dealing damage over time,
+        Fireballs going through the trail  generate a FireCharge on Hit. Duration
+        of speed buff is doubled when Ultimate is active.
       objectReference: {fileID: 0}
     - target: {fileID: 5467670777335343812, guid: 7d65a674a2760ee4fba5080c73309d56, type: 3}
       propertyPath: m_HorizontalAlignment
@@ -7884,8 +7884,9 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5467670777335343812, guid: 7d65a674a2760ee4fba5080c73309d56, type: 3}
       propertyPath: m_text
-      value: Call a meteor crashing from the sky dealing Fire damage, consuming your
-        fire charge to reduce the casting time and increase its damage.
+      value: Call down a meteor, consume available FireCharges, damage is increased
+        per FireCharge spent, casting time is decreased per FireCharge spent. Leave
+        a pool of fire if Ultimate is active.
       objectReference: {fileID: 0}
     - target: {fileID: 5467670777335343812, guid: 7d65a674a2760ee4fba5080c73309d56, type: 3}
       propertyPath: m_HorizontalAlignment
@@ -18637,8 +18638,9 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5467670777335343812, guid: 7d65a674a2760ee4fba5080c73309d56, type: 3}
       propertyPath: m_text
-      value: 'Turn to your inner fire to enhance all your other abilities. Gain 100%
-        chance to gain fire charges from fireball. [++]'
+      value: 'Improve all your other fire spells: Fireball gets +100% chance to get
+        a FireCharge on Hit. Double the duration of FireDash. Meteor leave a pool
+        of fire on impact.'
       objectReference: {fileID: 0}
     - target: {fileID: 5467670777335343812, guid: 7d65a674a2760ee4fba5080c73309d56, type: 3}
       propertyPath: m_HorizontalAlignment
@@ -68741,7 +68743,10 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5467670777335343812, guid: 7d65a674a2760ee4fba5080c73309d56, type: 3}
       propertyPath: m_text
-      value: Throw a fiery ball that causes Fire damage.
+      value: Throw a fire projectile with a 12% chance to grant a FireCharge on hit,
+        if no FireCharge is gained, the chance doubles until a FireCharge is gained,
+        resets when a FireCharge is gained. +100% chance to gain a FireCharge when
+        Ultimate is active.
       objectReference: {fileID: 0}
     - target: {fileID: 5467670777335343812, guid: 7d65a674a2760ee4fba5080c73309d56, type: 3}
       propertyPath: m_HorizontalAlignment
