@@ -964,6 +964,7 @@ public class Enemy : MonoBehaviour
     public void BossRockFall()
     {
         EventManager.BossRockFall(1);
+        EventManager.MessageEvent("Hide!", 3);
     }
 
     [AttackMethod]

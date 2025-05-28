@@ -1,27 +1,36 @@
+using System.Collections;
 using TMPro;
 using UnityEditor;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.SceneManagement;
 
-public class PauseMenu : MonoBehaviour
+public class UIManager : MonoBehaviour
 {
     public static bool isGamePaused;
     private GameObject pauseMenu;
     [SerializeField] private GameObject gameStateScreen;
     [SerializeField] private TextMeshProUGUI gameStateText;
+
+    [SerializeField] private GameObject gameMessageScreen;
+    [SerializeField] private TextMeshProUGUI gameMessageText;
+
     [SerializeField] private InputActionAsset inputActionAsset;
 
     private void OnEnable()
     {
         EventManager.onPlayerDeath += ShowGameOverScreen;
         EventManager.onBossDeath += ShowVictoryScreen;
+        EventManager.onMessageEvent += ShowGameMessage;
+
     }
 
     private void OnDisable()
     {
         EventManager.onPlayerDeath -= ShowGameOverScreen;
         EventManager.onBossDeath -= ShowVictoryScreen;
+
+        EventManager.onMessageEvent -= ShowGameMessage;
     }
 
 
@@ -107,5 +116,17 @@ public class PauseMenu : MonoBehaviour
         gameStateText.text = "Victory";
     }
 
+    public void ShowGameMessage(string message, int disableTimer)
+    {
+        gameMessageScreen.SetActive(true);
+        gameMessageText.text = message;
+
+        StartCoroutine(HideGameMessageAfterDelay(disableTimer));
+    }
+    private IEnumerator HideGameMessageAfterDelay(float delay)
+    {
+        yield return new WaitForSeconds(delay);
+        gameMessageScreen.SetActive(false);
+    }
 
 }

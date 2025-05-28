@@ -90,7 +90,7 @@ public class Combustion : MonoBehaviour
 
         yield return new WaitForSeconds(ultimateDuration);
 
-        SpellCharge.BuffByUltimate();
+        SpellCharge.RemoveUltimateBuff();
         dashScript.RemoveUltimateBuff();
         attackAndPowerCastingScript.RemoveUltimateBuff();
 
