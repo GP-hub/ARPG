@@ -187,6 +187,29 @@ public class Enemy : MonoBehaviour
         abilityCooldowns[ability] = ability.cooldown;
     }
 
+    public void TryUseFollowUpAbility()
+    {
+        if (currentAbility == null || currentAbility.followUpAbility == null)
+            return;
+
+        AbilityData followUp = currentAbility.followUpAbility;
+
+        int followUpIndex = abilities.IndexOf(followUp);
+        if (followUpIndex != -1)
+        {
+            ChangeState(new AttackState(followUpIndex));
+        }
+        else
+        {
+            Debug.LogWarning($"Follow-up ability '{followUp.name}' not found in enemy abilities list.");
+        }
+    }
+
+    private void UseAbilityNoCooldown(AbilityData ability)
+    {
+        isAttacking = true;
+    }
+
     private void UsePowerAbility(AbilityData ability)
     {
         //if (ability.cooldown <= 0) return;
@@ -739,6 +762,20 @@ public class Enemy : MonoBehaviour
         if (isPowering) isPowering = false;
     }
 
+    public void ForceAbility(int index)
+    {
+        if (index >= 0 && index < abilities.Count)
+        {
+            currentAbility = abilities[index];
+            UseAbilityNoCooldown(currentAbility);
+        }
+        else
+        {
+            Debug.LogWarning("Invalid ability index passed to ForceAbility");
+            DecideNextAbility(); // fallback
+        }
+    }
+
     public void DecideNextAbility()
     {
         if (isBoss) DecideNextBossMoveID();
@@ -768,6 +805,11 @@ public class Enemy : MonoBehaviour
 
         UseAbility(currentAbility);
     }
+    public AbilityData GetCurrentAbility()
+    {
+        return currentAbility;
+    }
+
 
     public float GetCurrentAbilityIndex()
     {
@@ -783,7 +825,7 @@ public class Enemy : MonoBehaviour
     public void MoveToPosition()
     {
         ChangeState(new MoveToState(new Vector3(206, 0, -28)));
-        ConsumePhaseChanged();
+        //ConsumePhaseChanged();
     }
 
 
@@ -964,30 +1006,31 @@ public class Enemy : MonoBehaviour
     public void BossRockFall()
     {
         EventManager.BossRockFall(1);
-        EventManager.MessageEvent("Hide!", 3);
+        //EventManager.MessageEvent("Hide!", 3);
     }
 
     [AttackMethod]
     public void TestSpellIndicator()
     {
+        bool canFallingRocksDestroyDestructibles = true; // Set this based on your game logic, if rocks can destroy destructible obstacles
         //Vector3 targetPos = GetInaccurateTarget(target.position);
         Vector3 groundTargetPosition = TargetPosition + new Vector3(0, 0.01f, 0);
-        RockFallAtTargetPos(2f, 3f, groundTargetPosition);
+        RockFallAtTargetPos(2f, 3f, groundTargetPosition, canFallingRocksDestroyDestructibles);
     }
 
-    private void RockFallAtTargetPos(float duration, float size, Vector3 targetPos)
+    private void RockFallAtTargetPos(float duration, float size, Vector3 targetPos, bool canDestroy)
     {
         GameObject newObject = PoolingManagerSingleton.Instance.GetObjectFromPool("Telegraph_AoE", targetPos);
 
         if (newObject.TryGetComponent<TelegraphIndicator>(out TelegraphIndicator indicator))
         {
             indicator.SetIndicatorPosition(duration, size);
-            StartCoroutine(RockFalling(duration, size, targetPos));
+            StartCoroutine(RockFalling(duration, size, targetPos, canDestroy));
         }
     }
 
 
-    private IEnumerator RockFalling(float indicatorDuration, float size, Vector3 targetPos)
+    private IEnumerator RockFalling(float indicatorDuration, float size, Vector3 targetPos, bool canDestroy)
     {
         float desiredFallDuration = 1f;
 
@@ -1033,16 +1076,19 @@ public class Enemy : MonoBehaviour
             }
         }
 
-        // overlap sphere to check for rocks
-        int maxRockColliders = 5;
-        Collider[] hitRocksColliders = new Collider[maxRockColliders];
-        int numRocksColliders = Physics.OverlapSphereNonAlloc(newObject.transform.position, size/2, hitRocksColliders, LayerMask.GetMask("Obstacle"));
-
-        for (int i = 0; i < numRocksColliders; i++)
+        if (canDestroy)
         {
-            if (hitRocksColliders[i].CompareTag("Destructible"))
+            // overlap sphere to check for rocks
+            int maxRockColliders = 5;
+            Collider[] hitRocksColliders = new Collider[maxRockColliders];
+            int numRocksColliders = Physics.OverlapSphereNonAlloc(newObject.transform.position, size/2, hitRocksColliders, LayerMask.GetMask("Obstacle"));
+
+            for (int i = 0; i < numRocksColliders; i++)
             {
-                hitRocksColliders[i].gameObject.SetActive(false);
+                if (hitRocksColliders[i].CompareTag("Destructible"))
+                {
+                    hitRocksColliders[i].gameObject.SetActive(false);
+                }
             }
         }
 
@@ -1059,6 +1105,7 @@ public class Enemy : MonoBehaviour
 
     private IEnumerator TripleRockFallRoutine()
     {
+        bool canFallingRocksDestroyDestructibles = true; // Set this based on your game logic, if rocks can destroy destructible obstacles
         float spacing = 2f;
 
         for (int i = 0; i < 3; i++)
@@ -1079,7 +1126,7 @@ public class Enemy : MonoBehaviour
             float indicatorDuration = .5f + (i * 0.25f);
             float size = 2f + (i * 0.75f);
 
-            RockFallAtTargetPos(indicatorDuration, size, spawnPosition);
+            RockFallAtTargetPos(indicatorDuration, size, spawnPosition, canFallingRocksDestroyDestructibles);
 
             yield return new WaitForSeconds(0.5f); // Small delay between rocks
         }
@@ -1096,6 +1143,8 @@ public class Enemy : MonoBehaviour
 
     private IEnumerator ChargeUntilObstacleCoroutine(Vector3 chargeDirection)
     {
+        bool canFallingRocksDestroyDestructibles = false; // Set this based on your game logic, if rocks can destroy destructible obstacles
+
         isCharging = true;
 
         transform.forward = chargeDirection;
@@ -1108,7 +1157,7 @@ public class Enemy : MonoBehaviour
 
         while (true)
         {
-            agent.Move(chargeDirection * speed * 3f * Time.deltaTime);
+            agent.Move(chargeDirection * speed * 2.25f * Time.deltaTime);
 
             float characterHeight = 2.25f;
             float radius = 1f;
@@ -1122,13 +1171,11 @@ public class Enemy : MonoBehaviour
             {
                 if (hit.CompareTag("Player") && !alreadyHitPlayers.Contains(hit))
                 {
-                    Debug.Log("Hit Player");
                     alreadyHitPlayers.Add(hit);
                     OnHitPlayer(hit);
                 }
                 else if (hit.CompareTag("Destructible"))
                 {
-                    Debug.Log("Hit Destructible obstacle");
                     OnHitDestructibleObstacle(hit);
                     cCDuration += 2.5f;
                     yield return BreakCharge();
@@ -1136,8 +1183,7 @@ public class Enemy : MonoBehaviour
                 }
                 else if (hit.CompareTag("Indestructible"))
                 {
-                    Debug.Log("Hit Indestructible obstacle");
-                    OnHitIndestructibleObstacle(hit);
+                    OnHitIndestructibleObstacle(hit, canFallingRocksDestroyDestructibles);
                     cCDuration += 2.5f;
                     yield return BreakCharge();
                     yield break;
@@ -1174,11 +1220,13 @@ public class Enemy : MonoBehaviour
         obstacle.gameObject.SetActive(false);
     }
 
-    private void OnHitIndestructibleObstacle(Collider obstacle)
+    private void OnHitIndestructibleObstacle(Collider obstacle, bool canFallingRocksDestroyDestructibles)
     {
         Vector3 start = BossFightManager.Instance.BottomLeftCorner.position;
         Vector3 end = BossFightManager.Instance.TopRightCorner.position;
-        float spacing = 3; // spacing between the rocks
+
+        // THE SPACING BETWEEN ROCKS IS RESPONSIBLE FOR THE AMOUNT OF ROCKS SPAWNED
+        float spacing = 4; // spacing between the rocks
 
         List<Vector3> positions = new List<Vector3>();
 
@@ -1192,10 +1240,10 @@ public class Enemy : MonoBehaviour
 
         foreach (Vector3 pos in positions)
         {
-            StartCoroutine(DelayedRockFall(pos));
+            StartCoroutine(DelayedRockFall(pos, canFallingRocksDestroyDestructibles));
         }
     }
-    private IEnumerator DelayedRockFall(Vector3 pos)
+    private IEnumerator DelayedRockFall(Vector3 pos, bool canRockDestroyDestructible)
     {
         int delay = Random.Range(0, 3);
         yield return new WaitForSeconds(delay);
@@ -1209,7 +1257,7 @@ public class Enemy : MonoBehaviour
 
         Vector3 randomizedPos = new Vector3(pos.x + offsetX, pos.y, pos.z + offsetZ);
 
-        RockFallAtTargetPos(duration, size, pos);
+        RockFallAtTargetPos(duration, size, pos, canRockDestroyDestructible);
     }
 
     private IEnumerator TriggerAbilityAfterDelay(float delay, Vector3 targetPos)

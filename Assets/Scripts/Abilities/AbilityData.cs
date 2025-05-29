@@ -14,4 +14,5 @@ public class AbilityData : ScriptableObject
     [HideInInspector]
     public string selectedFunctionName; // Function name to call on the enemy script
     public List<ScriptableAbilityCondition> conditions;
+    public AbilityData followUpAbility;
 }

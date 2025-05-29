@@ -10,14 +10,16 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: bf59774016b20b6448aa62df6df3e087, type: 3}
-  m_Name: FrontRockFall
+  m_Name: BossCharge
   m_EditorClassIdentifier: 
-  accuracy: 100
-  maxAttackRange: 100
-  minAttackRange: 2
-  damage: 20
-  cooldown: 7
+  accuracy: 0
+  maxAttackRange: 500
+  minAttackRange: 0
+  damage: 50
+  cooldown: 900
   projectilePrefab: {fileID: 0}
-  animationClip: {fileID: 7400000, guid: f28badfc73ba8e347a4f7265f8b83017, type: 2}
-  selectedFunctionName: TripleRockFallFront
-  conditions: []
+  animationClip: {fileID: 7400000, guid: f951e9a812fdba94dbd0547e0d3cc749, type: 2}
+  selectedFunctionName: ChargingUntilObstacleStart
+  conditions:
+  - {fileID: 11400000, guid: 7024205e44000b643a877089a76d2b1c, type: 2}
+  followUpAbility: {fileID: 0}

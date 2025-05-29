@@ -10,14 +10,15 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: bf59774016b20b6448aa62df6df3e087, type: 3}
-  m_Name: FrontRockFall
+  m_Name: BossRoarRockFallPhaseChange
   m_EditorClassIdentifier: 
-  accuracy: 100
-  maxAttackRange: 100
-  minAttackRange: 2
-  damage: 20
-  cooldown: 7
+  accuracy: 0
+  maxAttackRange: 1000
+  minAttackRange: 1
+  damage: 5
+  cooldown: 999
   projectilePrefab: {fileID: 0}
-  animationClip: {fileID: 7400000, guid: f28badfc73ba8e347a4f7265f8b83017, type: 2}
-  selectedFunctionName: TripleRockFallFront
-  conditions: []
+  animationClip: {fileID: 7400000, guid: 09b049ffd9dd6b748aff4a78c21099ac, type: 2}
+  selectedFunctionName: BossRockFall
+  conditions:
+  - {fileID: 11400000, guid: 1b9183aa08d5d664cbbaf89234a1d917, type: 2}

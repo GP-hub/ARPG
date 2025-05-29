@@ -21,6 +21,7 @@ public class MoveToState : IState
     void IState.Exit()
     {
         enemy.ResetSingleBool("TriggerWalk");
+        
     }
 
     void IState.Update()
@@ -32,7 +33,7 @@ public class MoveToState : IState
         if (allArrived)
         {
             enemy.isMoving = false;
-            //enemy.ChangeState(new AttackState());
+            enemy.TryUseFollowUpAbility();            
         }
     }
 
