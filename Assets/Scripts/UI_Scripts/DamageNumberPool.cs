@@ -25,12 +25,16 @@ public class DamageNumberPool : MonoBehaviour
     public void ShowDamage(Vector3 worldPosition, string text, Color color)
     {
         GameObject anchor = GetFromPool();
-        anchor.transform.position = worldPosition;
         anchor.SetActive(true);
+
+        // Pass world position to the anchor so it can update screen pos every frame
+        DamageNumberAnchor anchorScript = anchor.GetComponent<DamageNumberAnchor>();
+        anchorScript.Initialize(worldPosition);
 
         DamageNumber dmg = anchor.GetComponentInChildren<DamageNumber>();
         dmg.Initialize(text, color);
     }
+
 
     private GameObject GetFromPool()
     {

@@ -11530,6 +11530,22 @@ PrefabInstance:
         per FireCharge spent, casting time is decreased per FireCharge spent. Leave
         a pool of fire if Ultimate is active.
       objectReference: {fileID: 0}
+    - target: {fileID: 1950970608615217474, guid: 1f2cecd6e34bbce4482753db5ba91d9f, type: 3}
+      propertyPath: m_UiScaleMode
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 1950970608615217474, guid: 1f2cecd6e34bbce4482753db5ba91d9f, type: 3}
+      propertyPath: m_PresetInfoIsWorld
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1950970608615217474, guid: 1f2cecd6e34bbce4482753db5ba91d9f, type: 3}
+      propertyPath: m_ReferenceResolution.x
+      value: 1920
+      objectReference: {fileID: 0}
+    - target: {fileID: 1950970608615217474, guid: 1f2cecd6e34bbce4482753db5ba91d9f, type: 3}
+      propertyPath: m_ReferenceResolution.y
+      value: 1080
+      objectReference: {fileID: 0}
     - target: {fileID: 2496125340543479586, guid: 1f2cecd6e34bbce4482753db5ba91d9f, type: 3}
       propertyPath: m_LocalPosition.x
       value: 0
@@ -11574,12 +11590,60 @@ PrefabInstance:
       propertyPath: m_Camera
       value: 
       objectReference: {fileID: 963194227}
+    - target: {fileID: 2906015925401817569, guid: 1f2cecd6e34bbce4482753db5ba91d9f, type: 3}
+      propertyPath: m_RenderMode
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 3946201047096251207, guid: 1f2cecd6e34bbce4482753db5ba91d9f, type: 3}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Target
       value: 
       objectReference: {fileID: 1269496527}
     - target: {fileID: 6167776625281987855, guid: 1f2cecd6e34bbce4482753db5ba91d9f, type: 3}
       propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7256387331468123792, guid: 1f2cecd6e34bbce4482753db5ba91d9f, type: 3}
+      propertyPath: m_Pivot.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7256387331468123792, guid: 1f2cecd6e34bbce4482753db5ba91d9f, type: 3}
+      propertyPath: m_Pivot.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7256387331468123792, guid: 1f2cecd6e34bbce4482753db5ba91d9f, type: 3}
+      propertyPath: m_AnchorMax.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7256387331468123792, guid: 1f2cecd6e34bbce4482753db5ba91d9f, type: 3}
+      propertyPath: m_AnchorMax.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7256387331468123792, guid: 1f2cecd6e34bbce4482753db5ba91d9f, type: 3}
+      propertyPath: m_AnchorMin.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7256387331468123792, guid: 1f2cecd6e34bbce4482753db5ba91d9f, type: 3}
+      propertyPath: m_AnchorMin.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7256387331468123792, guid: 1f2cecd6e34bbce4482753db5ba91d9f, type: 3}
+      propertyPath: m_SizeDelta.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7256387331468123792, guid: 1f2cecd6e34bbce4482753db5ba91d9f, type: 3}
+      propertyPath: m_SizeDelta.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7256387331468123792, guid: 1f2cecd6e34bbce4482753db5ba91d9f, type: 3}
+      propertyPath: m_LocalScale.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7256387331468123792, guid: 1f2cecd6e34bbce4482753db5ba91d9f, type: 3}
+      propertyPath: m_LocalScale.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7256387331468123792, guid: 1f2cecd6e34bbce4482753db5ba91d9f, type: 3}
+      propertyPath: m_LocalScale.z
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 7327281287024145605, guid: 1f2cecd6e34bbce4482753db5ba91d9f, type: 3}
@@ -12602,14 +12666,6 @@ PrefabInstance:
     - target: {fileID: 7938957013488263564, guid: dc2bc0efb18e3014cafdd8d32305f289, type: 3}
       propertyPath: m_Name
       value: Environment
-      objectReference: {fileID: 0}
-    - target: {fileID: 8436262000069656504, guid: dc2bc0efb18e3014cafdd8d32305f289, type: 3}
-      propertyPath: m_LocalPosition.z
-      value: -30.5
-      objectReference: {fileID: 0}
-    - target: {fileID: 8815269534341534737, guid: dc2bc0efb18e3014cafdd8d32305f289, type: 3}
-      propertyPath: m_LocalPosition.z
-      value: -24.5
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
