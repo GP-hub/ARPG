@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   accuracy: 0
   maxAttackRange: 1000
-  minAttackRange: 1
+  minAttackRange: 0
   damage: 5
   cooldown: 999
   projectilePrefab: {fileID: 0}

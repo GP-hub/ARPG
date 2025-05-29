@@ -27,9 +27,16 @@ public class DamageNumberPool : MonoBehaviour
         GameObject anchor = GetFromPool();
         anchor.SetActive(true);
 
-        // Pass world position to the anchor so it can update screen pos every frame
+        // Random offset to avoid overlapping
+        Vector3 randomOffset = new Vector3(
+            Random.Range(-0.3f, 0.3f),  // X jitter
+            Random.Range(0.4f, 0.6f),   // Slight upward offset
+            Random.Range(-0.3f, 0.3f)   // Z jitter (optional)
+        );
+
+        // Pass position and direction to the anchor
         DamageNumberAnchor anchorScript = anchor.GetComponent<DamageNumberAnchor>();
-        anchorScript.Initialize(worldPosition);
+        anchorScript.Initialize(worldPosition + randomOffset);
 
         DamageNumber dmg = anchor.GetComponentInChildren<DamageNumber>();
         dmg.Initialize(text, color);

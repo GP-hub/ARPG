@@ -1,17 +1,37 @@
-
+﻿
 using UnityEngine;
 
 class AttackState : IState
 {
     private Enemy enemy;
+    private int? forcedAbilityIndex = null;
+
+    public AttackState() { }
+
+    public AttackState(int abilityIndex)
+    {
+        forcedAbilityIndex = abilityIndex;
+    }
 
     void IState.Enter(Enemy enemy)
     {
         this.enemy = enemy;
-        enemy.DecideNextAbility();
+
+        if (forcedAbilityIndex.HasValue)
+        {
+            enemy.ForceAbility(forcedAbilityIndex.Value); // ← You implement this method
+        }
+        else
+        {
+            enemy.DecideNextAbility();
+        }
+
         enemy.SetBoolSingle("TriggerAttack");
         enemy.TargetPosition = enemy.GetInaccurateTarget(enemy.Target.position);
-        if (enemy.Agent.isOnNavMesh && enemy.Agent.enabled) enemy.Stop();
+
+        if (enemy.Agent.isOnNavMesh && enemy.Agent.enabled)
+            enemy.Stop();
+
         enemy.Animator.SetFloat("AttackTree", enemy.GetCurrentAbilityIndex());
     }
 

@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: bf59774016b20b6448aa62df6df3e087, type: 3}
   m_Name: BossJumpAttack
   m_EditorClassIdentifier: 
-  accuracy: 2
+  accuracyRange: 1
   maxAttackRange: 200
   minAttackRange: 10
   damage: 20
@@ -21,4 +21,5 @@ MonoBehaviour:
   animationClip: {fileID: 7400000, guid: ebecde7db6c91cb42b5ab7e9077ddd6d, type: 2}
   selectedFunctionName: JumpAttack
   conditions:
-  - {fileID: 11400000, guid: e1c9bcc5f47fa8247aebb02f58cc2e25, type: 2}
+  - {fileID: 11400000, guid: 9866962ab3816b84d9b5486208002637, type: 2}
+  followUpAbility: {fileID: 0}

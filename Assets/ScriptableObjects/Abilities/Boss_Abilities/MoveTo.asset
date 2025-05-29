@@ -16,9 +16,10 @@ MonoBehaviour:
   maxAttackRange: 10000
   minAttackRange: 0
   damage: 0
-  cooldown: 1
+  cooldown: 12
   projectilePrefab: {fileID: 0}
   animationClip: {fileID: 7400000, guid: 915d45f9ac31d5e4c8d017b1ef95f6b9, type: 2}
   selectedFunctionName: MoveToPosition
   conditions:
-  - {fileID: 11400000, guid: 1b9183aa08d5d664cbbaf89234a1d917, type: 2}
+  - {fileID: 11400000, guid: 9866962ab3816b84d9b5486208002637, type: 2}
+  followUpAbility: {fileID: 11400000, guid: e28af33fa9aeec041903b2e528811c8d, type: 2}
