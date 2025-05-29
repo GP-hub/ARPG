@@ -88,7 +88,7 @@ public class AttackAndPowerCasting : MonoBehaviour
         playerInput.actions.FindAction("Power").performed += OnPowerChanged;
         playerInput.actions.FindAction("Power").canceled += OnPowerChanged;
 
-        playerInput.actions.FindAction("CancelCast").canceled += CancelCast;
+        playerInput.actions.FindAction("CancelCast").performed += CancelCast;
         playerInput.actions.FindAction("CancelCast").canceled += CancelCast;
     }
 
