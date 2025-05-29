@@ -387,6 +387,7 @@ public class AttackAndPowerCasting : MonoBehaviour
 
     public void CastFireball()
     {
+        if (!isCasting) return;
         float yRotation = lineDecal.transform.eulerAngles.y;
  
         Vector3 direction = Quaternion.Euler(0, yRotation + 90, 0) * Vector3.forward;
@@ -409,6 +410,8 @@ public class AttackAndPowerCasting : MonoBehaviour
     // Called by Player Power Animation Keyframe
     public void CastMeteor()
     {
+        if (!isCasting) return;
+
         Ray cursorRay = Camera.main.ScreenPointToRay(Input.mousePosition);
 
         if (Physics.Raycast(cursorRay, out RaycastHit hit, 100f, groundLayer))
