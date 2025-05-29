@@ -87,6 +87,9 @@ public class AttackAndPowerCasting : MonoBehaviour
 
         playerInput.actions.FindAction("Power").performed += OnPowerChanged;
         playerInput.actions.FindAction("Power").canceled += OnPowerChanged;
+
+        playerInput.actions.FindAction("CancelCast").canceled += CancelCast;
+        playerInput.actions.FindAction("CancelCast").canceled += CancelCast;
     }
 
     private void Start()
@@ -211,6 +214,25 @@ public class AttackAndPowerCasting : MonoBehaviour
     {
         if (context.performed) isPoweringHeldDown = true;
         else if (context.canceled) isPoweringHeldDown = false;
+    }
+
+    private void CancelCast(InputAction.CallbackContext context)
+    {
+        isCasting = false;
+        //isAttackingHeldDown = false;
+        //isPoweringHeldDown = false;
+
+        animator.ResetTrigger("Attack");
+        animator.ResetTrigger("Power");
+
+        attackSpellIndicator.fadeFactor = 0;
+        powerSpellIndicator.fadeFactor = 0;
+        secondaryIndicator.StopGrowth();
+
+        playerMovement.RemoveSpeedModifier("Attack");
+        playerMovement.RemoveSpeedModifier("Power");
+
+        EventManager.Casting(false);
     }
 
     private void CastAttack()

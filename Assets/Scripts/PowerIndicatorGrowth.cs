@@ -17,6 +17,15 @@ public class PowerIndicatorGrowth : MonoBehaviour
             Debug.LogError("No DecalProjector component found on the object.");
         }
     }
+    public void StopGrowth()
+    {
+        if (currentGrowthCoroutine != null)
+        {
+            StopCoroutine(currentGrowthCoroutine);
+            currentGrowthCoroutine = null;
+            decalProjector.fadeFactor = 0f;
+        }
+    }
 
     public void StartGrowth(float duration)
     {

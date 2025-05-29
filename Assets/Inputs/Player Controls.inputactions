@@ -27,7 +27,7 @@
                     "name": "Attack",
                     "type": "Button",
                     "id": "66a7cc62-1ea4-4c88-87e9-58872c10cabd",
-                    "expectedControlType": "Button",
+                    "expectedControlType": "",
                     "processors": "",
                     "interactions": "",
                     "initialStateCheck": false
@@ -63,7 +63,16 @@
                     "name": "Interact",
                     "type": "Button",
                     "id": "1bc3e331-653c-44fe-98fa-660c8a951ec9",
-                    "expectedControlType": "Button",
+                    "expectedControlType": "",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                },
+                {
+                    "name": "CancelCast",
+                    "type": "Button",
+                    "id": "d5a95494-e137-4635-970d-8526642bafbf",
+                    "expectedControlType": "",
                     "processors": "",
                     "interactions": "",
                     "initialStateCheck": false
@@ -188,6 +197,17 @@
                     "processors": "",
                     "groups": "KBM",
                     "action": "Interact",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "00249093-87a6-4f6e-a331-6898c26eac96",
+                    "path": "<Keyboard>/x",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": ";KBM",
+                    "action": "CancelCast",
                     "isComposite": false,
                     "isPartOfComposite": false
                 }
