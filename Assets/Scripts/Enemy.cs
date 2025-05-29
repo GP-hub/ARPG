@@ -618,7 +618,7 @@ public class Enemy : MonoBehaviour
     {
 
         // Random point in a circle (2D on XZ plane)
-        Vector2 randomOffset = Random.insideUnitCircle * (currentAbility.accuracy * (1 - accuracyPercent / 100f));
+        Vector2 randomOffset = Random.insideUnitCircle * (currentAbility.accuracyRange * (1 - accuracyPercent / 100f));
 
         // Add the offset to the original target
         Vector3 inaccurateTarget = new Vector3(
@@ -834,16 +834,19 @@ public class Enemy : MonoBehaviour
     {
         if (target == null) return;
 
-        float jumpDistance = 1f;
+        //float jumpDistance = 1f;
 
-        Vector3 directionToTarget = (TargetPosition - transform.position).normalized;
-        Vector3 finalPosition = TargetPosition - directionToTarget * jumpDistance;
+        //Vector3 directionToTarget = (TargetPosition - transform.position).normalized;
+        //Vector3 finalPosition = TargetPosition - directionToTarget * jumpDistance;
 
-        StartCoroutine(JumpToLocation(finalPosition));
+        StartCoroutine(JumpToLocation(/*finalPosition*/));
     }
 
-    private IEnumerator JumpToLocation(Vector3 destination)
+    private IEnumerator JumpToLocation(/*Vector3 destination*/)
     {
+        //TEST
+        TargetPosition = GetInaccurateTarget(Target.position);
+
         float jumpDuration = (currentAbility.animationClip.length / attackStateSpeed) * 0.5f; // Adjust the duration as needed
 
         float t = 0f;
@@ -852,7 +855,7 @@ public class Enemy : MonoBehaviour
 
         while (t < jumpDuration)
         {
-            transform.position = Vector3.Lerp(startPosition, destination, (t / jumpDuration));
+            transform.position = Vector3.Lerp(startPosition, TargetPosition, (t / jumpDuration));
             t += Time.deltaTime;
             yield return null;
         }
@@ -883,10 +886,10 @@ public class Enemy : MonoBehaviour
             }
         }
 
-        transform.position = destination;
+        //transform.position = TargetPosition;
 
         // wait time before the next action, so we dont rotate towards target while ending the animation
-        //yield return new WaitForSeconds(1.5f);
+        yield return new WaitForSeconds(.5f);
         isCharging = false;
     }
 

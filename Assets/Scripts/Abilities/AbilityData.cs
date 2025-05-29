@@ -4,7 +4,7 @@ using UnityEngine;
 [CreateAssetMenu(fileName = "NewAbilityData", menuName = "AbilityData")]
 public class AbilityData : ScriptableObject
 {
-    public float accuracy;
+    public float accuracyRange;
     public float maxAttackRange;
     public float minAttackRange;
     public int damage;
