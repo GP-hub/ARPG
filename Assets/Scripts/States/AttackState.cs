@@ -1,5 +1,4 @@
-﻿
-using UnityEngine;
+﻿using UnityEngine;
 
 class AttackState : IState
 {
@@ -33,6 +32,8 @@ class AttackState : IState
             enemy.Stop();
 
         enemy.Animator.SetFloat("AttackTree", enemy.GetCurrentAbilityIndex());
+
+        enemy.ResetPerformedBehavior();
     }
 
     void IState.Exit()

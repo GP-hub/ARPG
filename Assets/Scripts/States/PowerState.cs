@@ -15,6 +15,7 @@ class PowerState : IState
         enemy.TargetPosition = enemy.GetInaccurateTarget(enemy.Target.position);
         if (enemy.Agent.isOnNavMesh && enemy.Agent.enabled) enemy.Stop();
         enemy.Animator.SetFloat("PowerTree", enemy.GetCurrentPowerAbilityIndex());
+        enemy.ResetPerformedBehavior();
     }
 
     void IState.Exit()

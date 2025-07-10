@@ -13,13 +13,14 @@ MonoBehaviour:
   m_Name: BossJumpAttack
   m_EditorClassIdentifier: 
   accuracyRange: 1
-  maxAttackRange: 200
+  maxAttackRange: 60
   minAttackRange: 10
   damage: 20
-  cooldown: 6
+  cooldown: 8
   projectilePrefab: {fileID: 0}
   animationClip: {fileID: 7400000, guid: ebecde7db6c91cb42b5ab7e9077ddd6d, type: 2}
   selectedFunctionName: JumpAttack
   conditions:
   - {fileID: 11400000, guid: 9866962ab3816b84d9b5486208002637, type: 2}
+  - {fileID: 11400000, guid: f275cdb4fcb165540823672106a1dee1, type: 2}
   followUpAbility: {fileID: 0}

@@ -1,4 +1,4 @@
-using UnityEngine;
+﻿using UnityEngine;
 
 class FollowState : IState
 {
@@ -18,10 +18,17 @@ class FollowState : IState
 
     void IState.Update()
     {
-        enemy.ResetAttackingAndPowering();
+        //enemy.ResetAttackingAndPowering();
+        // Continuously update the destination if the target moves
         if (enemy.Target != null)
         {
-            AIManager.Instance.MakeAgentCircleTarget(enemy.Target.transform);
+            enemy.MoveAIUnit(enemy.Target.position);
+        }
+
+        // Check if the enemy has reached its destination
+        if (enemy.HasReachedDestination())
+        {
+            enemy.ChangeState(new IdleState());
         }
     }
 

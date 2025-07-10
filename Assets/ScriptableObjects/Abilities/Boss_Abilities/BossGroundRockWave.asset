@@ -10,15 +10,15 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: bf59774016b20b6448aa62df6df3e087, type: 3}
-  m_Name: MeleeAttack
+  m_Name: BossGroundRockWave
   m_EditorClassIdentifier: 
-  accuracyRange: 0
-  maxAttackRange: 2
-  minAttackRange: 0
-  damage: 1
-  cooldown: 3
-  projectilePrefab: {fileID: 0}
-  animationClip: {fileID: 7400000, guid: 222519241767d4e43a9943228eb7e227, type: 2}
-  selectedFunctionName: MeleeHit
+  accuracyRange: 0.5
+  maxAttackRange: 45
+  minAttackRange: 1
+  damage: 11
+  cooldown: 10
+  projectilePrefab: {fileID: 5539799306576165240, guid: f456a7e700b705045aea1097bc8ca631, type: 3}
+  animationClip: {fileID: 7400000, guid: 36764c0e5094b534e82d02622642dcac, type: 2}
+  selectedFunctionName: GroundWaveHit
   conditions: []
   followUpAbility: {fileID: 0}

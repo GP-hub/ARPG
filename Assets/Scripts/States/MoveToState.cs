@@ -20,8 +20,7 @@ public class MoveToState : IState
 
     void IState.Exit()
     {
-        enemy.ResetSingleBool("TriggerWalk");
-        
+        enemy.ResetSingleBool("TriggerWalk");        
     }
 
     void IState.Update()
@@ -29,7 +28,7 @@ public class MoveToState : IState
         AIManager.Instance.MoveUnitsToPosition(destination);
 
         bool allArrived = AIManager.Instance.MoveUnitsToPosition(destination);
-
+        Debug.Log("All units arrived: " + allArrived);
         if (allArrived)
         {
             enemy.isMoving = false;

@@ -17,6 +17,8 @@ public class Enemy : MonoBehaviour
     [SerializeField] private float moveStateSpeed;
     [SerializeField] private float attackStateSpeed;
 
+    [SerializeField] private IdleBehaviorType idleBehaviorType;
+
     [SerializeField] private RuntimeAnimatorController baseController;
     private AnimatorOverrideController runtimeOverride;
 
@@ -45,13 +47,13 @@ public class Enemy : MonoBehaviour
     [Space(10)]
     [Header("Abilities")]
     [SerializeField] private float accuracyPercent = 100;
+    [SerializeField] private float delayBetweenAbilities;
     [SerializeField] private List<AbilityData> abilities;
     private List<AbilityData> offCooldownAbilities;
     private AbilityData currentAbility;
     private float minMaxAbilityRange;
     private Dictionary<AbilityData, float> abilityCooldowns = new Dictionary<AbilityData, float>();
     private float nextCastTime = 0f;
-    private float delayBetweenAbilities = 0.5f;
 
     public bool CanCastAbility => Time.time >= nextCastTime;
 
@@ -92,6 +94,7 @@ public class Enemy : MonoBehaviour
     private bool isGrounded = true;
     private bool isAttacking;
     private bool isPowering = false;
+    private bool hasPerformedBehavior = false;
     public bool isMoving;
     private bool isIdle;
     private bool isAlive = true;
@@ -117,6 +120,7 @@ public class Enemy : MonoBehaviour
     public float MaxHealth { get => maxHealth; }
     public bool IsBoss { get => isBoss; }
     public int CurrentPhase { get => currentPhase; }
+
 
     private void Awake()
     {
@@ -159,7 +163,8 @@ public class Enemy : MonoBehaviour
         this.animator.SetFloat("AttackStateSpeed", attackStateSpeed); // Reset the attack tree to 0 on enable
         currentHealth = maxHealth;
         lastPosition = transform.position;
-        minMaxAbilityRange = MinMaxRangeAttackRange();
+        minMaxAbilityRange = MinMaxRangeAttackRange(abilities);
+        Debug.Log($"Enemy {gameObject.name} enabled. MinMaxAbilityRange: {minMaxAbilityRange}");
         StartCastCooldown();
         ChangeState(new IdleState());
     }
@@ -167,6 +172,11 @@ public class Enemy : MonoBehaviour
     private void OnDisable()
     {
         EventManager.onGetUnits -= AddEnemyToAIManager;
+    }
+
+    public IdleBehaviorType GetIdleBehavior()
+    {
+        return idleBehaviorType;
     }
 
     private void AddEnemyToAIManager()
@@ -189,19 +199,24 @@ public class Enemy : MonoBehaviour
 
     public void TryUseFollowUpAbility()
     {
+        // If we dont have a follow up ability, we go back to Idle state
         if (currentAbility == null || currentAbility.followUpAbility == null)
+        {
+            ChangeState(new IdleState());
             return;
+        }
 
-        AbilityData followUp = currentAbility.followUpAbility;
+        AbilityData followUpAbility = currentAbility.followUpAbility;
 
-        int followUpIndex = abilities.IndexOf(followUp);
+        int followUpIndex = abilities.IndexOf(followUpAbility);
         if (followUpIndex != -1)
         {
             ChangeState(new AttackState(followUpIndex));
         }
         else
         {
-            Debug.LogWarning($"Follow-up ability '{followUp.name}' not found in enemy abilities list.");
+            ChangeState(new IdleState());
+            //Debug.LogWarning($"Follow-up ability '{followUp.name}' not found in enemy abilities list.");
         }
     }
 
@@ -267,6 +282,7 @@ public class Enemy : MonoBehaviour
             yield return new WaitForSeconds(0.1f);
         }
     }
+
 
     public void TakeDamage(float damageAmount)
     {
@@ -365,14 +381,21 @@ public class Enemy : MonoBehaviour
                 return;
             }
 
-            if (!CanCastAbility)
-            {
-                ChangeState(new IdleState());
-                return;
-            }
             // Previous method of calculating distance that do one more operation: a square root
             //float distanceToTarget1 = Vector3.Distance(transform.position, target.position);
             float distanceToTarget = (transform.position - target.position).sqrMagnitude;
+
+            // If we cant cast ability yet, we change to Idle state to wait for the next ability cast time
+            if (!CanCastAbility)
+            {
+                if (!hasPerformedBehavior)
+                {
+                    GetEnemyBehavior();
+                    hasPerformedBehavior = true;
+                }
+                // Do not change state again until CanCastAbility is true
+                return;
+            }
 
             if (isPowering || isAttacking) return;
             if (CanPower(distanceToTarget) && AreConditionsMet(powerAbility))
@@ -396,7 +419,8 @@ public class Enemy : MonoBehaviour
                 }
                 else
                 {
-                    if (distanceToTarget < minMaxAbilityRange && CanSeeTarget(target))
+                    //if (distanceToTarget <= MinMaxRangeAttackRange(offCooldownAbilities) && CanSeeTarget(target))
+                    if (distanceToTarget <= minMaxAbilityRange && CanSeeTarget(target))
                     {
                         ChangeState(new IdleState());
                         return;
@@ -433,11 +457,12 @@ public class Enemy : MonoBehaviour
         return false;
     }
 
-    private float MinMaxRangeAttackRange()
+    private float MinMaxRangeAttackRange(List<AbilityData> abilities)
     {
         if (abilities.Count == 0)
         {
-            return 1.1f; // Default value if no abilities are available
+            //return 1.1f; // Default value if no abilities are available
+            return 2f; // Default value if no abilities are available
         }
 
         float minMaxAttackRange = float.MaxValue;
@@ -450,8 +475,13 @@ public class Enemy : MonoBehaviour
             }
         }
 
-        if (minMaxAttackRange <= 0) Debug.Log($"Issue with setting up ability range on {gameObject.name}. minMaxAttackRange is {minMaxAttackRange}");
-
+        if (minMaxAttackRange <= 0)
+        {
+            Debug.Log($"Issue with setting up ability range on {gameObject.name}. minMaxAttackRange is {minMaxAttackRange}");
+            //return 1.1f; // Default value if no valid range is found
+            return 2f; // Default value if no valid range is found
+        }
+        Debug.Log(minMaxAttackRange);
         return minMaxAttackRange;
     }
     public void ChangeState(IState newState)
@@ -465,6 +495,49 @@ public class Enemy : MonoBehaviour
 
         currentState = newState;
         currentState.Enter(this);
+    }
+
+    private void GetEnemyBehavior()
+    {
+        if (Target != null)
+        {
+            switch (GetIdleBehavior())
+            {
+                case IdleBehaviorType.Follow:
+                    float distance = Vector3.Distance(this.transform.position, Target.position);
+
+                    //if (distance <= MinMaxRangeAttackRange(offCooldownAbilities) && CanSeeTarget(Target))
+                    if (distance <= minMaxAbilityRange && CanSeeTarget(Target))
+                    {
+                        ChangeState(new IdleState());
+                        return;
+                    }
+                    ChangeState(new FollowState());
+                    break;
+                case IdleBehaviorType.Agressive:
+                    Vector3 destAggressive = Utility.GetPositionPoint(transform.position, TargetPosition, IdleBehaviorType.Agressive, agent, LayerMask.GetMask("Obstacle"));
+                    ChangeState(new MoveToState(destAggressive));
+                    break;
+                case IdleBehaviorType.Wander:
+                    Vector3 destWander = Utility.GetPositionPoint(transform.position, TargetPosition, IdleBehaviorType.Wander, agent, LayerMask.GetMask("Obstacle"));
+                    ChangeState(new MoveToState(destWander));
+                    break;
+                case IdleBehaviorType.Flee:
+                    Vector3 destFlee = Utility.GetPositionPoint(transform.position, TargetPosition, IdleBehaviorType.Flee, agent, LayerMask.GetMask("Obstacle"));
+                    ChangeState(new MoveToState(destFlee));
+                    break;
+                case IdleBehaviorType.Stationary:
+                    ChangeState(new IdleState());
+                    break;
+                default:
+                    break;
+            }
+        }
+    }
+
+    public void ResetPerformedBehavior()
+    {
+         hasPerformedBehavior = false;
     }
 
     private void AbilityFilteringAndSorting(float distanceToTarget)
@@ -561,6 +634,24 @@ public class Enemy : MonoBehaviour
 
             agent.SetDestination(targetPos);
         }
+    }
+
+    public bool HasReachedDestination()
+    {
+        if (agent == null || !agent.enabled || !agent.isOnNavMesh)
+            return false;
+
+        if (agent.pathPending)
+            return false;
+
+        // Check if the remaining distance is less than or equal to stopping distance
+        if (agent.remainingDistance <= agent.stoppingDistance)
+        {
+            // Optionally, check if the agent has stopped moving
+            //if (!agent.hasPath || Agent.velocity.sqrMagnitude == 0f)
+                return true;
+        }
+        return false;
     }
 
 
@@ -985,7 +1076,11 @@ public class Enemy : MonoBehaviour
     {
         if (targetPosition == Vector3.zero) return;
 
+        //TEST
+        TargetPosition = GetInaccurateTarget(Target.position);
+
         Vector3 adjustedTargetPosition = TargetPosition + new Vector3(0, 1f, 0);
+        //Vector3 adjustedTargetPosition = this.target.transform.position + new Vector3(0, 1f, 0);
 
         Vector3 direction = (adjustedTargetPosition - exitPoint.transform.position).normalized;
 
@@ -999,6 +1094,70 @@ public class Enemy : MonoBehaviour
             }
 
             Quaternion rotationToTarget = Quaternion.LookRotation(direction);
+            newObject.transform.rotation = rotationToTarget;
+        }
+    }
+
+    [AttackMethod]
+    public void GroundWaveHit()
+    {
+        if (targetPosition == Vector3.zero) return;
+
+        //TEST
+        //TargetPosition = GetInaccurateTarget(Target.position);
+
+        Vector3 adjustedTargetPosition = TargetPosition;
+        //Vector3 adjustedTargetPosition = this.target.transform.position + new Vector3(0, 1f, 0);
+
+        Vector3 direction = (adjustedTargetPosition - this.transform.position).normalized;
+
+        GameObject newObject = PoolingManagerSingleton.Instance.GetObjectFromPool(currentAbility.projectilePrefab.name, this.transform.position);
+
+        if (newObject != null)
+        {
+            if (newObject.TryGetComponent<AbilityValues>(out AbilityValues projectile))
+            {
+                projectile.Damage = currentAbility.damage;
+            }
+
+            Quaternion rotationToTarget = Quaternion.LookRotation(direction);
+            newObject.transform.rotation = rotationToTarget;
+        }
+    }
+
+    [AttackMethod]
+    public void TripleGroundWaveHit()
+    {
+        if (targetPosition == Vector3.zero) return;
+
+        //TEST
+        //TargetPosition = GetInaccurateTarget(Target.position);
+
+        Vector3 adjustedTargetPosition = TargetPosition;
+        //Vector3 adjustedTargetPosition = this.target.transform.position + new Vector3(0, 1f, 0);
+
+        Vector3 direction = (adjustedTargetPosition - this.transform.position).normalized;
+        FireProjectile(direction, 0);
+        FireProjectile(direction, -30);
+        FireProjectile(direction, 30);
+    }
+
+
+    public void FireProjectile(Vector3 direction, float angleOffset)
+    {
+        GameObject newObject = PoolingManagerSingleton.Instance.GetObjectFromPool(currentAbility.projectilePrefab.name, this.transform.position);
+
+        if (newObject != null)
+        {
+            if (newObject.TryGetComponent<AbilityValues>(out AbilityValues projectile))
+            {
+                projectile.Damage = currentAbility.damage;
+            }
+
+            Quaternion offsetRotation = Quaternion.Euler(0f, angleOffset, 0f);
+            Vector3 offsetDirection = offsetRotation * direction;
+
+            Quaternion rotationToTarget = Quaternion.LookRotation(offsetDirection);
             newObject.transform.rotation = rotationToTarget;
         }
     }
