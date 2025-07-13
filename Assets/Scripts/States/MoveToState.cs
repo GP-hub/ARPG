@@ -28,7 +28,7 @@ public class MoveToState : IState
         AIManager.Instance.MoveUnitsToPosition(destination);
 
         bool allArrived = AIManager.Instance.MoveUnitsToPosition(destination);
-        Debug.Log("All units arrived: " + allArrived);
+        //Debug.Log("All units arrived: " + allArrived);
         if (allArrived)
         {
             enemy.isMoving = false;

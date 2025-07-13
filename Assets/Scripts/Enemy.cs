@@ -1,8 +1,12 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Drawing;
 using System.Reflection;
+using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.AI;
+using static UnityEngine.UI.Image;
+using Color = UnityEngine.Color;
 using Random = UnityEngine.Random;
 
 
@@ -1190,6 +1194,75 @@ public class Enemy : MonoBehaviour
             StartCoroutine(RockFalling(duration, size, targetPos, canDestroy));
         }
     }
+
+    [AttackMethod]
+    public void ConeAttack()
+    {
+        //List<Collider> targetsInCone = new List<Collider>();
+        //int hitCount = Utility.ConeCastNonAlloc(
+        //    origin: transform.position,
+        //    direction: transform.forward,
+        //    maxDistance: 5f,
+        //    angle: 90f,
+        //    layerMask: LayerMask.GetMask("Character"),
+        //    results: targetsInCone
+        //);
+        TelegraphedCone(1f, 10f, 100f, this.transform.position + new Vector3(0, 0.01f, 0), this.transform, true);
+        //foreach (Collider hit in targetsInCone)
+        //{
+        //    if (hit.CompareTag("Player"))
+        //    {
+        //        EventManager.PlayerTakeDamage(currentAbility.damage);
+        //    }
+        //}
+    }
+
+    private void TelegraphedCone(float duration, float size, float angleOfCone, Vector3 targetPos, Transform transform, bool canDestroy)
+    {
+        GameObject newObject = PoolingManagerSingleton.Instance.GetObjectFromPool("Telegraph_Cone", targetPos);
+
+        if (newObject.TryGetComponent<TelegraphConeIndicator>(out TelegraphConeIndicator indicator))
+        {
+            indicator.SetIndicatorPosition(duration, size, angleOfCone, transform);
+            StartCoroutine(GetTargetsInsideConeAfterDelay(duration, size, angleOfCone, transform));
+        }
+    }
+
+    private IEnumerator GetTargetsInsideConeAfterDelay(float delay, float size, float angleOfCone, Transform transform)
+    {
+        Vector3 originPosition = transform.position + new Vector3(0, 1f, 0);
+        Vector3 targetPosition = transform.forward/* + new Vector3(0, 1f, 0)*/;
+
+        // Visualize the direction for the duration of the delay
+        float elapsed = 0f;
+        while (elapsed < delay)
+        {
+            Debug.DrawLine(originPosition, originPosition + targetPosition * (size / 2f), Color.green);
+            elapsed += Time.deltaTime;
+            yield return null;
+        }
+
+        List<Collider> targetsInCone = new List<Collider>();
+        int hitCount = Utility.ConeCastNonAlloc(
+            origin: originPosition,
+            direction: targetPosition,
+            maxDistance: size/2,
+            angle: angleOfCone,
+            layerMask: LayerMask.GetMask("Character"),
+            results: targetsInCone
+        );
+
+        // Example: process results
+        foreach (Collider hit in targetsInCone)
+        {
+            if (hit.CompareTag("Player"))
+            {
+                EventManager.PlayerTakeDamage(currentAbility.damage);
+            }
+        }
+    }
+
+
 
 
     private IEnumerator RockFalling(float indicatorDuration, float size, Vector3 targetPos, bool canDestroy)

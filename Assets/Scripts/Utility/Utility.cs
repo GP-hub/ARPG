@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using System.Collections.Generic;
+using UnityEngine;
 using UnityEngine.AI;
 
 public enum Quadrant { Front, Right, Back, Left }
@@ -9,6 +10,8 @@ public static class Utility
     private const float k_Distance = 3f;
     // How close NavMesh.SamplePosition is allowed to move the point (tweak to your grid density)
     private const float k_SampleRadius = 1f;
+
+    private static Collider[] coneHits = new Collider[10];
 
     public static Vector3 GetPositionPoint(Vector3 origin, Vector3 target, IdleBehaviorType behavior, NavMeshAgent agent, LayerMask obstacleMask)
     {
@@ -98,6 +101,36 @@ public static class Utility
         Vector3 direction = (target - source.position).normalized;
         Quaternion lookRotation = Quaternion.LookRotation(direction);
         source.rotation = Quaternion.Slerp(source.rotation, lookRotation, Time.deltaTime * rotationSpeed);
+    }
+
+    public static int ConeCastNonAlloc(Vector3 origin, Vector3 direction, float maxDistance, float angle, LayerMask layerMask, List<Collider> results)
+    {
+        results.Clear(); // Ensure output list is empty
+
+        int count = Physics.OverlapSphereNonAlloc(origin, maxDistance, coneHits, layerMask);
+
+        float halfAngle = angle * 0.5f;
+
+        int validCount = 0;
+
+        for (int i = 0; i < count; i++)
+        {
+            Collider col = coneHits[i];
+            Vector3 toTarget = col.transform.position - origin;
+            toTarget.y = 0; // Flatten if you want a 2D cone check
+            if (toTarget.magnitude <= maxDistance)
+            {
+                float angleToTarget = Vector3.Angle(direction, toTarget);
+
+                if (angleToTarget <= halfAngle)
+                {
+                    results.Add(col);
+                    validCount++;
+                }
+            }
+        }
+
+        return validCount;
     }
 
     //public static float GetClipThreshold(BlendTree blendTree, AnimationClip clipToFind)
