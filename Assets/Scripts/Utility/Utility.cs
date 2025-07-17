@@ -133,6 +133,31 @@ public static class Utility
         return validCount;
     }
 
+    public static float GetTimeToFirstEvent(AnimationClip clip)
+    {
+        if (clip == null)
+        {
+            Debug.LogWarning("Clip is null.");
+            return -1f;
+        }
+
+        AnimationEvent[] events = clip.events;
+        if (events == null || events.Length == 0)
+        {
+            Debug.LogWarning($"Clip '{clip.name}' has no events.");
+            return -1f;
+        }
+
+        float minTime = float.MaxValue;
+        foreach (AnimationEvent evt in events)
+        {
+            if (evt.time < minTime)
+                minTime = evt.time;
+        }
+
+        return minTime;
+    }
+
     //public static float GetClipThreshold(BlendTree blendTree, AnimationClip clipToFind)
     //{
     //    if (blendTree == null || clipToFind == null)

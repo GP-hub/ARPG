@@ -32,7 +32,7 @@ class AttackState : IState
             enemy.Stop();
 
         enemy.Animator.SetFloat("AttackTree", enemy.GetCurrentAbilityIndex());
-
+        //Debug.Log(enemy.DelayBeforeAbilityKeyEvent());
         enemy.ResetPerformedBehavior();
     }
 

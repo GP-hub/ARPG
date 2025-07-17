@@ -7674,7 +7674,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   rotationSpeed: 5
   moveStateSpeed: 1
-  attackStateSpeed: 2
+  attackStateSpeed: 1
   idleBehaviorType: 3
   baseController: {fileID: 9100000, guid: a8277e05608b67541aad32942915a99e, type: 2}
   hasPhaseJustChanged: 0
@@ -7690,7 +7690,7 @@ MonoBehaviour:
   accuracyPercent: 95
   delayBetweenAbilities: 1
   abilities:
-  - {fileID: 11400000, guid: 2d4c73b0730a0f34e8c5141e7ebb6a71, type: 2}
+  - {fileID: 11400000, guid: 43e2815c328dfc947adb8afa01198ea6, type: 2}
   powerAbility: {fileID: 0}
   exitPoint: {fileID: 634024018}
   characterLayer:

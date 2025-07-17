@@ -168,7 +168,7 @@ public class Enemy : MonoBehaviour
         currentHealth = maxHealth;
         lastPosition = transform.position;
         minMaxAbilityRange = MinMaxRangeAttackRange(abilities);
-        Debug.Log($"Enemy {gameObject.name} enabled. MinMaxAbilityRange: {minMaxAbilityRange}");
+
         StartCastCooldown();
         ChangeState(new IdleState());
     }
@@ -485,7 +485,6 @@ public class Enemy : MonoBehaviour
             //return 1.1f; // Default value if no valid range is found
             return 2f; // Default value if no valid range is found
         }
-        Debug.Log(minMaxAttackRange);
         return minMaxAttackRange;
     }
     public void ChangeState(IState newState)
@@ -620,6 +619,26 @@ public class Enemy : MonoBehaviour
         else
         {
             Debug.Log($"Method '{currentAbility.selectedFunctionName}' not found on {gameObject.name}");
+        }
+    }
+
+    public void InvokePreviewFunction(AbilityData abilityData)
+    {
+        if (abilityData == null || string.IsNullOrEmpty(abilityData.selectedPreviewFunctionName))
+            return;
+
+        MethodInfo previewMethod = GetType().GetMethod(
+            abilityData.selectedPreviewFunctionName,
+            BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic
+        );
+
+        if (previewMethod != null)
+        {
+            previewMethod.Invoke(this, null);
+        }
+        else
+        {
+            Debug.LogWarning($"Preview method '{abilityData.selectedPreviewFunctionName}' not found on {name}.");
         }
     }
 
@@ -903,6 +922,11 @@ public class Enemy : MonoBehaviour
     public AbilityData GetCurrentAbility()
     {
         return currentAbility;
+    }
+
+    public float DelayBeforeAbilityKeyEvent()
+    {
+        return Utility.GetTimeToFirstEvent(GetCurrentAbility().animationClip) / attackStateSpeed;
     }
 
 
@@ -1196,25 +1220,26 @@ public class Enemy : MonoBehaviour
     }
 
     [AttackMethod]
-    public void ConeAttack()
+    public void ConeAttackWithDelay()
     {
-        //List<Collider> targetsInCone = new List<Collider>();
-        //int hitCount = Utility.ConeCastNonAlloc(
-        //    origin: transform.position,
-        //    direction: transform.forward,
-        //    maxDistance: 5f,
-        //    angle: 90f,
-        //    layerMask: LayerMask.GetMask("Character"),
-        //    results: targetsInCone
-        //);
         TelegraphedCone(1f, 10f, 100f, this.transform.position + new Vector3(0, 0.01f, 0), this.transform, true);
-        //foreach (Collider hit in targetsInCone)
-        //{
-        //    if (hit.CompareTag("Player"))
-        //    {
-        //        EventManager.PlayerTakeDamage(currentAbility.damage);
-        //    }
-        //}
+    }
+
+    [AttackMethod]
+    public void ConeAttackNoDelay()
+    {
+        GetTargetsInsideConeNoDelay(6f, 90f, this.transform);
+    }
+
+    [AbilityPreviewMethod]
+    public void TelegraphedConeNoDelay()
+    {
+        GameObject newObject = PoolingManagerSingleton.Instance.GetObjectFromPool("Telegraph_Cone", this.transform.position);
+
+        if (newObject.TryGetComponent<TelegraphConeIndicator>(out TelegraphConeIndicator indicator))
+        {
+            indicator.SetIndicatorPosition(DelayBeforeAbilityKeyEvent(), 6f, 90f, this.transform);
+        }
     }
 
     private void TelegraphedCone(float duration, float size, float angleOfCone, Vector3 targetPos, Transform transform, bool canDestroy)
@@ -1225,6 +1250,31 @@ public class Enemy : MonoBehaviour
         {
             indicator.SetIndicatorPosition(duration, size, angleOfCone, transform);
             StartCoroutine(GetTargetsInsideConeAfterDelay(duration, size, angleOfCone, transform));
+        }
+    }
+
+    private void GetTargetsInsideConeNoDelay(float size, float angleOfCone, Transform transform)
+    {
+        Vector3 originPosition = transform.position + new Vector3(0, 1f, 0);
+        Vector3 targetPosition = transform.forward/* + new Vector3(0, 1f, 0)*/;
+
+        List<Collider> targetsInCone = new List<Collider>();
+        int hitCount = Utility.ConeCastNonAlloc(
+            origin: originPosition,
+            direction: targetPosition,
+            maxDistance: size / 2,
+            angle: angleOfCone,
+            layerMask: LayerMask.GetMask("Character"),
+            results: targetsInCone
+        );
+
+        // Example: process results
+        foreach (Collider hit in targetsInCone)
+        {
+            if (hit.CompareTag("Player"))
+            {
+                EventManager.PlayerTakeDamage(currentAbility.damage);
+            }
         }
     }
 

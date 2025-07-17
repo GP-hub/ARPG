@@ -3,9 +3,14 @@ using UnityEngine;
 public class LogOnAnimationLoop : StateMachineBehaviour
 {
     private int previousLoopCount = 0;
+    private Enemy cachedEnemy;
+
     public override void OnStateEnter(Animator animator, AnimatorStateInfo stateInfo, int layerIndex)
     {
         previousLoopCount = 0;
+
+        cachedEnemy = animator.gameObject.GetComponent<Enemy>();
+        cachedEnemy.InvokePreviewFunction(cachedEnemy.GetCurrentAbility());
     }
 
 
@@ -17,7 +22,7 @@ public class LogOnAnimationLoop : StateMachineBehaviour
         if (currentLoopCount > previousLoopCount)
         {
             previousLoopCount = currentLoopCount;
-            animator.gameObject.GetComponent<Enemy>().StartCastCooldown();
+            cachedEnemy.StartCastCooldown();
         }
     }
 

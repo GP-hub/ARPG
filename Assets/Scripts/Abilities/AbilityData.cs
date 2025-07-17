@@ -13,6 +13,8 @@ public class AbilityData : ScriptableObject
     public AnimationClip animationClip; // Animation for the attack move
     [HideInInspector]
     public string selectedFunctionName; // Function name to call on the enemy script
+    [HideInInspector]
+    public string selectedPreviewFunctionName; // Function name to call on the enemy script
     public List<ScriptableAbilityCondition> conditions;
     public AbilityData followUpAbility;
 }
